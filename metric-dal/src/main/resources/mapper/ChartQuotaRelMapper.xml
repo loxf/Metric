@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ywwl.metric.dal.dao.ChartQuotaRelMapper" >
+  <resultMap id="BaseResultMap" type="com.ywwl.metric.dal.po.ChartQuotaRel" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="chart_id" property="chartId" jdbcType="VARCHAR" />
+    <result column="quota_id" property="quotaId" jdbcType="VARCHAR" />
+    <result column="quota_dimension" property="quotaDimension" jdbcType="VARCHAR" />
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, chart_id, quota_id, quota_dimension, created_at
+  </sql>
+  <select id="selectByChartId" resultType="com.ywwl.metric.dal.po.QuotaWithDim" parameterType="java.lang.String" >
+    select a.quota_dimension as chartDimension, b.quota_id quotaId, b.quota_code quotaCode,
+    b.quota_source quotaSource, b.quota_name quotaName, b.expression, b.quota_display_name quotaDisplayName,
+    b.particle_size particleSize, type, b.show_operation showOperation, b.state, b.quota_dim quotaDim, b.show_type showType from chart_quota_rel a, quota b where a.quota_id = b.quota_id and a.chart_id = #{chartId}
+  </select>
+  <insert id="insert" parameterType="com.ywwl.metric.dal.po.ChartQuotaRel" >
+    insert into chart_quota_rel (id, chart_id, quota_id, quota_dimension,
+      created_at)
+    values (#{id,jdbcType=BIGINT}, #{chartId,jdbcType=VARCHAR}, #{quotaId,jdbcType=VARCHAR}, #{quotaDimension,jdbcType=VARCHAR},
+    now())
+  </insert>
+  <delete id="deleteByChartId" parameterType="java.lang.String" >
+    delete from chart_quota_rel
+    where chart_id = #{chartId,jdbcType=VARCHAR}
+  </delete>
+</mapper>

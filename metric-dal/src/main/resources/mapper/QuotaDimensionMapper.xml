@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ywwl.metric.dal.dao.QuotaDimensionMapper" >
+  <resultMap id="BaseResultMap" type="com.ywwl.metric.dal.po.QuotaDimension" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="quota_id" property="quotaId" jdbcType="VARCHAR" />
+    <result column="column_name" property="columnName" jdbcType="VARCHAR" />
+    <result column="column_code" property="columnCode" jdbcType="VARCHAR" />
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, quota_id, column_name, column_code, created_at
+  </sql>
+  <select id="selectByQuotaId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from quota_dimension
+    where quota_id = #{quotaId}
+  </select>
+  <insert id="insert" parameterType="com.ywwl.metric.dal.po.QuotaDimension" keyProperty="id" useGeneratedKeys="true" >
+    insert into quota_dimension (quota_id, column_name,
+      column_code, created_at)
+    values (#{quotaId,jdbcType=VARCHAR}, #{columnName,jdbcType=VARCHAR},
+      #{columnCode,jdbcType=VARCHAR}, now())
+  </insert>
+  <select id="selectByDimCode" resultType="java.lang.String" >
+    select column_name from quota_dimension where column_code = #{columnCode} and quota_id = #{quotaId} limit 0,1
+  </select>
+  <delete id="deleteByQuotaId" parameterType="java.lang.String">
+    delete from quota_dimension where quota_id = #{quotaId}
+  </delete>
+</mapper>

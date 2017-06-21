@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ywwl.metric.dal.dao.OperationMapper" >
+  <resultMap id="BaseResultMap" type="com.ywwl.metric.dal.po.Operation" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="operation" property="operation" jdbcType="VARCHAR" />
+    <result column="oper_name" property="operName" jdbcType="VARCHAR" />
+    <result column="is_deleted" property="isDeleted" jdbcType="TINYINT" />
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, operation, oper_name, is_deleted, created_at
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from operation
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from operation
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.ywwl.metric.dal.po.Operation" >
+    insert into operation (id, operation, oper_name, 
+      is_deleted, created_at)
+    values (#{id,jdbcType=BIGINT}, #{operation,jdbcType=VARCHAR}, #{operName,jdbcType=VARCHAR}, 
+      #{isDeleted,jdbcType=TINYINT}, #{createdAt,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ywwl.metric.dal.po.Operation" >
+    insert into operation
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="operation != null" >
+        operation,
+      </if>
+      <if test="operName != null" >
+        oper_name,
+      </if>
+      <if test="isDeleted != null" >
+        is_deleted,
+      </if>
+      <if test="createdAt != null" >
+        created_at,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="operation != null" >
+        #{operation,jdbcType=VARCHAR},
+      </if>
+      <if test="operName != null" >
+        #{operName,jdbcType=VARCHAR},
+      </if>
+      <if test="isDeleted != null" >
+        #{isDeleted,jdbcType=TINYINT},
+      </if>
+      <if test="createdAt != null" >
+        #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ywwl.metric.dal.po.Operation" >
+    update operation
+    <set >
+      <if test="operation != null" >
+        operation = #{operation,jdbcType=VARCHAR},
+      </if>
+      <if test="operName != null" >
+        oper_name = #{operName,jdbcType=VARCHAR},
+      </if>
+      <if test="isDeleted != null" >
+        is_deleted = #{isDeleted,jdbcType=TINYINT},
+      </if>
+      <if test="createdAt != null" >
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ywwl.metric.dal.po.Operation" >
+    update operation
+    set operation = #{operation,jdbcType=VARCHAR},
+      oper_name = #{operName,jdbcType=VARCHAR},
+      is_deleted = #{isDeleted,jdbcType=TINYINT},
+      created_at = #{createdAt,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

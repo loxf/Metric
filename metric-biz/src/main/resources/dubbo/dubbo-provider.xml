@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 添加 DUBBO SCHEMA -->
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <!--<dubbo:service timeout="${dubbo.service.timeout}" interface="com.ywwl.trade.client.TransOrderService" ref="transOrderService"
+                   version="${dubbo.service.version}"/>-->
+    <dubbo:service timeout="${dubbo.service.timeout}" interface="com.ywwl.metric.client.BoardService" ref="boardService"
+                   version="${dubbo.service.version}"/>
+    <dubbo:service timeout="${dubbo.service.timeout}" interface="com.ywwl.metric.client.ChartService" ref="chartService"
+                   version="${dubbo.service.version}"/>
+    <dubbo:service timeout="${dubbo.service.timeout}" interface="com.ywwl.metric.client.TargetService" ref="targetService"
+                   version="${dubbo.service.version}" />
+    <dubbo:service timeout="${dubbo.service.timeout}" interface="com.ywwl.metric.client.TargetItemService" ref="targetItemService"
+                   version="${dubbo.service.version}" />
+    <dubbo:service timeout="${dubbo.service.timeout}" interface="com.ywwl.metric.client.TargetNoticeUserService" ref="targetNoticeUserService"
+                   version="${dubbo.service.version}" />
+    <dubbo:service timeout="${dubbo.service.timeout}" interface="com.ywwl.metric.client.QuotaScanService" ref="quotaScanService"
+                   version="${dubbo.service.version}" />
+    <dubbo:service timeout="${dubbo.service.timeout}" interface="com.ywwl.metric.client.UserQuotaScanRelService" ref="userQuotaScanRelService"
+                   version="${dubbo.service.version}" />
+    <dubbo:service timeout="${dubbo.service.timeout}" interface="com.ywwl.metric.client.QuotaService" ref="quotaService"
+                   version="${dubbo.service.version}" />
+    <dubbo:service timeout="${dubbo.service.timeout}" interface="com.ywwl.metric.client.QuotaDimenValueService" ref="quotaDimenValueService"
+                   version="${dubbo.service.version}" />
+    <dubbo:service timeout="${dubbo.service.timeout}" interface="com.ywwl.metric.client.JobManageService" ref="jobManageService"
+                   version="${dubbo.service.version}" />
+    <dubbo:service timeout="3000000" interface="com.ywwl.metric.client.ExcelDataImportService" ref="excelImport"
+                   version="${dubbo.service.version}" />
+</beans>

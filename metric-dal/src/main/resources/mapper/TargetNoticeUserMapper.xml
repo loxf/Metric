@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ywwl.metric.dal.dao.TargetNoticeUserMapper" >
+  <resultMap id="BaseResultMap" type="com.ywwl.metric.dal.po.TargetNoticeUser" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="target_id" property="targetId" jdbcType="VARCHAR" />
+    <result column="obj_type" property="objType" jdbcType="VARCHAR" />
+    <result column="obj_id" property="objId" jdbcType="VARCHAR" />
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+</resultMap>
+  <sql id="Base_Column_List" >
+  id, target_id, obj_type, obj_id, created_at
+  </sql>
+  <select id="selectByTargetId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from target_notice_user
+    where target_id = #{targetId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByTargetId" parameterType="java.lang.String" >
+    delete from target_notice_user
+    where target_id = #{targetId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.ywwl.metric.dal.po.TargetNoticeUser" >
+    insert into target_notice_user ( target_id, obj_type,
+      obj_id, created_at)
+    values ( #{targetId,jdbcType=VARCHAR}, #{objType,jdbcType=VARCHAR},
+      #{objId,jdbcType=VARCHAR}, #{createdAt,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="batchInsert" parameterType="java.util.List">
+    insert into target_notice_user (target_id, obj_type,
+    obj_id, created_at)
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.targetId},#{item.objType},#{item.objId},#{item.createdAt})
+    </foreach>
+  </insert>
+</mapper>
