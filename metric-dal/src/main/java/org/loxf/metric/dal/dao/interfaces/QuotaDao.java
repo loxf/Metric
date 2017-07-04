@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * Created by luohj on 2017/6/27.
  */
-public interface QuotaDao extends MongoBase<Quota> {
+public interface QuotaDao{
     Quota selectQuota(Quota quota);
 
     List<Quota> selectList(Quota quota);

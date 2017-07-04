@@ -9,13 +9,14 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
 import javax.annotation.Resource;
+import java.lang.reflect.ParameterizedType;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Created by luohj on 2017/6/27.
  */
-public class MongoDaoBase implements MongoBase<Object> {
+public class MongoDaoBase<T> implements MongoBase<T> {
     private static final String SET = "$set";
     private static final String INC = "$inc";
     private static final String PUSH = "$push";
@@ -28,27 +29,30 @@ public class MongoDaoBase implements MongoBase<Object> {
     }
 
     @Override
-    public Object findOne(Map<String, Object> params, Class clazz, String collectionName) {
+    public T findOne(Map<String, Object> params, String collectionName) {
         DBObject obj = new BasicDBObject();
         obj.putAll(params);
         Query query=new BasicQuery(obj);
+        Class < T >  clazz  =  (Class < T > ) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[ 0 ];
         return mongoTemplate.findOne(query, clazz, collectionName);
     }
 
     @Override
-    public List<Object> findAll(Map<String, Object> params, Class clazz, String collectionName) {
+    public List<T> findAll(Map<String, Object> params, String collectionName) {
         DBObject obj = new BasicDBObject();
         obj.putAll(params);
         Query query=new BasicQuery(obj);
+        Class < T >  clazz  =  (Class < T > ) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[ 0 ];
         return mongoTemplate.find(query, clazz, collectionName);
     }
 
     @Override
-    public List<Object> findByPager(Map<String, Object> params, int start, int end, Class clazz, String collectionName) {
+    public List<T> findByPager(Map<String, Object> params, int start, int end, String collectionName) {
         DBObject obj = new BasicDBObject();
         obj.putAll(params);
         Query query=new BasicQuery(obj);
         query.skip(start).limit(end);
+        Class < T >  clazz  =  (Class < T > ) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[ 0 ];
         return mongoTemplate.find(query, clazz, collectionName);
     }
 

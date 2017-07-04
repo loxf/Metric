@@ -15,17 +15,17 @@ public interface MongoBase<T> {
     /**
      * 根据条件查找一个
      */
-    public T findOne(Map<String, Object> params, Class clazz, String collectionName);
+    public T findOne(Map<String, Object> params, String collectionName);
 
     /**
      * 根据条件查找所有
      */
-    public List<T> findAll(Map<String, Object> params, Class clazz, String collectionName);
+    public List<T> findAll(Map<String, Object> params, String collectionName);
 
     /**
      * 根据条件查找所有（分页）
      */
-    public List<T> findByPager(Map<String, Object> params, int start, int end, Class clazz, String collectionName);
+    public List<T> findByPager(Map<String, Object> params, int start, int end, String collectionName);
 
     /**
      * 修改
