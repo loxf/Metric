@@ -1,0 +1,161 @@
+<link href="${rc.contextPath}/_resources/css/bootstrap-select.css" rel="stylesheet">
+<script src="${rc.contextPath}/_resources/js/bootstrap-select.js"></script>
+<link href="${rc.contextPath}/_resources/css/jquery/select2.min.css" rel="stylesheet">
+<script src="${rc.contextPath}/_resources/js/jquery.select2.full.js"></script>
+<script src="${rc.contextPath}/_resources/js/plugins/layer/laydate/laydate.js"></script>
+<script>
+    #if($!{baseResult})
+        #if($!{baseResult.code} == 1)
+          parent.searchList();
+          parent.closeLayer("$!{baseResult.msg}");
+        #else
+          parent.layer.msg("$!{baseResult.msg}",failIcon);
+        #end
+    #end
+</script>
+<div class="ibox-content">
+   <form class="form-horizontal" id="form1" action="updateResource.html" method="POST" enctype="multipart/form-data">
+         <div class="form-group">
+             <label class="col-sm-3 control-label">附件名称：</label>
+             <div class="col-sm-8">
+                 <input type="hidden" name="advRecId" value="$!{entity.advRecId}">
+                 <input type="text" class="form-control" name="advResName" value="$!{entity.advResName}" style="width:400px">
+             </div>
+         </div>
+         <div class="form-group">
+              <label class="col-sm-3 control-label">附件类型：</label>
+              <div class="col-sm-8" style="width:430px">
+                 <select name="advResType" class="selectpicker show-tick form-control">
+                    #foreach($item in $!{advResType.entrySet()})
+                      <option value="$!{item.key}" #if($!{entity.advResType} == $!{item.key}) selected="selected" #end>$!{item.value}</option>
+                    #end
+                </select>
+              </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">关联广告：</label>
+            <div class="col-sm-8" style="width:430px">
+               <select id="advertIdSel" name="advertId" onchange="listSubAds()" class="selectpicker show-tick form-control" data-live-search="true">
+                  #foreach($item in $!{adverts})
+                    <option value="$!{item.advertId}" #if($!{entity.advertId} == $!{item.advertId}) selected="selected" #end>$!{item.advertName}</option>
+                  #end
+              </select>
+            </div>
+         </div>
+          <div class="form-group">
+             <label class="col-sm-3 control-label">关联子广告：</label>
+             <div class="col-sm-8">
+              <select id="advertMaIdSel" name="advertMaId" style="width:400px">
+                   #foreach($item in $!{subAdverts})
+                     <option value="$!{item.advertMaId}" #if($!{entity.advertMaId} == $!{item.advertMaId}) selected="selected" #end>$!{item.advMaDisplayName}</option>
+                   #end
+               </select>
+             </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">领取方式：</label>
+            <div class="col-sm-8" style="width:430px">
+               <select name="advResTakeMethod" class="selectpicker show-tick form-control">
+                  #foreach($item in $!{takeTypes.entrySet()})
+                    <option value="$!{item.key}" #if($!{entity.advResTakeMethod} == $!{item.key}) selected="selected" #end>$!{item.value}</option>
+                  #end
+              </select>
+            </div>
+         </div>
+         <div class="form-group">
+              <label class="col-sm-3 control-label">单次领取数量：</label>
+              <div class="col-sm-8">
+                  <input type="text" class="form-control" name="advResSingle" value="$!{entity.advResSingle}" style="width:400px">
+              </div>
+          </div>
+          <div class="form-group">
+              <label class="col-sm-3 control-label">礼包内容：</label>
+             <div class="col-sm-8">
+                 <input type="text" class="form-control" name="content" value="$!{entity.content}" style="width:400px">
+             </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">使用方法：</label>
+            <div class="col-sm-8">
+               <input type="text" class="form-control" name="usageMethod" value="$!{entity.usageMethod}" style="width:400px">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">礼包码：</label>
+           <div class="col-sm-8">
+               <input type="file" name="file">
+           </div>
+         </div>
+          <div class="form-group">
+              <label class="col-sm-3 control-label">总数量：</label>
+              <div class="col-sm-8">
+                  <input type="text" class="form-control" disabled="disabled" value="$!{entity.advresTotalNum}" style="width:400px">
+              </div>
+          </div>
+          <div class="form-group">
+              <label class="col-sm-3 control-label">已领取数量：</label>
+              <div class="col-sm-8">
+                  <input type="text" class="form-control" disabled="disabled" value="$!{entity.advResTakeNum}" style="width:400px">
+              </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">状态：</label>
+            <div class="col-sm-8" style="width:430px">
+                <select name="status" class="selectpicker show-tick form-control">
+                     <option value="1" #if($!entity.status == 1) selected="selected" #end>启用</option>
+                     <option value="0" #if($!entity.status == 0) selected="selected" #end>禁用</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-3 control-label">有效期：</label>
+          <div class="col-sm-8">
+              <input class="form-control layer-date" name="validAtStr" value="$!{entity.validAtStr}" style="width:400px" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'})">
+          </div>
+        </div>
+        <div align="center">
+           <button class="btn btn-success" type="submit"><i class="glyphicon glyphicon-ok"></i>保存</button>
+           <button class="btn btn-white" type="button" onclick="parent.closeLayer()"><i class="glyphicon glyphicon-remove"></i>返回</button>
+        </div>
+     </form>
+ </div>
+ <script>
+ function listSubAds(){
+      $("#advertMaIdSel").html("");
+  }
+  $(function () {
+    $("#advertMaIdSel").select2({
+       ajax: {
+           url: "listSubAds.html",
+           dataType: 'json',
+           delay: 250,
+           data: function (params) {
+               return {
+                   advertId: $("#advertIdSel").val(),
+                   advMaDisplayName: params.term,
+                   page: params.page
+               };
+           },
+           processResults: function (data, params) {
+               params.page = params.page || 1;
+               var itemList = [];
+               for(item in data){
+                  itemList.push({id:data[item].advertMaId, text:data[item].advMaDisplayName})
+               }
+               return {
+                   results: itemList,
+                   pagination: {
+                       more: (params.page * 30) < data.total_count
+                   }
+               };
+           },
+          cache: true
+       },
+       escapeMarkup: function (markup) { return markup; },
+       minimumInputLength: 1,
+       formatResult: function formatRepo(repo){return repo.text;}, // 函数用来渲染结果
+       formatSelection: function formatRepoSelection(repo){return repo.text;} // 函数用于呈现当前的选择
+   });
+  });
+</script>
+</html>

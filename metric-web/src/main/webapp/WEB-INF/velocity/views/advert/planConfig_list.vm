@@ -1,0 +1,123 @@
+<div class="ibox-content">
+    <form role="form" class="form-inline">
+        <div class="form-group">
+           <label>计划名称:</label><input type="text" id="planCfgName" class="form-control">
+           <label>状态</label>
+           <div class="input-group">
+              <select class="form-control" id="status">
+                <option value="">请选择</option>
+                <option value="1">启用</option>
+                <option value="0">禁用</option>
+              </select>
+           </div>
+          <label>创建时间</label>
+          <input class="form-control layer-date" id="startDate" placeholder="开始时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})">
+          <input class="form-control layer-date" id="endDate" placeholder="结束时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})">
+          <button class="btn btn-white" type="button" onclick="searchList('1')"><i class="glyphicon glyphicon-search"></i>查询</button>
+            #if($permissionTool.hasPermission('plan.plan.add'))
+            <button class="btn btn-success" type="button" onclick="edit('')"><i class="glyphicon glyphicon-plus"></i>新建计划</button>
+            #end
+        </div>
+    </form>
+  </div>
+  <div class="jqGrid_wrapper">
+        <table id="table_list_1"></table>
+        <div id="pager_list_1"></div>
+   </div>
+<script>
+   function searchList(page){
+       $("#table_list_1").jqGrid('setGridParam',{
+            url:'listjson.html?'+getParams(),
+            page:page
+       }).trigger("reloadGrid");
+   }
+    function getParams(){
+      var planCfgName=$("#planCfgName").val();
+      var status=$("#status").val();
+      var startDate=$("#startDate").val();
+      var endDate=$("#endDate").val();
+      if("" != endDate){
+         endDate = endDate + ' 23:59:59';
+      }
+      return "planCfgName="+planCfgName+"&status="+status+"&startDate="+startDate+"&endDate="+endDate;
+   }
+   $(document).ready(function () {
+       $.jgrid.defaults.styleUI = 'Bootstrap';
+       $('#table_list_1').jqGrid({
+              url:'listjson.html',
+              datatype: "json",
+              height: jqGridHeight,
+              autowidth: true,
+              shrinkToFit: true,
+              viewrecords:true,
+              rowNum: 20,
+              rowList: [20, 30, 50],
+              viewrecords : true,
+              colNames: ['计划名称','下游结算方式','下游结算指标','下游结算类型','下游结算值','下游结算周期','状态','创建时间','操作'],
+              colModel: [
+                 {
+                    name: 'planCfgName',
+                    width: 10
+                 },
+                 {
+                     name: 'planConfigSettleRule1.settleMethod',
+                     width: 8
+                  },
+                   {
+                   name: 'planConfigSettleRule1.settleTarget',
+                   width: 8
+                 },
+                  {
+                    name: 'planConfigSettleRule1.settleType',
+                    width: 8
+                  },
+                 {
+                    name: 'planConfigSettleRule1.settlePrice',
+                    width: 8
+                  },
+                  {
+                  name: 'planConfigSettleRule1.settleCycle',
+                  width: 8
+                 },
+                 {
+                   name:'status',
+                   width:5,
+                   formatter : function(value, options, rowObject) {
+                      if("1" == value){
+                         return "启用";
+                      }else{
+                         return "禁用";
+                      }
+                   }
+                 },
+                 {
+                    name: 'createdAtStr',
+                    width: 10
+                  },
+                  {
+                     name : "optId",
+                     width:10,
+                     formatter : function(value, options, rowObject) {
+                        var b = '';
+                        #if($permissionTool.hasPermission('plan.plan.update'))
+                        b =  '<a href="javascript:void(0)" onclick="edit(\'' + rowObject.planCfgId + '\')" class="btn btn-primary"><i class="glyphicon glyphicon-pencil"></i>编辑</a>';
+                        #end
+                        return b;
+                     }
+                  }
+              ],
+              pager: "#pager_list_1"
+         });
+  });
+
+function edit(planCfgId){
+   layer.open({
+     type: 2,
+     area: ['900px', '600px'],
+     fixed: false,
+     title: '编辑计划',
+     maxmin: true,
+     content: 'editConfig.html?planCfgId='+planCfgId
+    });
+ }
+</script>

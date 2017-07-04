@@ -1,0 +1,27 @@
+<table class="layui-table" style="overflow-y:hidden">
+  <thead>
+    <tr>
+      <th>类型</th><th>金额</th>
+    </tr>
+  </thead>
+  #if($!{type} == '1')
+      <tbody>
+        <tr><td>酷点退款</td><td>$!{entity.refundKudian}</td></tr>
+        <tr><td>360退款</td><td>$!{entity.refundQihu}</td></tr>
+        <tr><td>魔豆退款</td><td>$!{entity.refundModou}</td></tr>
+        <tr><td>遥点退款</td><td>$!{entity.refundYaodian}</td></tr>
+        <tr><td>酷币退款</td><td>$!{entity.refundKubi}</td></tr>
+        <tr><td>UC退款</td><td>$!{entity.refundUc}</td></tr>
+      </tbody>
+   #elseif($!{type}=='2')
+      <tbody>
+        <tr><td>酷点充值</td><td>$!{entity.chargeKudian}</td></tr>
+        <tr><td>360充值</td><td>$!{entity.chargeQihu}</td></tr>
+        <tr><td>魔豆充值</td><td>$!{entity.chargeModou}</td></tr>
+        <tr><td>遥点充值</td><td>$!{entity.chargeYaodian}</td></tr>
+        <tr><td>酷币充值</td><td>$!{entity.chargeKubi}</td></tr>
+        <tr><td>UC充值</td><td>$!{entity.chargeUc}</td></tr>
+        <tr><td>魔豆游戏</td><td>$!{entity.chargeModouGame}</td></tr>
+      </tbody>
+  #end
+</table>

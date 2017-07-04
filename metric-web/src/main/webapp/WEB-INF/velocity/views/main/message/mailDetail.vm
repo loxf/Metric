@@ -1,0 +1,156 @@
+<link href="${rc.contextPath}/_resources/css/bootstrap-select.css" rel="stylesheet">
+<script src="${rc.contextPath}/_resources/js/bootstrap-select.js"></script>
+<link href="${rc.contextPath}/_resources/css/plugins/iCheck/custom.css" rel="stylesheet">
+<script src="${rc.contextPath}/_resources/js/plugins/iCheck/icheck.min.js"></script>
+<div class="ibox-content">
+    <form class="form-horizontal" id="form1">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">消息名称：</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="title" name="title" value="$!{entity.title}" style="width:400px">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">消息类型：</label>
+            <div class="col-sm-8" style="width:430px">
+                <select name="type" id="type" class="selectpicker show-tick form-control" data-live-search="true">
+                    #foreach($item in ${types})
+                    <option value="$!{item.typeId}" #if($!{entity.type} == $!{item.name}) selected="selected" #end>$!{item.name}</option>
+                    #end
+                </select>
+            </div>
+        </div>
+        <div class="hr-line-dashed"></div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">发送对象：</label>
+            <div class="radio i-checks">
+                <label>
+                    <input type="radio" value="0" #if($!{entity.receiverType} == 0) checked="" #end name="receiverType" > <i></i>全部用户
+                    <small class="text-navy">发送所有用户</small>
+                </label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">&nbsp;</label>
+            <div class="radio i-checks">
+                <label>
+                    <input type="radio" value="1" #if($!{entity.receiverType} == 1) checked="" #end name="receiverType" > <i></i>渠道用户
+                    <small class="text-navy">请选择下列渠道类型</small>
+                </label>
+            </div>
+            <label class="col-sm-3 control-label">&nbsp;</label>
+            <div class="checkbox i-checks">
+                #foreach($item in ${channels})
+                <label class="checkbox-inline i-checks">
+                    <input type="checkbox" name="channelIds" value="$!{item.typeId}"
+                        #foreach($x in $!{entity.channelIds})
+                           #if($x == $!{item.typeId} && $!{entity.receiverType} == 1) checked=""
+                           #end
+                        #end
+                    >$!{item.name}</label>
+                #end
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">&nbsp;</label>
+            <div class="radio i-checks">
+                <label>
+                    <input type="radio" value="2" #if($!{entity.receiverType} == 2) checked="" #end name="receiverType"> <i></i>指定用户
+                    <small class="text-navy">用,分割用户名</small>
+                </label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">&nbsp;</label>
+            <div class="col-sm-8">
+            <textarea id="usernames" name="usernames" placeholder="这里输入用户名" style="width:400px;height:200px">$!{entity.usernames}</textarea>
+            </div>
+        </div>
+        <div class="hr-line-dashed"></div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">消息内容</label>
+            <div class="col-sm-8">
+            <textarea id="content" name="content" placeholder="这里输入消息内容" style="width:400px;height:200px">$!{entity.content}</textarea>
+            </div>
+        </div>
+        <div align="center">
+            #if(! $!{entity.mailId})
+            <button class="btn btn-success" type="button" onclick="saveMail()"><i class="glyphicon glyphicon-ok"></i>发送</button>
+            #end
+            <button class="btn btn-white" type="button" onclick="closeLayer('0')"><i class="glyphicon glyphicon-remove"></i>返回</button>
+        </div>
+    </form>
+</div>
+<script>
+  function closeLayer(reload){
+     if("1" == reload){
+        parent.location.reload();
+     }
+     var index = parent.layer.getFrameIndex(window.name);
+     parent.layer.close(index);
+  }
+  function saveMail(){
+    var title = $('#title').val();
+    var type = $('#type').val();
+    var usernames = $('#usernames').val();
+    var content = $('#content').val();
+    var radio = document.getElementsByName("receiverType");
+    var selectValue = null;
+    for(var i=0;i<radio.length;i++){
+        if(radio[i].checked==true) {
+            selectValue=radio[i].value;
+            break;
+        }
+    }
+    var check=document.getElementsByName("channelIds");
+    var checkValue="";
+    for(var i=0;i<check.length;i++){
+        if(check[i].checked==true) {
+        checkValue=checkValue+check[i].value+",";
+        }
+    }
+    if (title == "") {
+        parent.layer.msg("请输入消息标题",failIcon);
+        return;
+    }
+    if (type == "") {
+        parent.layer.msg("请选择消息类型",failIcon);
+        return;
+    }
+    if (selectValue == null) {
+        parent.layer.msg("请选择发送对象",failIcon);
+        return;
+    } else if(selectValue == '2' && usernames == '') {
+        parent.layer.msg("指定用户时请输入用户名",failIcon);
+        return;
+    } else if(selectValue == '1' && checkValue == '') {
+        parent.layer.msg("指定渠道时请选择特定渠道",failIcon);
+        return;
+    }
+    if (content == '') {
+        parent.layer.msg("请输入消息内容",failIcon);
+        return;
+    }
+     $.ajax({
+        type: "POST",
+        url:"updateMail.html",
+        data:$('#form1').serialize(),
+        success: function(data) {
+           data = eval('(' + data + ')');
+           if(data.code == 1){
+               parent.searchList();
+               parent.closeLayer(data.msg);
+           }else{
+               parent.layer.msg(data.msg,failIcon);
+           }
+        }
+    });
+  }
+  $(document).ready(function() {
+     $('.i-checks').iCheck({
+         checkboxClass: 'icheckbox_square-green',
+         radioClass: 'iradio_square-green',
+     });
+   });
+</script>
+</html>

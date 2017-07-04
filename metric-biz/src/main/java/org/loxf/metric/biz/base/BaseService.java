@@ -16,7 +16,7 @@ public class BaseService {
     Logger logger = Logger.getLogger(this.getClass());
 
     public PageData pageList(Common entity, Class<? extends Object> daoClzz, String suffix) {
-        if (null == entity) {
+        /*if (null == entity) {
             return new PageData(0, 0, new ArrayList<Common>());
         }
         try {
@@ -42,7 +42,8 @@ public class BaseService {
         } catch (Exception ex) {
             logger.error("mybatis分页查询出错:" , ex);
         }
-        return new PageData(0, 0, new ArrayList<Common>());
+        return new PageData(0, 0, new ArrayList<Common>());*/
+        return null;
     }
 
 }

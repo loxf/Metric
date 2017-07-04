@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <link href="${rc.contextPath}/_resources/css/plugins/jqgrid/ui.jqgrid.css" rel="stylesheet">
+    <script src="${rc.contextPath}/_resources/js/plugins/jqgrid/i18n/grid.locale-cn.js"></script>
+    <script src="${rc.contextPath}/_resources/js/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+    <script src="${rc.contextPath}/_resources//layui/layui.js"></script>
+</head>
+<body class="gray-bg">
+<div class="ibox-content">
+    <form role="form" id="settleForm" class="form-inline">
+        <div class="form-group">
+            <label>广告名称:</label>
+            <input type="text" id="advertName" name="advertName" class="form-control">
+            <label>素材名称:</label>
+            <input type="text" id="advertMaName" name="advertMaName" class="form-control">
+            <label>渠道名称:</label>
+            <input type="text" id="channelName" name="channelName" class="form-control">
+            <label>渠道编号:</label>
+            <input type="text" id="channelCode" name="channelCode" class="form-control">
+        </div>
+        <br><br>
+        <div class="form-group">
+            <label>有效期范围</label>
+            <input class="form-control layer-date" id="startDate" name="startDate" placeholder="开始时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})">
+            <input class="form-control layer-date" id="endDate" name="endDate" placeholder="结束时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})">
+            <button class="btn btn-white" type="button" onclick="searchList('1')"><i class="glyphicon glyphicon-search"></i>查询</button>
+            <button class="btn btn-info" type="button" onclick="exportList()"><i class="glyphicon glyphicon-export"></i>导出</button>
+            #if($permissionTool.hasPermission('settle.user.import'))
+            <button class="btn btn-warning" type="button" onclick="importPage()"><i class="glyphicon glyphicon-import"></i>导入配置</button>
+            #end
+        </div>
+    </form>
+</div>
+<div class="jqGrid_wrapper ">
+    <table id="table_list_1"></table>
+    <div id="pager_list_1"></div>
+</div>
+<script>
+   function exportList(){
+        window.open("exportList.html?" + $('#settleForm').serialize());
+   }
+
+    function searchList(page){
+         $("#table_list_1").jqGrid('setGridParam',{
+              url:'list.html',
+              postData:{
+                  advertName: function() { return $("#advertName").val(); },
+                  advertMaName: function() { return $("#advertMaName").val(); },
+                  channelName: function() { return $("#channelName").val(); },
+                  channelCode: function() { return $("#channelCode").val(); },
+                  startDate: function() { return $("#startDate").val(); },
+                  endDate: function() { return $("#endDate").val(); }
+             },
+             page:page
+         }).trigger("reloadGrid");
+    }
+
+   $(document).ready(function () {
+       $.jgrid.defaults.styleUI = 'Bootstrap';
+       $('#table_list_1').jqGrid({
+              url:'list.html',
+              datatype: "json",
+              height: jqGridHeight,
+              autowidth: true,
+              shrinkToFit: true,
+              rownumbers:true,
+              viewrecords:true,
+              rowNum: 20,
+              rowList: [20, 30, 50],
+              colNames: ['广告名称','素材名称','渠道名称','渠道编号','结算比例/单价','生效日期','配置人员','状态','操作'],
+              colModel: [
+                 {
+                    name: 'advertName',
+                 },
+                 {
+                    name: 'advertMaName',
+                  },
+                  {
+                    name: 'channelName',
+                  },
+                  {
+                    name: 'channelCode',
+                  },
+                  {
+                      name: 'settleTypeNumStr',
+                  },
+                  {
+                      name: 'validTimeStr',
+                      formatter:'date',
+                      formatoptions:{srcformat: 'Y-m-d', newformat: 'Y-m-d'},
+                  },
+                  {
+                      name: 'adminUserName',
+                  },
+                  {
+                      name: 'status',
+                      formatter : function(value, row, index) {
+                         if("0" == value){
+                            return "禁用";
+                         }else if("1" == value){
+                            return "启用";
+                         }else {
+                            return "已过期";
+                         }
+                      }
+                  },
+                  {
+                      name : "chaSettleCfgId",
+                      width: 200,
+                      formatter : function(value, options, rowObject) {
+                        var h1 = '';
+                        #if($permissionTool.hasPermission('settle.channel.status'))
+                        if(rowObject.status!='2'){
+                            var statusName = '禁用';
+                            var status = '0';
+                            var className = 'danger';
+                            var tag = 'ban-circle';
+                            if(rowObject.status=='0'){
+                                statusName='启用';
+                                status = '1';
+                                className = 'success';
+                                tag = 'ok-circle';
+                            }
+                            h1 = '<a href="javascript:statusConfig(\'' + value + '\',\'' + status + '\')" class="btn btn-' + className + ' "><i class="glyphicon glyphicon-'+ tag + '"></i>' + statusName + '</a>';
+                        }
+                        #end
+                        var h2 = '';
+                        #if($permissionTool.hasPermission('settle.channel.update'))
+                        h2 = '<a href="javascript:void(0)" onclick="showPopupBox(\'' + value + '\')" class="btn btn-primary"><i class="glyphicon glyphicon-pencil"></i>编辑</a>'
+                        #end
+                        return h2 + "&nbsp;&nbsp;" + h1;
+                      }
+                  }
+              ],
+              pager: "#pager_list_1"
+         });
+   });
+
+    function statusConfig(chaSettleCfgId, status) {
+        var qes = "确定启用吗?";
+        if(status == '0') {
+            qes = "确定禁用吗?";
+        }
+        layer.confirm(qes,{icon: 3, title:'修改状态'}, function(){
+       $.ajax({
+         type: "POST",
+         url:"update.html?chaSettleCfgId="+chaSettleCfgId+"&status="+status,
+         dataType:"json",
+         success: function(data) {
+            if(data.code == 1){
+               searchList();
+               closeLayer(data.msg);
+            }else{
+               layer.msg(data.msg,failIcon);
+            }
+         }
+       });
+       }, function(){
+         layer.closeAll();
+       });
+    }
+
+    function showPopupBox(chaSettleCfgId){
+        layer.open({
+            type: 2,
+            title: '修改单价',
+            shadeClose: true,
+            shade: false,
+            maxmin: false, //开启最大化最小化按钮
+            area: ['800px', '320px'],
+            content: 'detail.html?chaSettleCfgId='+chaSettleCfgId
+        });
+    }
+
+    function importPage(advSettleCfgId){
+        layer.open({
+            type: 2,
+            title: '导入配置',
+            shadeClose: true,
+            shade: false,
+            maxmin: false, //开启最大化最小化按钮
+            area: ['500px', '300px'],
+            content: 'importPage.html'
+        });
+    }
+</script>
+</body>
+</html>

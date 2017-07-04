@@ -1,0 +1,53 @@
+<link href="${rc.contextPath}/_resources/css/bootstrap-select.css" rel="stylesheet">
+<script src="${rc.contextPath}/_resources/js/bootstrap-select.js"></script>
+<div class="ibox-content">
+    <form class="form-horizontal" id="form1">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">类型名称：</label>
+            <div class="col-sm-8">
+                <input type="hidden" name="typeId" value="$!{entity.typeId}">
+                <input type="text" class="form-control" name="name" value="$!{entity.name}" style="width:400px">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">状态：</label>
+            <div class="col-sm-8" style="width:430px">
+                <select name="isDeleted" class="selectpicker show-tick form-control">
+                    <option value="0" #if($!entity.isDeleted == 0) selected="selected" #end>启用</option>
+                    <option value="1" #if($!entity.isDeleted == 1) selected="selected" #end>禁用</option>
+                </select>
+            </div>
+        </div>
+        <div align="center">
+            <button class="btn btn-success" type="button" onclick="saveType()"><i class="glyphicon glyphicon-ok"></i>保存</button>
+            <button class="btn btn-white" type="button" onclick="closeLayer('0')"><i class="glyphicon glyphicon-remove"></i>返回</button>
+        </div>
+    </form>
+</div>
+<script>
+  function closeLayer(reload){
+     if("1" == reload){
+        parent.location.reload();
+     }
+     var index = parent.layer.getFrameIndex(window.name);
+     parent.layer.close(index);
+  }
+  function saveType(){
+     $.ajax({
+        type: "POST",
+        url:"updateType.html",
+        data:$('#form1').serialize(),
+        success: function(data) {
+           data = eval('(' + data + ')');
+           if(data.code == 1){
+               parent.searchList();
+               parent.closeLayer(data.msg);
+           } else {
+                parent.layer.msg(data.msg,failIcon);
+           }
+        }
+    });
+  }
+</script>
+</body>
+</html>

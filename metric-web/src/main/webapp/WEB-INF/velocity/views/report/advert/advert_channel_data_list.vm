@@ -1,0 +1,163 @@
+<script src="${rc.contextPath}/_resources/js/plugins/layer/laydate/laydate.js"></script>
+ <div class="ibox-content">
+    <form id="form1" role="form" class="form-inline">
+       <div class="form-group">
+        <label>广告名称:</label><input type="text" id="advertName" class="form-control">
+        <label>子广告名称:</label><input type="text" id="advertMaName" class="form-control">
+        <label>渠道名称:</label><input type="text" id="channelName" class="form-control">
+         #if($permissionTool.hasPermission('data.detail.import'))
+             <label>同步广告</label>
+             <select class="form-control" style="width:130px;height:33px" name="advertType" id="synType">
+                 <option value="">请选择</option>
+                 <option value="BAIDU">百度游戏</option>
+                 <option value="360">360游戏</option>
+                 <option value="YAODIAN">遥点游戏</option>
+                 <option value="MODOU">魔豆游戏</option>
+                 <option value="WAP2F">WAP2f广告</option>
+             </select>
+             <button class="layui-btn layui-btn-radius" type="button" onclick="showSynFLowBox()">同步数据</button>
+             <button class="btn btn-warning" type="button" onclick="importPage()"><i class="glyphicon glyphicon-import"></i>导入数据</button>
+         #end
+    </div>
+    </br>
+   <div class="form-group">
+     <label>时间范围</label>
+     <input class="form-control layer-date" id="startDate" placeholder="开始时间" value="$!{startDate}" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})">
+     <input class="form-control layer-date" id="endDate" placeholder="结束时间" value="$!{endDate}" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})">
+     <button class="btn btn-white" type="button" onclick="searchList('1')"><i class="glyphicon glyphicon-search"></i>查询</button>
+     <button class="btn btn-info" type="button" onclick="exportData()"><i class="glyphicon glyphicon-export"></i>导出</button>
+  </div>
+    </form>
+  </div>
+  <div class="jqGrid_wrapper ">
+     <table id="table_list_1"></table>
+     <div id="pager_list_1"></div>
+  </div>
+<script>
+    function showSynFLowBox(){
+        var name=$("#synType").val();
+        if(name==""){
+            layer.alert('请选择要同步的广告');
+            return;
+        }
+        layer.confirm('确定要同步'+($("#synType").find("option:selected").text())+'数据？', {
+            btn: ['确定','取消'] //按钮
+        }, function(){
+            $.ajax({
+                type: "POST",
+                url:"synFlowData.html",
+                dataType:"json",
+                data:$('#form1').serialize(),
+                success: function(data) {
+                    layer.alert('调用成功！');
+                }
+            });
+        }, function(){
+
+        });
+    }
+
+    function searchList(page){
+         $("#table_list_1").jqGrid('setGridParam',{
+              url:'dataJson.html?'+getParams(),
+              page:page
+         }).trigger("reloadGrid");
+    }
+    function getParams(){
+        var advertName=$("#advertName").val();
+        var advertMaName=$("#advertMaName").val();
+        var channelName=$("#channelName").val();
+        var startDate=$("#startDate").val();
+        var endDate=$("#endDate").val();
+        if("" != endDate){
+           endDate = endDate + ' 23:59:59';
+        }
+        return "advertName="+advertName+"&advertMaName="+advertMaName+"&channelName="+channelName+"&startDate="+startDate+"&endDate="+endDate;
+    }
+   $(document).ready(function () {
+       $.jgrid.defaults.styleUI = 'Bootstrap';
+       $('#table_list_1').jqGrid({
+              url:'dataJson.html?'+getParams(),
+              datatype: "json",
+              height: jqGridHeight,
+              autowidth: true,
+              shrinkToFit: true,
+              rowNum: 20,
+              rowList: [20, 30, 50],
+              viewrecords : true,
+              colNames: ['日期','广告名称','子广告名称','渠道名称','渠道编号','业务员','结算方式','结算指标','结算类型','结算值','流水类型','流水数值','收入'],
+              colModel: [
+                 {
+                    name: 'reportDateStr',
+                    width: 12
+                 },
+                 {
+                    name: 'advertName',
+                    width: 10
+                 },
+                 {
+                    name: 'advertMaName',
+                    width: 10
+                 },
+                 {
+                    name: 'channelName',
+                    width: 10
+                  },
+                  {
+                     name: 'channelCode',
+                     width: 10
+                   },
+                   {
+                    name: 'businessName',
+                    width: 10
+                  },
+                   {
+                    name: 'settleMethodName',
+                    width: 10
+                  },
+                  {
+                    name: 'settleTarget',
+                    width: 10
+                  },
+                  {
+                      name: 'settleTypeName',
+                      width: 10
+                    },
+                    {
+                      name: 'settleTypeNum',
+                      width: 10
+                    },
+                   {
+                    name: 'flowTypeName',
+                    width: 10
+                  },
+                  {
+                      name: 'flowTypeNum',
+                      width: 10
+                  },
+                  {
+                    name: 'income',
+                    width: 10
+                }
+              ],
+              pager: "#pager_list_1"
+         });
+   });
+
+    function importPage(){
+        layer.open({
+            type: 2,
+            title: '数据导入',
+            shadeClose: true,
+            shade: false,
+            maxmin: false, //开启最大化最小化按钮
+            area: ['500px', '300px'],
+            content: 'importPage.html'
+        });
+    }
+
+    function exportData(){
+       window.location.href="export.html?"+getParams();
+    }
+</script>
+</html>

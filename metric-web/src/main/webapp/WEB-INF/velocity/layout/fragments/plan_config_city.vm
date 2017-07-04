@@ -1,0 +1,84 @@
+  <script src="${rc.contextPath}/_resources/js/city_select.js"></script>
+ <style>
+    /*style start*/
+    .area li {
+        line-height: 32px;
+        height: 32px;
+        clear: both;
+    }
+    .area li span {
+        display: block;
+        width: 30px;
+        height: 32px;
+        font-size: 12px;
+        float: left;
+        line-height: 32px;
+        padding-right: 10px;
+    }
+    ol, ul {
+        list-style: none;
+    }
+    .region {
+        font-size: 12px;
+        font-weight: normal;
+        height: 32px;
+        line-height: 32px;
+    }
+    .region div {
+        float: left;
+        width: 65px;
+        text-align: center;
+    }
+    .region .hover {
+        border: solid 1px #97A5B2;
+        border-right: none;
+        background-color: #FFF;
+        margin: -1px 0;
+        z-index: 999;
+        position: relative;
+    }
+    .region input {
+        margin-top: -2px;
+        vertical-align: middle;
+    }
+    .p_city {
+        display: none;
+        border: solid 1px #97A5B2;
+        position: absolute;
+        padding: 3px 0;
+        margin: -1px;
+        background-color: #FFF;
+        z-index: 998;
+        width: 180px;
+    }
+    .p_city li {
+        float: left;
+        padding: 5px;
+        white-space: nowrap;
+        clear: none;
+    }
+    .class_tb {
+        width: 100%
+    }
+    .class_tb td {
+        border: 0px solid #dcdcdc;
+        text-align: left;
+    }
+    .week_tb td {
+        border: 0px solid #dcdcdc;
+        text-align: center;
+    }
+    .p_ys, .p_xz, .p_dx, .p_qt {
+        display: none
+    }
+    /*style end*/
+</style>
+<div class="ibox-content" id="putRegionDiv">
+  <script>
+     var _province = "$!{provinceArr}", _city = "$!{cityArr}";
+     document.write(citySelect());
+     bindSelectCity();
+   </script>
+</div>
+
+

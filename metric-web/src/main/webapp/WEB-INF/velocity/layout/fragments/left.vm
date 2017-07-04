@@ -1,0 +1,27 @@
+ <nav class="navbar-default navbar-static-side" role="navigation">
+    <div class="nav-close"><i class="fa fa-times-circle"></i>
+    </div>
+    <div class="sidebar-collapse">
+        <ul class="nav" id="side-menu">
+            <li class="nav-header">
+                <div class="dropdown profile-element">
+                    <a class="dropdown-toggle" href="${rc.contextPath}/admin/index.html">
+                        <span class="clear">
+                            <span class="block m-t-xs" style="font-size:20px;">
+                                <i class="glyphicon glyphicon-globe"></i>
+                                <strong class="font-bold">营销平台</strong>
+                            </span>
+                        </span>
+                    </a>
+                </div>
+            </li>
+            #parse("/layout/fragments/menu.vm")
+        </ul>
+    </div>
+</nav>
+#set( $permissionId = "" )
+#set( $permissionId = $request.getAttribute("permissionId") )
+<script type="text/javascript">
+    expandMenu();
+
+</script>

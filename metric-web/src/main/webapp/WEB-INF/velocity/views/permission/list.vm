@@ -1,0 +1,117 @@
+<div class="ibox-content">
+    #if($permissionTool.hasPermission('system.permission.add'))
+<div >
+    <a href="javascript:void(0)" onclick="add()" class="btn btn-success"><i class="glyphicon glyphicon-plus"></i>添加</a>
+</div>
+    #end
+<div class="jqGrid_wrapper ">
+    <table id="table_list_1"></table>
+    <div id="pager_list_1"></div>
+</div>
+</div>
+<script>
+  function searchList(obj){
+       $("#table_list_1").jqGrid('setGridParam',{
+            url:'list.html?categoryId='+$(obj).attr("data-value")
+       }).trigger("reloadGrid");
+   }
+
+
+   $(document).ready(function () {
+       $.jgrid.defaults.styleUI = 'Bootstrap';
+       $('#table_list_1').jqGrid({
+              url:'list.html',
+              datatype: "json",
+              autowidth: true,
+              height: jqGridHeight,
+              viewrecords:true,
+              shrinkToFit: true,
+              rowNum: 20,
+              rowList: [20, 30, 50],
+              colNames: ['权限ID','权限名称','权限描述','父权限','操作'],
+              colModel: [
+                 {
+                   name: 'permissionId',
+                   width: 10
+                 },
+                 {
+                       name: 'name',
+                       width: 10,
+                       editable:true
+                  },
+                  {
+                      name: 'remark',
+                      width: 10
+                  },
+                  {
+                        name: 'parentId',
+                        width: 10
+                  },
+                  {
+                  name : "permissionId",
+                  title : false,
+                  width:10,
+                  formatter : actFormatter
+                  }
+              ],
+              pager: "#pager_list_1"
+         });
+   });
+
+   function actFormatter(cellvalue, options, rawObject) {
+       var detailHref = '';
+       #if($permissionTool.hasPermission('system.permission.update'))
+       detailHref = '<a onclick="edit(\'' + rawObject.permissionId + '\')" class="btn btn-primary "><i class="glyphicon glyphicon-pencil"></i>修改</a>';
+       #end
+       var deleteHref = '';
+       #if($permissionTool.hasPermission('system.permission.delete'))
+       deleteHref = '<a onclick="deletePermission(\'' + rawObject.permissionId + '\')" class="btn btn-danger "><i class="glyphicon glyphicon-remove"></i>删除</a>';
+       #end
+       return detailHref + "\t"+ deleteHref;
+   };
+
+ function edit(id){
+   layer.open({
+     type: 2,
+     area: ['800px', '320px'],
+     fixed: false,
+     maxmin: true,
+     title: '编辑权限',
+     content: 'edit.html?permissionId='+id
+    });
+}
+ function add(){
+   layer.open({
+     type: 2,
+     area: ['800px', '320px'],
+     fixed: false,
+     maxmin: true,
+     title: '新增权限',
+     content: 'add.html'
+    });
+}
+
+function deletePermission(id){
+layer.confirm('确定要删除吗？', {
+  btn: ['确定','取消'] //按钮
+}, function(){
+    $.ajax({
+        type: "get",
+        url:"delete.html",
+        dataType:"json",
+        data:{
+            permissionId:id
+        },
+        success: function(data) {
+            if(data.code == 1){
+                searchList();
+                layer.msg(data.msg,successIcon);
+            }else{
+                layer.msg(data.msg,failIcon);
+            }
+        }
+    });
+}, function(){
+});
+}
+</script>

@@ -1,0 +1,259 @@
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox-content">
+                <form id="userinfoForm" class="form-horizontal" method="post">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">用户ID</label>
+                        <div class="col-sm-8">
+                            <label class="form-control">$!{data.user.userId}</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">用户名</label>
+                        <div class="col-sm-8">
+                            <label class="form-control">$!{data.user.userName}</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">手机号码</label>
+                        <div class="col-sm-8">
+                            <label class="form-control">$!data.user.userPhone</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">身份类型</label>
+                        <div class="col-sm-8">
+                            <select data-placeholder="身份类型" class="form-control" style="height:33px" disabled>
+                                #foreach(${_roleType} in ${roleTypeList})
+                                <option value="$!{_roleType.value}" hassubinfo="true"
+                                        #if($!{data.user.userRole}==$!{_roleType.value}) selected="selected" #end>
+                                    $!{_roleType.name}
+                                </option>
+                                #end
+                            </select>
+                        </div>
+                    </div>
+                    #if($!{data.user.userRole}=='PERSON')
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">姓名</label>
+                        <div class="col-sm-8">
+                            <label class="form-control">$!data.user.realName</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">身份证号码</label>
+                        <div class="col-sm-8">
+                            <label class="form-control">$!data.certif.certifNo</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">身份证图片</label>
+                        <div class="col-sm-8">
+                            #if($!{data.certif.certifImgs}=='null' || $!{data.certif.certifImgs}=='')
+                            <img src="" style="height:200px;width:300px;display:none" id="userLicenseImgDiv"/>
+                            #else
+                                #foreach(${_file} in $commonTool.split($!{data.certif.certifImgs}, ","))
+                                 <a href="$!{ossdomain}/$!{_file}" target="_blank">
+                                   <img src="$!{ossdomain}/$!{_file}" style="height:200px;width:300px;" id="userLicenseImgDiv"/>
+                                 </a>
+                                #end
+                            #end
+                        </div>
+                    </div>
+                    #elseif($!{data.user.userRole}=='BUSI')
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">企业名称</label>
+                        <div class="col-sm-8">
+                            <label class="form-control">$!data.user.realName</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">社会信用号码</label>
+                        <div class="col-sm-8">
+                            <label class="form-control">$!data.certif.certifNo</label>
+                        </div>
+                    </div>
+                    <div class="form-group forBusi">
+                        <label class="col-sm-3 control-label">社会信用证件图片</label>
+                        <div class="col-sm-8">
+                            #if($!{data.certif.certifImgs}=='')
+                            <img src="" style="height:200px;width:300px;display:none" id="companyLisenceImgDiv"/>
+                            #else
+                                #foreach(${_file} in $commonTool.split($!{data.certif.certifImgs}, ","))
+                                 <a href="$!{ossdomain}/$!{_file}" target="_blank">
+                                   <img src="$!{ossdomain}/$!{_file}" style="height:200px;width:300px;" id="companyLisenceImgDiv"/>
+                                 </a>
+                                #end
+                            #end
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">法人姓名</label>
+                        <div class="col-sm-8">
+                            <label class="form-control">$!data.certif.certifOwn</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">身份证号码</label>
+                        <div class="col-sm-8">
+                            <label class="form-control">$!data.certif.certifNo</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">法人身份证图片</label>
+                        <div class="col-sm-8">
+                            #if($!{data.certif.certifOwnImgs}=='null' || $!{data.certif.certifOwnImgs}=='')
+                            <img src="" style="height:200px;width:300px;display:none" />
+                            #else
+                            #foreach(${_file} in $commonTool.split($!{data.certif.certifOwnImgs}, ","))
+                             <a href="$!{ossdomain}/$!{_file}" target="_blank">
+                               <img src="$!{ossdomain}/$!{_file}" style="height:200px;width:300px;"/>
+                             </a>
+                            #end
+                            #end
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">联系人姓名</label>
+                        <div class="col-sm-8">
+                            <label class="form-control">$!data.detail.linkMan</label>
+                        </div>
+                    </div>
+                    #end
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">地址</label>
+                        <div class="col-sm-8">
+                            <label class="form-control">$!data.detail.address</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">推广员</label>
+                        <div class="col-sm-8">
+                            <select data-placeholder="推广员" name="user.promoterId" id="userPromoterId" class="form-control"
+                                    style="height:33px;">
+                                #foreach(${_promoter} in ${promoterList})
+                                <option value="$!{_promoter.value}" hassubinfo="true"
+                                        #if($!{data.user.promoterId}==$!{_promoter.value}) selected="selected" #end>
+                                    $!{_promoter.name}
+                                </option>
+                                #end
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">注册时间</label>
+                        <div class="col-sm-8">
+                            <label class="form-control" placeholder="注册时间">$!date.format('yyyy-MM-dd HH:mm:ss ', $!{data.user.createdAt})</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">最后登录时间</label>
+                        <div class="col-sm-8">
+                            <label class="form-control"
+                                   placeholder="最后登录时间">$!date.format('yyyy-MM-dd HH:mm:ss ', $!{lastLoginInfo.createdAt})</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">登录IP</label>
+                        <div class="col-sm-8">
+                            <label class="form-control" placeholder="登录IP">$!{lastLoginInfo.userIp}</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">渠道类型</label>
+                        <div class="col-sm-8 checkbox i-checks">
+                            #foreach(${_channelType} in ${channelTypeList} )
+                            #set($flag=0)
+                            #foreach(${_userChannel} in ${data.userChannel} )
+                            #if($!{_userChannel.channelId}==$!{_channelType.value} && $!{_userChannel.state}!=2)
+                            #set($flag=1)
+                            #end
+                            #end
+                            #if(${flag}==1)
+                            <label class="checkbox-inline i-checks">
+                                <input type="checkbox" value="$!{_channelType.value}" checked="checked"
+                                       name="userChannel[${velocityCount}].channelId">$!{_channelType.name}
+                            </label>
+                            #else
+                            <label class="checkbox-inline i-checks">
+                                <input type="checkbox" value="$!{_channelType.value}"
+                                       name="userChannel[${velocityCount}].channelId">$!{_channelType.name}
+                            </label>
+                            #end
+                            #end
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">财务信息</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">银行名称</label>
+                        <div class="col-sm-8">
+                            <label class="form-control">$!data.detail.cardBank</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">银行账号</label>
+                        <div class="col-sm-8">
+                            <label class="form-control">$!data.detail.cardNumber</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">开户行</label>
+                        <div class="col-sm-8">
+                            <label class="form-control">$!data.detail.cardBankAddr</label>
+                        </div>
+                    </div>
+                    #if($!{data.userRole}=='BUSI')
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">企业类型</label>
+                        <div class="col-sm-8">
+                            <select data-placeholder="企业类型" class="form-control" style="height:33px;" disabled>
+                                #foreach(${_companyType} in ${companyTypeList})
+                                <option value="$!{_companyType.value}" hassubinfo="true"
+                                        #if($!{data.certif.companyType}==$!{_companyType.value}) selected="selected"
+                                        #end>
+                                    $!{_companyType.name}
+                                </option>
+                                #end
+                            </select>
+                        </div>
+                    </div>
+                    #end
+                    <!-- 资质列表 -->
+                    #if(${data.channelLaw})
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">资质证明</label>
+                    </div>
+                    #end
+                    #foreach(${_channelLaw} in ${data.channelLaw})
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">渠道描述</label>
+                        <div class="col-sm-8">
+                            <label class="form-control">$!_channelLaw.remark</label>
+                            #if($!{_channelLaw.fileList} != '')
+                            #foreach(${_file} in $commonTool.split($!{_channelLaw.fileList}, ","))
+                            <a href="$!{ossdomain}/$!{_file}" target="_blank">
+                              <img style="height:200px;width:300px;" src="$!{ossdomain}/$!{_file}">
+                            </a>
+                            #end
+                            #end
+                        </div>
+                    </div>
+                    #end
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">审核备注</label>
+                        <div class="col-sm-8">
+                            <textarea name="user.userRemark" id="userRemark" style="height:100;width:300px">$!data.user.userRemark</textarea>
+                        </div>;
+                    </div>
+                    <div class="col-sm-offset-3 col-sm-8">
+                        <button class="btn btn-sm btn-white" type="button" onclick="parent.closeLayer()">返回</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>

@@ -1,0 +1,304 @@
+#if($permissionTool.hasPermission('system'))
+<li>
+    <a ><i class="glyphicon glyphicon-cog"></i><span class="nav-label">系统管理 </span></a>
+    <ul class="nav nav-second-level">
+        #if($permissionTool.hasPermission('system.permission'))
+        <li>
+            <a class="J_menuItem" rel="2" href="${rc.contextPath}/admin/permission/page.html" >权限管理</a>
+        </li>
+        #end
+        #if($permissionTool.hasPermission('system.role'))
+        <li>
+            <a class="J_menuItem" rel="3" href="${rc.contextPath}/admin/role/page.html" >角色管理</a>
+        </li>
+        #end
+        #if($permissionTool.hasPermission('system.admin'))
+        <li>
+            <a class="J_menuItem" rel="4" href="${rc.contextPath}/admin/admin/page.html" >管理员</a>
+        </li>
+        #end
+        #if($permissionTool.hasPermission('system.conf'))
+        <li>
+            <a class="J_menuItem" rel="5" href="${rc.contextPath}/admin/conf/confInfo.html" >系统配置</a>
+        </li>
+        #end
+    </ul>
+</li>
+#end
+#if($permissionTool.hasPermission('user'))
+<li>
+    <a ><i class="glyphicon glyphicon-user"></i><span class="nav-label">用户管理</span></a>
+    <ul class="nav nav-second-level">
+        #if($permissionTool.hasPermission('user.channel'))
+        <li>
+            <a class="J_menuItem" rel="2" href="${rc.contextPath}/admin/userMgr/channelUser.html" >渠道主管理</a>
+        </li>
+        #end
+        #if($permissionTool.hasPermission('user.advert'))
+        <li>
+            <a class="J_menuItem" rel="2" href="${rc.contextPath}/admin/userMgr/advertUser.html" >广告主管理</a>
+        </li>
+        #end
+        #if($permissionTool.hasPermission('user.discount'))
+        <li>
+            <a class="J_menuItem" rel="2" href="${rc.contextPath}/admin/userDiscount/toUserDiscount.html" >用户折扣管理</a>
+        </li>
+        #end
+    </ul>
+</li>
+#end
+#if($permissionTool.hasPermission('channel'))
+<li>
+    <a ><i class="glyphicon glyphicon-random"></i><span class="nav-label">渠道管理</span></a>
+    <ul class="nav nav-second-level">
+        #if($permissionTool.hasPermission('channel.channel'))
+        <li>
+            <a class="J_menuItem" rel="2" href="${rc.contextPath}/admin/channel/channel.html">渠道管理</a>
+        </li>
+        <li>
+            <a class="J_menuItem" rel="2" href="${rc.contextPath}/admin/thirdParty/channel.html">渠道关联配置</a>
+        </li>
+        #end
+        #if($permissionTool.hasPermission('channel.package'))
+        <li>
+            <a class="J_menuItem" rel="2" href="${rc.contextPath}/admin/channelPkg/pkg.html">渠道包管理</a>
+        </li>
+        #end
+    </ul>
+</li>
+#end
+#if($permissionTool.hasPermission('advert'))
+<li>
+    <a><i class="glyphicon glyphicon-film"></i><span class="nav-label">广告管理 </span></a>
+    <ul class="nav nav-second-level" >
+        #if($permissionTool.hasPermission('advert.type'))
+        <li><a class="J_menuItem" rel="5" href="${rc.contextPath}/admin/advertChannel/listType.html" >广告/渠道类型配置</a> </li>
+        #end
+        #if($permissionTool.hasPermission('advert.rule'))
+        <li><a class="J_menuItem" rel="6" href="${rc.contextPath}/admin/advert/listSettleRule.html" >常用结算规则配置</a> </li>
+        #end
+        #if($permissionTool.hasPermission('advert.tag'))
+        <li><a class="J_menuItem" rel="7" href="${rc.contextPath}/admin/advert/listTag.html" >广告标签管理</a> </li>
+        #end
+        #if($permissionTool.hasPermission('advert.advert'))
+        <li><a class="J_menuItem" rel="7" href="${rc.contextPath}/admin/advertisement/page.html" >广告管理</a> </li>
+        #end
+        #if($permissionTool.hasPermission('advert.resource'))
+        <li><a class="J_menuItem" rel="8" href="${rc.contextPath}/admin/advert/listResource.html" >附件管理</a> </li>
+        #end
+        #if($permissionTool.hasPermission('advert.material'))
+        <li><a class="J_menuItem" rel="9" href="${rc.contextPath}/admin/advert/listMaterials.html" >广告素材管理</a> </li>
+        #end
+    </ul>
+</li>
+#end
+#if($permissionTool.hasPermission('plan'))
+<li>
+    <a><i class="glyphicon glyphicon-film"></i><span class="nav-label">计划广告管理</span></a>
+    <ul class="nav nav-second-level" >
+        #if($permissionTool.hasPermission('plan.plan'))
+        <li><a class="J_menuItem" rel="5" href="${rc.contextPath}/admin/planConfig/config.html" >计划管理</a> </li>
+        #end
+        #if($permissionTool.hasPermission('plan.advert'))
+        <li><a class="J_menuItem" rel="6" href="${rc.contextPath}/admin/advertisement/planAdvert.html" >广告管理</a> </li>
+        #end
+        #if($permissionTool.hasPermission('plan.advertzone'))
+        <li><a class="J_menuItem" rel="7" href="${rc.contextPath}/admin/advZone/advZone.html" >广告位管理</a> </li>
+        #end
+    </ul>
+</li>
+#end
+#if($permissionTool.hasPermission('message'))
+<li>
+    <a><i class="glyphicon glyphicon-envelope"></i><span class="nav-label">运营管理 </span></a>
+    <ul class="nav nav-second-level" >
+        #if($permissionTool.hasPermission('message.mail'))
+        <li><a class="J_menuItem" rel="5" href="${rc.contextPath}/admin/mail/list.html" >站内信管理</a> </li>
+        #end
+        #if($permissionTool.hasPermission('message.mailtype'))
+        <li><a class="J_menuItem" rel="6" href="${rc.contextPath}/admin/mail/type.html" >站内信类型</a> </li>
+        #end
+        #if($permissionTool.hasPermission('message.notice'))
+        <li><a class="J_menuItem" rel="7" href="${rc.contextPath}/admin/notice/list.html" >公告管理</a> </li>
+        #end
+        #if($permissionTool.hasPermission('message.noticetype'))
+        <li><a class="J_menuItem" rel="8" href="${rc.contextPath}/admin/notice/type.html" >公告类型</a> </li>
+        #end
+        #if($permissionTool.hasPermission('message.banner'))
+        <li><a class="J_menuItem" rel="8" href="${rc.contextPath}/admin/banner/banner.html" >Banner管理</a> </li>
+        #end
+
+        <li><a class="J_menuItem" rel="8" href="${rc.contextPath}/admin/helptype/index.html" >帮助分类配置</a> </li>
+
+
+        <li><a class="J_menuItem" rel="8" href="${rc.contextPath}/admin/helpcenter/index.html" >帮助信息配置</a> </li>
+
+    </ul>
+</li>
+#end
+#if($permissionTool.hasPermission('audit'))
+<li>
+    <a ><i class="glyphicon glyphicon-check"></i><span class="nav-label">审核管理</span></a>
+    <ul class="nav nav-second-level">
+        #if($permissionTool.hasPermission('audit.user'))
+        <li>
+            <a class="J_menuItem" rel="2" href="${rc.contextPath}/admin/pending/userPendingMgr.html">用户信息审核</a>
+        </li>
+        #end
+        #if($permissionTool.hasPermission('audit.advert'))
+        <li>
+            <a class="J_menuItem" rel="2" href="${rc.contextPath}/admin/advert/listApply.html">广告申请审核</a>
+        </li>
+        #end
+        #if($permissionTool.hasPermission('audit.resource'))
+        <li>
+            <a class="J_menuItem" rel="2" href="${rc.contextPath}/admin/advertResouce/listApply.html">附件申请审核</a>
+        </li>
+        #end
+        #if($permissionTool.hasPermission('audit.remittance'))
+        <li>
+            <a class="J_menuItem" rel="2" href="${rc.contextPath}/admin/order/listOrderRem.html">汇款充值审核</a>
+        </li>
+        #end
+    </ul>
+</li>
+#end
+#if($permissionTool.hasPermission('settle'))
+<li>
+    <a ><i class="glyphicon glyphicon-yen"></i><span class="nav-label">结算管理</span></a>
+    <ul class="nav nav-second-level">
+        #if($permissionTool.hasPermission('settle.advert'))
+        <li>
+            <a class="J_menuItem" rel="2" href="${rc.contextPath}/admin/materialConfig/page.html">广告素材结算配置</a>
+        </li>
+        #end
+        #if($permissionTool.hasPermission('settle.user'))
+        <li>
+            <a class="J_menuItem" rel="2" href="${rc.contextPath}/admin/settle/userSettlePage.html">渠道用户结算配置</a>
+        </li>
+        #end
+        #if($permissionTool.hasPermission('settle.channel'))
+        <li>
+            <a class="J_menuItem" rel="2" href="${rc.contextPath}/admin/channelConfig/page.html">渠道编号结算配置</a>
+        </li>
+        #end
+        #if($permissionTool.hasPermission('settle.order'))
+        <li>
+            <a class="J_menuItem" rel="2" href="${rc.contextPath}/admin/settle/listAdvStlOrders.html">结算单列表</a>
+        </li>
+        #end
+    </ul>
+</li>
+#end
+#if($permissionTool.hasPermission('data'))
+<li>
+    <a ><i class="glyphicon glyphicon-signal"></i><span class="nav-label">数据管理</span></a>
+    <ul class="nav nav-second-level">
+        #if($permissionTool.hasPermission('data.advert'))
+        <li>
+            <a class="J_menuItem" rel="2" href="${rc.contextPath}/admin/advertChannel/advertReport.html">广告数据</a>
+        </li>
+        #end
+        #if($permissionTool.hasPermission('data.channel'))
+        <li>
+            <a class="J_menuItem" rel="2" href="${rc.contextPath}/admin/advertChannel/channelReport.html">渠道数据</a>
+        </li>
+        #end
+        #if($permissionTool.hasPermission('data.salesman'))
+        <li>
+            <a class="J_menuItem" rel="2" href="${rc.contextPath}/admin/salesman/page.html">业务员数据</a>
+        </li>
+        #end
+        #if($permissionTool.hasPermission('data.detail'))
+        <li>
+            <a class="J_menuItem" rel="2" href="${rc.contextPath}/admin/advertChannel/channelData.html">数据明细</a>
+        </li>
+        <li>
+            <a class="J_menuItem" rel="2" href="${rc.contextPath}/admin/advertChannel/channelDataUp.html">游戏数据明细</a>
+        </li>
+        #end
+        #if($permissionTool.hasPermission('data.game'))
+        <li>
+            <a class="J_menuItem" rel="2" href="${rc.contextPath}/admin/transOrder/consumerOrder.html">游戏充值订单</a>
+        </li>
+        #end
+        #if($permissionTool.hasPermission('data.account'))
+        <li>
+            <a class="J_menuItem" rel="2" href="${rc.contextPath}/admin/transOrder/chargeOrder.html">账户充值订单</a>
+        </li>
+        #end
+        #if($permissionTool.hasPermission('data.balance'))
+        <li>
+            <a class="J_menuItem" rel="2" href="${rc.contextPath}/admin/dataMgr/toAcctDetail.html">账户收支明细</a>
+        </li>
+        #end
+        #if($permissionTool.hasPermission('data.finance'))
+        <li>
+            <a class="J_menuItem" rel="2" href="">财务数据</a>
+        </li>
+        #end
+        #if($permissionTool.hasPermission('data.script'))
+        <li>
+            <a class="J_menuItem" rel="2" href="${rc.contextPath}/admin/script/page.html">动态数据统计</a>
+        </li>
+        #end
+    </ul>
+</li>
+#end
+#if($permissionTool.hasPermission('finance'))
+<li>
+    <a ><i class="glyphicon glyphicon-signal"></i><span class="nav-label">财务管理</span></a>
+    <ul class="nav nav-second-level">
+        #if($permissionTool.hasPermission('finance.accountBalance'))
+        <li>
+            <a class="J_menuItem" rel="1" href="${rc.contextPath}/admin/account/balanceTemp.html">账户余额备份</a>
+        </li>
+        #end
+        #if($permissionTool.hasPermission('user.BalanceApply'))
+         <li>
+           <a class="J_menuItem" rel="1" href="${rc.contextPath}/admin/balance/listApply.html">余额变更审核</a>
+         </li>
+        #end
+        #if($permissionTool.hasPermission('finance.report'))
+         <li>
+           <a class="J_menuItem" rel="1" href="${rc.contextPath}/admin/financeReport/reportList.html">财务报表</a>
+         </li>
+        #end
+        #if($permissionTool.hasPermission('finance.accountDetailReport'))
+         <li>
+           <a class="J_menuItem" rel="1" href="${rc.contextPath}/admin/account/detailReport.html">账户收支统计</a>
+         </li>
+        #end
+    </ul>
+</li>
+#end
+#if($permissionTool.hasPermission('okr'))
+<li>
+    <a ><i class="glyphicon glyphicon-signal"></i><span class="nav-label">OKR数据配置</span></a>
+    <ul class="nav nav-second-level">
+        <li>
+            #if($permissionTool.hasPermission('okr.quota'))
+            <a class="J_menuItem" rel="2" href="${rc.contextPath}/admin/okr/quota/index.html">指标管理</a>
+            #end
+         #if($permissionTool.hasPermission('okr.chart'))
+            <a class="J_menuItem" rel="2" href="${rc.contextPath}/admin/okr/chart/index.html">单图管理</a>
+         #end
+         #if($permissionTool.hasPermission('okr.board'))
+            <a class="J_menuItem" rel="2" href="${rc.contextPath}/admin/okr/board/index.html">看板管理</a>
+         #end
+         #if($permissionTool.hasPermission('okr.target'))
+            <a class="J_menuItem" rel="2" href="${rc.contextPath}/admin/okr/target/index.html">目标管理</a>
+         #end
+            #if($permissionTool.hasPermission('okr.quotascan'))
+            <a class="J_menuItem" rel="2" href="${rc.contextPath}/admin/okr/quotascan/index.html">展示指标管理</a>
+            #end
+            #if($permissionTool.hasPermission('okr.jobmanager'))
+            <a class="J_menuItem" rel="2" href="${rc.contextPath}/admin/okr/jobManager/index.html">JOB管理</a>
+            #end
+            #if($permissionTool.hasPermission('okr.jobinstmanager'))
+            <a class="J_menuItem" rel="2" href="${rc.contextPath}/admin/okr/jobManager/jobInstMgr.html">JOB账期管理</a>
+            #end
+        </li>
+    </ul>
+</li>
+#end

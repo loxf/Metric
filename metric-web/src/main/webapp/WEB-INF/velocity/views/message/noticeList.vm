@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <link href="${rc.contextPath}/_resources/css/plugins/jqgrid/ui.jqgrid.css" rel="stylesheet">
+    <script src="${rc.contextPath}/_resources/js/plugins/jqgrid/i18n/grid.locale-cn.js"></script>
+    <script src="${rc.contextPath}/_resources/js/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+    <script src="${rc.contextPath}/_resources/js/plugins/layer/laydate/laydate.js"></script>
+    <script src="${rc.contextPath}/_resources/lhgdialog/lhgdialog.js"></script>
+    <script src="${rc.contextPath}/_resources/lhgdialog/lhgdialog.min.js"></script>
+</head>
+<body class="gray-bg">
+<div class="ibox-content">
+    <form role="form" class="form-inline">
+        <div class="form-group">
+            <label>公告名称:</label><input type="text" id="title" class="form-control">
+            <label>公告类型</label>
+            <select class="form-control" style="width:130px;height:33px" name="type" id="type">
+                <option value="">请选择</option>
+                #foreach(${type} in ${types})
+                <option value="$!{type.typeId}">$!{type.name}</option>
+                #end
+            </select>
+            <label>渠道类型</label>
+            <select class="form-control" style="width:130px;height:33px" name="channelId" id="channelId">
+                <option value="">请选择</option>
+                #foreach(${channel} in ${channels})
+                <option value="$!{channel.typeId}">$!{channel.name}</option>
+                #end
+            </select>
+            <label>状态</label>
+            <select class="form-control" style="width:130px;height:33px" name="status" id="status">
+                <option value="">请选择</option>
+                <option value="1">上线</option>
+                <option value="0">下线</option>
+            </select>
+        </div>
+        <br><br>
+        <div class="form-group">
+            <label>创建时间</label>
+            <input class="form-control layer-date" id="startDate" placeholder="开始时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})">
+            <input class="form-control layer-date" id="endDate" placeholder="结束时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})">
+            <button class="btn btn-white" type="button" onclick="searchList('1')"><i class="glyphicon glyphicon-search"></i>查询</button>
+            #if($permissionTool.hasPermission('message.notice.add'))
+            <button class="btn btn-success" type="button" onclick="detail()"><i class="glyphicon glyphicon-plus"></i>新建</button>
+            #end
+        </div>
+    </form>
+</div>
+<div class="jqGrid_wrapper">
+    <table id="table_list_1"></table>
+    <div id="pager_list_1"></div>
+</div>
+<script>
+function searchList(page){
+    $("#table_list_1").jqGrid('setGridParam',{
+        url:'listjson.html?'+getParams(),
+        page:page
+    }).trigger("reloadGrid");
+}
+function getParams(){
+    var title = $("#title").val();
+    var type=$("#type").val();
+    var channelId=$("#channelId").val();
+    var status=$("#status").val();
+    var startDate=$("#startDate").val();
+    var endDate=$("#endDate").val();
+    return "title="+title+"&type="+type+"&channelId="+channelId+"&status="+status+"&startDate="+startDate+"&endDate="+endDate;
+}
+$(document).ready(function () {
+    $.jgrid.defaults.styleUI = 'Bootstrap';
+    $('#table_list_1').jqGrid({
+        url:'listjson.html?' + getParams(),
+        datatype: "json",
+        height: jqGridHeight,
+        autowidth: true,
+        shrinkToFit: true,
+        rowNum: 20,
+        rownumbers: true,
+        viewrecords:true,
+        rowList: [20, 30, 50],
+        colNames: ['公告名称','公告类型','渠道类型','创建时间','发布时间','下线时间','是否置顶','创建人','状态','操作'],
+        colModel: [
+            {
+                name: 'title',
+            },
+            {
+                name: 'type',
+            },
+            {
+                name: 'receiverType',
+            },
+            {
+                name: 'createdAtStr',
+                formatter:'date',
+                formatoptions:{srcformat: 'Y-m-d H:i:s', newformat: 'Y-m-d H:i:s'},
+            },
+            {
+                name: 'publishTimeStr',
+            },
+            {
+                name: 'offlineTimeStr',
+            },
+            {
+                name: 'isTop',
+                formatter : function(value, row, index) {
+                         if("0" == value){
+                            return "否";
+                         }else{
+                            return "是";
+                         }
+                  }
+            },
+            {
+                name: 'createdUser',
+            },
+            {
+                name: 'status',
+                formatter : function(value, row, index) {
+                         if("0" == value){
+                            return "下线";
+                         }else{
+                            return "上线";
+                         }
+                  }
+            },
+            {
+                name: 'noticeId',
+                width: 250,
+                formatter : function(value, options, rowObject) {
+                    var h1 = '';
+                    #if($permissionTool.hasPermission('message.notice.status'))
+                    var statusName = '下线';
+                    var status = '0';
+                    var className = 'danger';
+                    var tag = 'ban-circle';
+                    if(rowObject.status=='0'){
+                                statusName='上线';
+                                status = '1';
+                                className = 'success';
+                                tag = 'ok-circle';
+                    }
+                    h1 = '<a href="javascript:updateStatus(\'' + value + '\',\'' + status + '\')" class="btn btn-' + className + ' "><i class="glyphicon glyphicon-'+ tag + '"></i>' + statusName + '</a>';
+                    #end
+                    var h2 = '';
+                    #if($permissionTool.hasPermission('message.notice.update'))
+                    h2 = '<a href="javascript:void(0)" onclick="detail(\'' + value + '\')" class="btn btn-primary" ><i class="glyphicon glyphicon-pencil"></i>编辑</a>';
+                    #end
+                    return h2 + "&nbsp;&nbsp;" + h1;
+                }
+            },
+        ],
+        pager: "#pager_list_1"
+    });
+});
+ function detail(noticeId){
+   layer.open({
+     type: 2,
+     area: ['1200px', '600px'],
+     fixed: false,
+     maxmin: true,
+     title: '编辑公告',
+     content: 'detailNotice.html?noticeId='+noticeId,
+   });
+ }
+ function updateStatus(noticeId, status) {
+        var qes = "确定上线吗?";
+        if(status == '0') {
+            qes = "确定下线吗?";
+        }
+        layer.confirm(qes,{icon: 3, title:'修改状态'}, function(){
+       $.ajax({
+         type: "POST",
+         url:"updateStatus.html?noticeId="+noticeId+"&status="+status,
+         dataType:"json",
+         success: function(data) {
+            if(data.code == 1){
+               searchList();
+               closeLayer(data.msg);
+            }else{
+               layer.msg(data.msg,failIcon);
+            }
+         }
+       });
+       }, function(){
+         layer.closeAll();
+       });
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,315 @@
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox-content">
+                <form id="userinfoForm" class="form-horizontal" method="post" action="updateUser.html">
+                    <input type="hidden" value="$!{data.user.userCatalog}" name="user.userCatalog">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">用户ID</label>
+                        <div class="col-sm-8">
+                            <label class="form-control" >$!{data.user.userId}</label>
+                            <input name="user.userId" type="hidden" value="$!{data.user.userId}">
+                            <input type="hidden" name="user.appCode" value="$!{data.user.appCode}">
+                            <input type="hidden" id="certifCertifName" name="certif.certifName" value="$!data.user.realName">
+                            <input type="hidden" id="detailCardUser" name="detail.cardUser" value="$!data.user.realName">
+                            <input type="hidden" id="userRealname" name="user.realName" value="$!data.user.realName">
+                            <input type="hidden" id="partnerName" name="partner.name" value="$!data.user.realName">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">用户名</label>
+                        <div class="col-sm-8">
+                            <label class="form-control" name="user.userName">$!{data.user.userName}</label>
+                            <input name="user.userName" type="hidden" value="$!{data.user.userName}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">手机号码</label>
+                        <div class="col-sm-8">
+                            <input type="text" name="user.userPhone" required value="$!data.user.userPhone" readonly placeholder="手机号码"
+                                   class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">身份类型</label>
+                        <div class="col-sm-8">
+                            <select data-placeholder="身份类型" name="user.userRole" class="form-control" style="height: 33px" disabled >
+                                #foreach(${_roleType} in ${roleTypeList})
+                                <option value="$!{_roleType.value}" hassubinfo="true" #if($!{data.user.userRole}==$!{_roleType.value}) selected="selected" #end>
+                                    $!{_roleType.name}</option>
+                                #end
+                            </select>
+                        </div>
+                    </div>
+                    #if($!{data.user.userRole}=='PERSON')
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">姓名</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="realname" value="$!data.user.realName" placeholder="姓名"
+                                   class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">身份证号码</label>
+                        <div class="col-sm-8">
+                            <input type="text" name="certif.certifNo" value="$!data.certif.certifNo" placeholder="身份证号码"
+                                   class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">身份证图片</label>
+                        <div class="col-sm-8">
+                            #if($!{data.certif.certifImgs}=='null' || $!{data.certif.certifImgs}=='')
+                            <img src=""  name="file" style="height:200px;width:300px;display:none" id="userLicenseImg1Div"/>
+                            <img src=""  name="file" style="height:200px;width:300px;display:none" id="userLicenseImg2Div"/>
+                            <input type="hidden" name="certif.certifImgs" value="" id="userLicenseImg1Value">
+                            <input type="hidden" name="certif.certifImgs" value="" id="userLicenseImg2Value">
+                            <input type="file" id="userLicenseImg1" name="file" lay-ext="jpg|png|gif|jpeg"
+                                   lay-type="images" lay-title="身份证正面" class="layui-upload-file">
+                            <input type="file" id="userLicenseImg2" name="file" lay-ext="jpg|png|gif|jpeg"
+                                   lay-type="images" lay-title="身份证反面" class="layui-upload-file">
+                            #else
+                                #foreach(${_file} in $commonTool.split($!{data.certif.certifImgs}, ","))
+                                <img src="$!{ossdomain}/$!{_file}" style="height:200px;width:300px;"
+                                     id="userLicenseImg$!{velocityCount}Div"/>
+                                <input type="hidden" name="certif.certifImgs" value="" id="userLicenseImg$!{velocityCount}Value">
+                                <input type="file" id="userLicenseImg$!{velocityCount}" name="file" lay-ext="jpg|png|gif|jpeg"
+                                       lay-type="images" lay-title="身份证$!{velocityCount}" class="layui-upload-file">
+                                #end
+                            #end
+                        </div>
+                    </div>
+                    #elseif($!{data.user.userRole}=='BUSI')
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">企业名称</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="realname" value="$!data.certif.certifName" placeholder="企业名称"
+                                       class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">社会信用号码</label>
+                            <div class="col-sm-8">
+                                <input type="text" name="certif.certifNo" value="$!data.certif.certifNo" placeholder="社会信用号码"
+                                       class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group forBusi">
+                            <label class="col-sm-3 control-label">社会信用证件图片</label>
+                            <div class="col-sm-8">
+                                #if($!{data.certif.certifImgs}=='null' || $!{data.certif.certifImgs}=='')
+                                <img src=""  name="file" style="height:200px;width:300px;display:none" id="companyLisenceImg1Div"/>
+                                <input type="hidden" name="certif.certifImgs" value="" id="companyLisenceImg1Value">
+                                <input type="file" id="companyLisenceImg1" name="file" lay-ext="jpg|png|gif|jpeg"
+                                       lay-type="images" lay-title="社会信用证件" class="layui-upload-file">
+                                #else
+                                    #foreach(${_file} in $commonTool.split($!{data.certif.certifImgs}, ","))
+                                    <img src="$!{ossdomain}/$!{_file}" style="height:200px;width:300px;"
+                                         id="companyLisenceImg$!{velocityCount}Div"/>
+                                    <input type="hidden" name="certif.certifImgs" value="" id="companyLisenceImg$!{velocityCount}Value">
+                                    <input type="file" id="companyLisenceImg$!{velocityCount}" name="file" lay-ext="jpg|png|gif|jpeg"
+                                           lay-type="images" lay-title="社会信用证件" class="layui-upload-file">
+                                    #end
+                                #end
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">法人姓名</label>
+                            <div class="col-sm-8">
+                                <input type="text" name="certif.certifOwn" value="$!data.certif.certifOwn" placeholder="法人姓名"
+                                       class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">身份证号码</label>
+                            <div class="col-sm-8">
+                                <input type="text" name="certif.certifOwnLicense" value="$!data.certif.certifNo" placeholder="法人身份证号码"
+                                       class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">法人身份证图片</label>
+                            <div class="col-sm-8">
+                                #if($!{data.certif.certifImgs}=='null' || $!{data.certif.certifImgs}=='')
+                                <img src=""  name="file" style="height:200px;width:300px;display:none" id="certifOwnLicenseImg1Div"/>
+                                <img src=""  name="file" style="height:200px;width:300px;display:none" id="certifOwnLicenseImg2Div"/>
+                                <input type="hidden" name="certif.certifImgs" value="" id="certifOwnLicenseImg1Value">
+                                <input type="hidden" name="certif.certifImgs" value="" id="certifOwnLicenseImg2Value">
+                                <input type="file" id="certifOwnLicenseImg1" name="file" lay-ext="jpg|png|gif|jpeg"
+                                       lay-type="images" lay-title="身份证正面" class="layui-upload-file">
+                                <input type="file" id="certifOwnLicenseImg2" name="file" lay-ext="jpg|png|gif|jpeg"
+                                       lay-type="images" lay-title="身份证反面" class="layui-upload-file">
+                                #else
+                                #foreach(${_file} in $commonTool.split($!{data.certif.certifImgs}, ","))
+                                <img src="$!{ossdomain}/$!{_file}" style="height:200px;width:300px;"
+                                     id="certifOwnLicenseImg$!{velocityCount}Div"/>
+                                <input type="hidden" name="certif.certifImgs" value="" id="certifOwnLicenseImg$!{velocityCount}Value">
+                                <input type="file" id="certifOwnLicenseImg$!{velocityCount}" name="file" lay-ext="jpg|png|gif|jpeg"
+                                       lay-type="images" lay-title="身份证$!{velocityCount}" class="layui-upload-file">
+                                #end
+                                #end
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">联系人姓名</label>
+                            <div class="col-sm-8">
+                                <input type="text" name="detail.linkMan" value="$!data.detail.linkMan" placeholder="联系人姓名"
+                                       class="form-control">
+                            </div>
+                        </div>
+                    #end
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">地址</label>
+                        <div class="col-sm-8">
+                            <input type="text" name="detail.address" value="$!data.detail.address" placeholder="地址"
+                                   class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">#if($!{data.user.userCatalog}=='CHANNEL') 推广员 #else 商务人员 #end</label>
+                        <div class="col-sm-8">
+                            <select data-placeholder="推广员" name="user.promoterId" class="form-control" id="userPromoterId" style="height:33px;" >
+                                #foreach(${_promoter} in ${promoterList})
+                                <option value="$!{_promoter.value}" hassubinfo="true" #if($!{data.user.promoterId}==$!{_promoter.value}) selected="selected" #end>
+                                    $!{_promoter.name}</option>
+                                #end
+                            </select>
+                            <input type="hidden" id="userPromoterName" name="user.promoterName">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">注册时间</label>
+                        <div class="col-sm-8">
+                            <label class="form-control" name="user.createdAt" placeholder="注册时间">$!date.format('yyyy-MM-dd HH:mm:ss ', $!{data.user.createdAt})</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">最后登录时间</label>
+                        <div class="col-sm-8">
+                            <label class="form-control" name="lastLoginTime" placeholder="最后登录时间">$!date.format('yyyy-MM-dd HH:mm:ss ', $!{lastLoginInfo.createdAt})</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">登录IP</label>
+                        <div class="col-sm-8">
+                            <label class="form-control" name="lastLoginIp" placeholder="登录IP">$!{lastLoginInfo.userIp}</label>
+                        </div>
+                    </div>
+                    #if($!{userCatalog}=='CHANNEL')
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">渠道类型</label>
+                        <div class="col-sm-8 checkbox i-checks">
+                            #foreach(${_channelType} in ${channelTypeList} )
+                                #set($flag=0)
+                                #foreach(${_userChannel} in ${data.userChannel} )
+                                    #if($!{_userChannel.channelId}==$!{_channelType.value} && $!{_userChannel.state}!=2)
+                                        #set($flag=1)
+                                    #end
+                                #end
+                                #if(${flag}==1)
+                                <label class="checkbox-inline i-checks">
+                                    <input type="checkbox" value="$!{_channelType.value}" checked="checked" name="userChannel[${velocityCount}].channelId">$!{_channelType.name}
+                                    <!-- <input type="hidden" name="userChannel[${velocityCount}].state" value="1"> --> </label>
+                                #else
+                                <label class="checkbox-inline i-checks">
+                                    <input type="checkbox" value="$!{_channelType.value}" name="userChannel[${velocityCount}].channelId">$!{_channelType.name}
+                                    <!-- <input type="hidden" name="userChannel[${velocityCount}].state" value="2"> --> </label>
+                                #end
+                            #end
+                        </div>
+                    </div>
+                    #end
+                    <div class="hr-line-dashed"></div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">银行名称</label>
+                        <div class="col-sm-8">
+                            <input type="text" name="detail.cardBank" value="$!data.detail.cardBank" placeholder="银行名称"
+                                   class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">银行账号</label>
+                        <div class="col-sm-8">
+                            <input type="text" name="detail.cardNumber" value="$!data.detail.cardNumber" placeholder="银行账号"
+                                   class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">开户行</label>
+                        <div class="col-sm-8">
+                            <input type="text" name="detail.cardBankAddr" value="$!data.detail.cardBankAddr" placeholder="开户行"
+                                   class="form-control">
+                        </div>
+                    </div>
+                    #if($!{data.userRole}=='BUSI')
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">企业类型</label>
+                        <div class="col-sm-8">
+                            <select data-placeholder="企业类型" name="certif.companyType" class="form-control" style="height:33px;">
+                                #foreach(${_companyType} in ${companyTypeList})
+                                <option value="$!{_companyType.value}" hassubinfo="true" #if($!{data.certif.companyType}==$!{_companyType.value}) selected="selected" #end>
+                                    $!{_companyType.name}</option>
+                                #end
+                            </select>
+                        </div>
+                    </div>
+                    #end
+                    <div align="center">
+                        <button class="btn btn-sm btn-success" type="button" onclick="submitForm('userinfoForm')"><i class="glyphicon glyphicon-ok"></i>保存</button>
+                        <button class="btn btn-sm btn-white" type="button" onclick="parent.closeLayer()"><i class="glyphicon glyphicon-remove"></i>返回</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+$(document).ready(function(){
+    $('.i-checks').iCheck({
+         checkboxClass: 'icheckbox_square-green',
+         radioClass: 'iradio_square-green',
+     });
+});
+$("#realname").change(function(){
+        $("#certifCertifName").val($(this).val());
+        $("#detailCardUser").val($(this).val());
+        $("#userRealname").val($(this).val());
+        $("#partnerName").val($(this).val());
+});
+$("#userPromoterId").change(function(){
+    var text=$("#userPromoterId").find("option:selected").text().trim();
+    $("#userPromoterName").val(text);
+});
+function submitForm(formId){
+    var form=$("#"+formId)
+    $.ajax({
+        type: "POST",
+        url:form.attr("action"),
+        dataType:"json",
+        data:form.serialize(),
+        success: function(data) {
+            if(data.code == 1){
+               parent.searchList();
+               parent.closeLayer(data.msg);
+            }else{
+               parent.layer.msg(data.msg,failIcon);
+            }
+        }
+    });
+}
+layui.use('upload', function(){
+    layui.upload({
+    url:  '${rc.contextPath}/upload/uploadFile.html?uploadPath=certif/img',
+    method: 'post',
+    success: function(res, input){
+        if(res.code == 1){
+            $("#" + input.id + "Value").val(res.data.id);
+            $("#" + input.id + "Div").prop('src',res.data.value);
+            $("#" + input.id + "Div").show();
+         }else{
+           parent.layer.msg(res.msg,failIcon);
+         }
+      }
+    });
+});
+ </script>

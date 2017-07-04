@@ -1,0 +1,131 @@
+<link href="${rc.contextPath}/_resources/css/bootstrap-select.css" rel="stylesheet">
+<script src="${rc.contextPath}/_resources/js/bootstrap-select.js"></script>
+<div class="ibox-content">
+   <form class="form-horizontal" id="form1">
+
+        <div class="form-group">
+             <label class="col-sm-3 control-label">附件ID：</label>
+             <div class="col-sm-8">
+                 <input type="hidden" name="channelId" value="$!{entity.channelId}">
+                 <input type="text" class="form-control" name="channelName" value="$!{entity.channelName}" style="width:400px">
+             </div>
+         </div>
+         <div class="form-group">
+             <label class="col-sm-3 control-label">附件名称：</label>
+             <div class="col-sm-8">
+                 <input type="hidden" name="channelId" value="$!{entity.channelId}">
+                 <input type="text" class="form-control" name="channelName" value="$!{entity.channelName}" style="width:400px">
+             </div>
+         </div>
+
+         <div class="form-group">
+             <label class="col-sm-3 control-label">附件类型：</label>
+             <div class="col-sm-8" style="width:430px">
+              <select name="userId" class="selectpicker show-tick form-control" data-live-search="true">
+                 #foreach($item in ${users})
+                    #if($!{entity.userId} == $!{item.userId})
+                       <option value="$!{item.userId}" selected="selected">$!{item.userName}</option>
+                     #else
+                       <option value="$!{item.userId}">$!{item.userName}</option>
+                     #end
+                  #end
+              </select>
+           </div>
+         </div>
+         <div class="form-group">
+                      <label class="col-sm-3 control-label">关联广告：</label>
+                      <div class="col-sm-8">
+                          <input type="hidden" name="channelId" value="$!{entity.channelId}">
+                          <input type="text" class="form-control" name="channelName" value="$!{entity.channelName}" style="width:400px">
+                      </div>
+                  </div>
+              <div class="form-group">
+                           <label class="col-sm-3 control-label">关联子广告：</label>
+                           <div class="col-sm-8">
+                               <input type="hidden" name="channelId" value="$!{entity.channelId}">
+                               <input type="text" class="form-control" name="channelName" value="$!{entity.channelName}" style="width:400px">
+                           </div>
+                       </div>
+           <div class="form-group">
+                               <label class="col-sm-3 control-label">领取方式：</label>
+                               <div class="col-sm-8" style="width:430px">
+                                   <select name="status" class="selectpicker show-tick form-control" data-live-search="true">
+                                        <option value="1" #if($!entity.status == 1) selected="selected" #end>启用</option>
+                                        <option value="0" #if($!entity.status == 0) selected="selected" #end>禁用</option>
+                                   </select>
+                               </div>
+                           </div>
+                             <div class="form-group">
+                                                      <label class="col-sm-3 control-label">单次领取次数：</label>
+                                                      <div class="col-sm-8">
+                                                          <input type="hidden" name="channelId" value="$!{entity.channelId}">
+                                                          <input type="text" class="form-control" name="channelName" value="$!{entity.channelName}" style="width:400px">
+                                                      </div>
+                                                  </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">内容：</label>
+                    <div class="col-sm-8">
+                        <input type="hidden" name="channelId" value="$!{entity.channelId}">
+                        <input type="textarea" class="form-control" name="channelName" value="$!{entity.channelName}" style="width:400px">
+                    </div>
+                </div>
+
+           <div class="form-group">
+                <label class="col-sm-3 control-label">ICON：</label>
+                <div class="col-sm-8">
+                    <input type="hidden" name="channelId" value="$!{entity.channelId}">
+                    <input type="button" class="form-control" name="channelName" value="$!{entity.channelName}" style="width:400px">
+                </div>
+            </div>
+              <div class="form-group">
+                    <label class="col-sm-3 control-label">礼包码：</label>
+                    <div class="col-sm-8">
+                        <input type="hidden" name="channelId" value="$!{entity.channelId}">
+                        <input type="button" class="form-control" name="channelName" value="$!{entity.channelName}" style="width:400px">
+                    </div>
+                </div>
+                 <div class="form-group">
+                                    <label class="col-sm-3 control-label">数量：</label>
+                                    <div class="col-sm-8">
+                                        <input type="hidden" name="channelId" value="$!{entity.channelId}">
+                                        <input type="text" class="form-control" name="channelName" value="$!{entity.channelName}" style="width:400px">
+                                    </div>
+                 </div>
+                  <div class="form-group">
+                                                     <label class="col-sm-3 control-label">剩余：</label>
+                                                     <div class="col-sm-8">
+                                                         <input type="hidden" name="channelId" value="$!{entity.channelId}">
+                                                         <input type="text" class="form-control" name="channelName" value="$!{entity.channelName}" style="width:400px">
+                                                     </div>
+                                  </div>
+        <div align="center">
+           <button class="btn btn-success" type="button" onclick="saveChannel()"><i class="glyphicon glyphicon-ok"></i>保存</button>
+           <button class="btn btn-white" type="button" onclick="closeLayer('0')"><i class="glyphicon glyphicon-remove"></i>返回</button>
+        </div>
+     </form>
+ </div>
+ <script>
+  function closeLayer(reload){
+     if("1" == reload){
+        parent.location.reload();
+     }
+     var index = parent.layer.getFrameIndex(window.name);
+     parent.layer.close(index);
+  }
+  function saveChannel(){
+     $.ajax({
+        type: "POST",
+        url:"updateChannel.html",
+        data:$('#form1').serialize(),
+        success: function(data) {
+           data = eval('(' + data + ')');
+           alert(data.msg);
+           if(data.code == 1){
+               closeLayer('1');
+            }
+        }
+    });
+  }
+</script>
+</body>
+</html>

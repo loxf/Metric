@@ -1,0 +1,96 @@
+<div class="tabs-container">
+       <ul class="nav nav-tabs">
+          #foreach($item in ${list})
+            #if($!{velocityCount} == 1)
+               <li class="active"><a data-toggle="tab" id="tabIndex1" data-value="$!{item.confCatId}" href="javascript:void(0)" onclick="searchList('$!{item.confCatId}','1')"  aria-expanded="true">$!{item.name}</a></li>
+             #else
+               <li class=""><a data-toggle="tab" data-value="$!{item.confCatId}" href="javascript:void(0)" onclick="searchList('$!{item.confCatId}','1')"  aria-expanded="false">$!{item.name}</a></li>
+            #end
+          #end
+       </ul>
+   </div>
+  <div class="jqGrid_wrapper">
+        <table id="table_list_1"></table>
+        <div id="pager_list_1"></div>
+   </div>
+ <script>
+  function searchList(categoryId,page){
+     $("#table_list_1").jqGrid('setGridParam',{
+        url:'listJson.html?categoryId='+categoryId,
+        page:page
+     }).trigger("reloadGrid");
+   }
+   $(document).ready(function () {
+       $.jgrid.defaults.styleUI = 'Bootstrap';
+       $('#table_list_1').jqGrid({
+              url:'listJson.html?categoryId='+$("#tabIndex1").attr("data-value"),
+              datatype: "json",
+              height: jqGridHeight,
+              autowidth: true,
+              shrinkToFit: true,
+              rowNum: 20,
+              rowList: [20, 30, 50],
+              viewrecords : true,
+              colNames: ['参数名称','参数Id','参数值','备注','状态','排序号','操作'],
+              colModel: [
+                 {
+                    name: 'name',
+                    width: 10
+                 },
+                  {
+                       name: 'paramId',
+                       width: 10
+                  },
+                 {
+                       name: 'paramValue',
+                       width: 10,
+                       editable:true
+                  },
+                  {
+                        name: 'remark',
+                        width: 10
+                  },
+                  {
+                   name:'status',
+                   width:10,
+                   formatter : function(value, options, rowObject) {
+                       if("1" == value){
+                          return "启用";
+                       }else{
+                          return "禁用";
+                       }
+                    }
+                 },
+                 {
+                     name: 'orderNo',
+                     width: 10
+                  },
+                  {
+                    name:'',
+                    width:10,
+                    #if($permissionTool.hasPermission('system.conf.update'))
+                    formatter : function(value, options, rowObject) {
+                      return '<a href="javascript:void(0)" onclick="edit(\'' + rowObject.confInfoId + '\',\'' + rowObject.type + '\')" class="btn btn-primary" ><i class="glyphicon glyphicon-pencil"></i>编辑</a>';
+                    }
+                    #end
+                  }
+              ],
+              pager: "#pager_list_1"
+         });
+   });
+    function edit(confInfoId,type){
+      var area = ['800px', '360px'];
+      if(type == '2'){//json数据
+         area = ['800px', '600px'];
+      }
+      layer.open({
+        type: 2,
+        area: area,
+        fixed: false,
+        maxmin: true,
+        title: '编辑配置',
+        content: 'editConf.html?confInfoId='+confInfoId
+     });
+    }
+</script>
+</html>

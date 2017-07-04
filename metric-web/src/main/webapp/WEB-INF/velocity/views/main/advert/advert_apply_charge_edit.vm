@@ -1,0 +1,132 @@
+<link href="${rc.contextPath}/_resources/css/bootstrap-select.css" rel="stylesheet">
+<script src="${rc.contextPath}/_resources/js/bootstrap-select.js"></script>
+<link href="${rc.contextPath}/_resources/css/plugins/iCheck/custom.css" rel="stylesheet">
+<link href="${rc.contextPath}/_resources/css/diyUpload.css" rel="stylesheet">
+<link href="${rc.contextPath}/_resources/css/webuploader.css" rel="stylesheet">
+<script src="${rc.contextPath}/_resources/js/plugins/iCheck/icheck.min.js"></script>
+<script src="${rc.contextPath}/_resources/js/webuploader.html5only.min.js"></script>
+<script src="${rc.contextPath}/_resources/js/diyUpload.js"></script>
+<script>
+    #if($!{baseResult})
+        #if($!{baseResult.code} == 1)
+          parent.searchList();
+          parent.closeLayer("$!{baseResult.msg}");
+        #else
+          parent.layer.msg("$!{baseResult.msg}",failIcon);
+        #end
+    #end
+</script>
+
+<script>
+$(document).ready(function(){
+$('body').on('click','a.delete',function(e){
+    var index=$("a.delete").index(this);
+    image = $(this).closest('.image').find('img');
+
+    $(this).closest('.image').fadeTo(300,0,function(){
+        $(this).animate({width:0},200,function(){
+        $(this).remove();
+        });
+    });
+ });
+});
+</script>
+<div class="ibox-content">
+    <form class="form-horizontal" id="form1"action="${rc.contextPath}/admin/advertisement/saveAdvertisementMaCharge.html" method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+        <input type="hidden" id="advertId" name="advertId" value="$!{advertId}">
+        <input type="hidden" id="icon" name="advMaUrl" value="">
+        <input type="hidden" id="iconWidth" name="iconWidth" value="">
+        <input type="hidden" id="iconHeight" name="iconHeight" value="">
+           <label class="col-sm-3 control-label">素材名称：</label>
+           <div id="box" style="margin:50px auto; width:540px; min-height:400px; background:#FF9">
+           	        <div id="js_maName" ></div>
+
+              </div>
+        </div>
+         <div class="form-group">
+            <label class="col-sm-3 control-label">已经绑定素材：</label>
+               #foreach($item in $!{systemImgs})
+                    <div class="col-sm-8 image" >
+                        <img src="$!{ossDomain}/$!{item.img}"  width="320px" heigth="400px"/>
+                            #set($temp=$velocityCount)
+                            #set($temp=$temp - 1)
+                            <input type="hidden"  name="systemImgs[2].img" value="$!{item.img}">
+                            <input type="hidden"  name="systemImgs[2].height" value="$!{item.height}">
+                            <input type="hidden"  name="systemImgs[2].width" value="$!{item.width}">
+                        <a href="#" class="delete">删除</a>
+                     </div>
+                #end
+        </div>
+         <div class="form-group">
+                     <label class="col-sm-3 control-label">计费链接(excel格式)：</label>
+                    <div class="col-sm-8">
+                        <input type="file" name="file2">
+                    </div>
+           </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">总数量:</label>
+            <div class="col-sm-8">
+                <input type="text" readonly class="form-control" name="totalNum" value="$!{userdCount}"  style="width:400px">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">剩余数量:</label>
+            <div class="col-sm-8">
+                <input type="text" readonly class="form-control" name="remainNum" value="$!{noUsedCount}"  style="width:400px">
+            </div>
+        </div>
+
+        <div align="center">
+            <button class="btn btn-success" type="submit" ><i class="glyphicon glyphicon-ok"></i>保存</button>
+            <button class="btn btn-white" type="button" onclick="closeLayer('0')"><i class="glyphicon glyphicon-remove"></i>返回</button>
+            <small class="text-navy"><a href="${rc.contextPath}/static/excel/charge_fee.xlsx" class="btn btn-primary ">下载模板</a></small>
+        </div>
+    </form>
+</div>
+<script>
+
+    $('#js_maName').diyUpload({
+        url:'${rc.contextPath}/upload/uploadFile.html?uploadPath=advert/icon',
+        success:function( res ) {
+            if(res.code == 1){
+                    $("#icon").val($("#icon").val()+","+res.data.id);
+                    $("#iconHeight").val($("#iconHeight").val()+","+res.data.height);
+                    $("#iconWidth").val($("#iconWidth").val()+","+res.data.width);
+               }else{
+                   parent.layer.msg(data.msg,failIcon);
+          }
+        },
+        error:function(res) {
+              parent.layer.msg(res.msg,failIcon);
+        }
+    });
+    function closeLayer(reload) {
+        if ("1" == reload) {
+            parent.location.reload();
+        }
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);
+    }
+
+    layui.use('upload', function(){
+        layui.upload({
+            url: '${rc.contextPath}/upload/uploadFile.html?uploadPath=advert/icon',
+            elem: '#file1',
+            method: 'post',
+            unwrap:true,
+            success: function(res){
+                if(res.code == 1){
+                    $("#icon").val(res.data.id);
+                    $("#iconDiv").attr('src',res.data.value);
+                    $("#iconDiv").show();
+                }else{
+                    parent.layer.msg(data.msg,failIcon);
+                }
+            }
+        });
+        $("#layui-upload-iframe").hide();
+    });
+
+</script>
+</html>

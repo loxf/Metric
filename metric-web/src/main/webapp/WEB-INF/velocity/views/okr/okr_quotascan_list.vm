@@ -1,0 +1,149 @@
+<div class="ibox-content">
+    <form role="form" class="form-inline">
+        <div class="form-group">
+            <label>展示指标类型:</label>
+               <select style="width:400px;height:30px"  name="quotaScanType"  id="quotaScanType">
+                  <option value="" >请选择展示指标类型</option>
+                   <option  value="1">指标</option>
+                   <option  value="2">非指标</option>
+                </select>
+        </div>
+          <div class="form-group">
+                    <label>业务类型:</label>
+                       <select style="width:400px;height:30px"  name="busiDomain"  id="busiDomain">
+                          <option value="" >请选择所属业务</option>
+                         #foreach($item in $bizInfo)
+                         <option #if($!quotascan.busiDomain == $!{item.value}) selected=\"selected\"  #end value="$!{item.value}">$!{item.name}</option>
+                         #end
+                     </select>
+                </div>
+        <br><br>
+        <div class="form-group">
+           <button class="btn btn-white" type="button" onclick="searchList('1')"><i class="glyphicon glyphicon-search"></i>查询</button>
+            <button class="btn btn-success" type="button" onclick="add()"><i class="glyphicon glyphicon-plus"></i>创建展示指标</button>
+        </div>
+    </form>
+  </div>
+  <div class="jqGrid_wrapper">
+        <table id="table_list_1"></table>
+        <div id="pager_list_1"></div>
+   </div>
+ <script>
+  function searchList(page){
+       $("#table_list_1").jqGrid('setGridParam',{
+            url:'listjson.html?'+getParams(),
+            page:page
+       }).trigger("reloadGrid");
+   }
+   function getParams(){
+    var quotaScanType=$("#quotaScanType").val();
+      var busiDomain=$("#busiDomain").val();
+      return "busiDomain="+busiDomain+"&quotaScanType="+quotaScanType;
+   }
+   $(document).ready(function () {
+       $.jgrid.defaults.styleUI = 'Bootstrap';
+       $('#table_list_1').jqGrid({
+              url:'listjson.html?'+getParams(),
+              datatype: "json",
+              height: jqGridHeight,
+              autowidth: true,
+              shrinkToFit: true,
+              viewrecords:true,
+              rowNum: 20,
+              rowList: [20, 30, 50],
+              viewrecords : true,
+              colNames: ['类型','展示名称','展示指标','业务类型','关联看板','修改者','修改时间','操作'],
+              colModel: [
+                   {
+                     name: 'quotaScanType',
+                     width: 10,
+                     formatter : function(value, options, rowObject) {
+                         if(value == '1'){
+                             return "指标";
+                         }else if(value== '2'){
+                            return "非指标";
+                         }else{
+                            return "";
+                         }
+                     }
+                   },
+                  {
+                     name: 'quotaScanShowName',
+                     width: 10
+                   },
+                 {
+                   name: 'quotaName',
+                   width: 10
+                 },
+                 {
+                    name: 'busiName',
+                    width: 10
+                 },
+                 {
+                       name: 'boardName',
+                       width: 10
+                  },
+                  {
+                      name: 'updateUserName',
+                      width: 10
+                  },
+                  {
+                    name: 'endDate',
+                    width: 10
+                  },
+                  {
+                   name:'scanId',
+                   width:10,
+                   formatter : function(value, options, rowObject) {
+                        var b = '';
+                          b = '<a href="javascript:void(0)" onclick="edit(\'' + value + '\')" class="btn btn-primary" ><i class="glyphicon glyphicon-pencil"></i>编辑</a>';
+                        b =b+ '&nbsp;&nbsp;<a onclick="delQuotaScan(\'' + rowObject.scanId + '\')" class="btn btn-danger "><i class="glyphicon glyphicon-remove"></i>删除</a>';
+                        return b;
+                    }
+                  }
+              ],
+              pager: "#pager_list_1"
+         });
+   });
+ function edit(scanId){
+    var width = (document.body.clientWidth-220)+"px";
+   layer.open({
+     type: 2,
+     area: [width, '100%'],
+     offset: ['0px', '220px'],
+     fixed: false,
+     maxmin: true,
+     content: 'toEdit.html?scanId='+scanId
+    });
+  }
+   function add(){
+     var width = (document.body.clientWidth-220)+"px";
+     layer.open({
+       type: 2,
+     area: [width, '100%'],
+     offset: ['0px', '220px'],
+       fixed: false,
+       maxmin: true,
+       content: 'toEdit.html'
+      });
+    }
+    function delQuotaScan(scanId){
+           layer.confirm('确认执行该操作？',{icon: 3, title:'删除指标预览'}, function(){
+           $.ajax({
+                  type: "POST",
+                 url:"deleteQuotaScan.html?scanId="+scanId,
+                 dataType:"json",
+                 success: function(data) {
+                    if(data.code == 1){
+                       searchList();
+                       closeLayer(data.msg);
+                    }else{
+                       layer.msg(data.msg,failIcon);
+                   }
+                }
+            });
+           }, function(){
+            layer.closeAll();
+          });
+        }
+</script>

@@ -15,9 +15,15 @@ public interface QuotaService {
 
     public BaseResult<String> delQuota(QuotaDto quotaDto);
 
-    public QuotaData getQuotaData(String quotaId, ConditionVo condition);
+    /**
+     * 获取展示指标的值
+     * @param scanId 展示指标ID
+     * @param condition 条件
+     * @return
+     */
+    public BaseResult getQuotaData(String scanId, ConditionVo condition);
 
-    public QuotaData getChartData(ChartDto chartDto, ConditionVo condition);
+    public ChartData getChartData(String chartId, ConditionVo condition);
 
     public BaseResult<List<QuotaDto>> queryQuotaNameAndId(QuotaDto quotaDto);
 
@@ -30,8 +36,6 @@ public interface QuotaService {
     public List<QuotaDimensionDto> queryDimenListByBoardId(String boardId);
 
     public List<QuotaDimensionDto> queryDimenListByQuotaId(String quotaId);
-
-    public List<String> getExecuteSql(String id, String type, ConditionVo condition);
 
     public PageData<QuotaDto> listQuotaPage(QuotaDto quotaDto);
 

@@ -1,0 +1,75 @@
+<div id="page-wrapper" class="ibox-content dashbard-1">
+<div class="row border-bottom">
+    <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <a class="navbar-minimalize minimalize-styl-2 btn btn-info " href="#"><i class="fa fa-bars"></i> </a>
+        <ul class="nav navbar-top-links navbar-right">
+            <li class="dropdown">
+                <a class="dropdown-toggle count-info">
+                    选择业务:
+                </a>
+            </li>
+            <li>
+                <select name="bizId" id="bizId" class="selectpicker show-tick form-control"
+                        onchange="javascript:changeBiz();" data-live-search="true" style="height: 33px">
+                    #foreach($item in $BizTool.getBizList())
+                    <option value="$!{item.bizId}"
+                            #if($BizTool.bizChecked() == $!{item.bizId}) selected="selected"  #end
+                    >$!{item.bizName}
+                    </option>
+                    #end
+                </select>
+            </li>
+            <li class="dropdown">
+                <a class="dropdown-toggle count-info" onclick="javascript:resetPwd();">
+                    修改密码
+                </a>
+            </li>
+            <li class="dropdown">
+                <a class="dropdown-toggle count-info" onclick="javascript:logout();">
+                    退出登录
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+<script>
+function resetPwd(){
+   layer.open({
+     type: 2,
+     area: ['780px', '250px'],
+     fixed: false,
+     maxmin: false,
+     title: '修改密码',
+     content: '${rc.contextPath}/admin/reset.html',
+   });
+}
+function logout(){
+   layer.confirm('确认退出登录？',{icon: 3, title:'退出登录'}, function(){
+       $.ajax({
+         type: "POST",
+         url:"${rc.contextPath}/admin/logout.html",
+         dataType:"json",
+         success: function(data) {
+            window.location.href=data.data;
+         }
+       });}, function(){
+         layer.closeAll();
+       }
+   );
+}
+function changeBiz(){
+    var bizId = $('#bizId option:selected').val();
+    $.ajax({
+         type: "POST",
+         url:"${rc.contextPath}/admin/changeBiz.html?bizId=" + bizId,
+         dataType:"json",
+         success: function(data) {
+          if(data.code == 1){
+              searchList('1');
+           }else{
+              layer.msg(data.msg,failIcon);
+           }
+        }
+     });
+}
+</script>

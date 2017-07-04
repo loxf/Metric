@@ -1,0 +1,76 @@
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <form id="form1" class="form-horizontal" method="post" action="allotPermission.html">
+            <input type="hidden" name="roleId" value="$!{roleId}" />
+            <input type="hidden" name="permissionIds" id="permissionIds" />
+            <div class="form-group" >
+                <ul id="treeDemo" class="ztree"></ul>
+            </div>
+            <div align="center">
+                <button class="btn btn-sm btn-success" type="button" onclick="submitAllotForm()"><i class="glyphicon glyphicon-ok"></i>提交</button>
+                <button class="btn btn-sm btn-white" type="button" onclick="closeLayer()"><i class="glyphicon glyphicon-remove"></i>返回</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+<link rel="stylesheet" href="${rc.contextPath}/_resources/plugins/ztree/css/zTreeStyle/zTreeStyle.css" type="text/css">
+<script type="text/javascript" src="${rc.contextPath}/_resources/plugins/ztree/js/jquery.ztree.core.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/_resources/plugins/ztree/js/jquery.ztree.excheck.js"></script>
+<script>
+        var setting = {
+            check: {
+                enable: true,
+                chkboxType: { "Y" : "ps", "N" : "s" }
+            },
+			data: {
+				simpleData: {
+					enable: true
+				}
+			}
+		};
+
+		var zNodes =${data};
+
+		$(document).ready(function(){
+			$.fn.zTree.init($("#treeDemo"), setting, zNodes);
+			var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+			treeObj.expandAll(true);
+		});
+
+function submitAllotForm(){
+	var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+	var nodes =  treeObj.getCheckedNodes(true);
+	var permissionIds="";
+	for(var i=0;i<nodes.length;i++){
+		permissionIds+=nodes[i].id+",";
+	}
+	$("#permissionIds").val(permissionIds.substring(0,permissionIds.length-1));
+	submitForm("form1");
+}
+function closeLayer(reload){
+     if("1" == reload){
+        parent.location.reload();
+     }
+     var index = parent.layer.getFrameIndex(window.name);
+     parent.layer.close(index);
+}
+function submitForm(formId){
+    var form=$("#"+formId)
+    $.ajax({
+        type: "POST",
+        url:form.attr("action"),
+        dataType:"json",
+        data:form.serialize(),
+        success: function(data) {
+            if(data.code == 1){
+               parent.searchList();
+               parent.closeLayer(data.msg);
+            }else{
+               parent.layer.msg(data.msg,failIcon);
+            }
+        }
+    });
+}
+</script>

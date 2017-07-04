@@ -26,6 +26,11 @@ public class QuotaScan extends Common{
 
     private Integer quotaScanType;
 
+    /**
+     * 指标维度
+     */
+    private String quotaDim;
+
     private Date createdAt;
 
     private Date updatedAt;
@@ -108,6 +113,14 @@ public class QuotaScan extends Common{
 
     public void setQuotaScanType(Integer quotaScanType) {
         this.quotaScanType = quotaScanType;
+    }
+
+    public String getQuotaDim() {
+        return quotaDim;
+    }
+
+    public void setQuotaDim(String quotaDim) {
+        this.quotaDim = quotaDim;
     }
 
     public Date getCreatedAt() {

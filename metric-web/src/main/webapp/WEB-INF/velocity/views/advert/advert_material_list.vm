@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <link href="${rc.contextPath}/_resources/css/plugins/jqgrid/ui.jqgrid.css" rel="stylesheet">
+    <script src="${rc.contextPath}/_resources/js/plugins/jqgrid/i18n/grid.locale-cn.js"></script>
+    <script src="${rc.contextPath}/_resources/js/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+    <script src="${rc.contextPath}/_resources//layui/layui.js"></script>
+</head>
+<body class="gray-bg">
+  <div class="ibox-content">
+    <form role="form" class="form-inline">
+        <div class="form-group">
+            <label>广告名称:</label><input type="text" id="advertName" class="form-control" name="advertName" value="$!{advertName}">
+            <label>素材名称:</label><input type="text" id="advMaName" class="form-control" name="advMaName" value="$!{advMaName}">
+            <label>状态</label>
+            <select class="form-control" style="width:130px;height:33px" id="status">
+                <option value="">请选择</option>
+                <option value="1">启用</option>
+                <option value="0">禁用</option>
+            </select>
+        </div>
+        <button class="btn btn-white" type="button" onclick="searchList('1')"><i class="glyphicon glyphicon-search"></i>查询</button>
+        <button class="btn btn-info" type="button" onclick="doExport()"><i class="glyphicon glyphicon-export"></i>导出</button>
+        <button class="layui-btn layui-btn-radius" type="button" onclick="synGame(1)">百度游戏同步</button>
+        <button class="layui-btn layui-btn-normal layui-btn-radius" type="button" onclick="synGame(2)">魔豆游戏同步</button>
+        <button class="layui-btn layui-btn-warm layui-btn-radius" type="button" onclick="synGame(3)">遥点游戏同步</button>
+    </form>
+  </div>
+  <div class="jqGrid_wrapper ">
+     <table id="table_list_1"></table>
+     <div id="pager_list_1"></div>
+  </div>
+<script>
+
+    function searchList(page){
+         $("#table_list_1").jqGrid('setGridParam',{
+              url:'listMaterialsPage.html',
+              page:page,
+              postData:{
+                  advertName: function() { return $("#advertName").val(); },
+                 advMaName: function() { return $("#advMaName").val(); },
+                 status: function() { return $("#status").val(); }
+
+             }
+         }).trigger("reloadGrid");
+    }
+
+   $(document).ready(function () {
+       $.jgrid.defaults.styleUI = 'Bootstrap';
+       $('#table_list_1').jqGrid({
+              url:'listMaterialsPage.html',
+              datatype: "json",
+              postData:{
+                  advertName: function() { return $("#advertName").val(); },
+                   advMaName: function() { return $("#advMaName").val(); },
+                   status: function() { return $("#status").val(); }
+               },
+              height: jqGridHeight,
+              autowidth: true,
+              shrinkToFit: true,
+              viewrecords : true,
+              rowNum: 20,
+              rowList: [20, 30, 50],
+              colNames: ['广告名称','外部素材ID','素材名称','对外素材名称','ICON','成本折扣','充值折扣','返点比例(%)','酷币充值折扣','排序号','状态','更新时间','操作'],
+              colModel: [
+                  {
+                      name: 'advertName',
+                  },
+                 {
+                    name: 'outAdvMaId',
+                 },
+                 {
+                    name: 'advMaName',
+                  },
+                  {
+                      name: 'advMaDisplayName',
+                  },
+                  {
+                     name: 'advMaPic',
+                      formatter : function(value, options, rowObject) {
+                          return '<img width="50px" height="50px" src="'+value+'"/>';
+                      }
+                   },
+                   {
+                    name: 'discountCost',
+                  },
+                   {
+                      name: 'discount',
+                  },
+                  {
+                      name: 'rebate',
+                  },
+                  {
+                      name: 'discountCoin',
+                  },
+                  {
+                      name: 'orderNo',
+                  },
+                   {
+                   name: 'status',
+                   formatter : function(value, row, index) {
+                      if("1" == value){
+                          return "启用";
+                       }else{
+                          return "禁用";
+                        }
+                    }
+                  },
+                  {
+                      name: 'updatedAtStr',
+                  },
+                  {
+                      name : "advertMaId",
+                      formatter : function(value, options, rowObject) {
+                          var b = '';
+                          #if($permissionTool.hasPermission('advert.material.update'))
+                           b = '<a href="javascript:void(0)" onclick="edit(\'' + value + '\')" class="btn btn-primary"><i class="glyphicon glyphicon-pencil"></i>编辑</a>';
+                            #end
+                            return b;
+                      }
+                  }
+              ],
+              pager: "#pager_list_1"
+         });
+   });
+
+    function edit(advertMaId){
+      layer.open({
+        type: 2,
+        area: ['800px', '400px'],
+        fixed: false,
+        maxmin: true,
+        title: '编辑素材',
+        content: 'showEditBox.html?advertMaId='+advertMaId
+       });
+     }
+
+     function synGame(mapId) {
+         $.ajax({
+             url:"synAdvertMaterial.html?mapId="+mapId,
+             success: function(data) {
+                 data = eval('(' + data + ')');
+                 alert(data.msg);
+             }
+         });
+     }
+
+    function doExport(){
+        var advertName = $("#advertName").val();
+        var advMaName = $("#advMaName").val();
+        var status = $("#status").val();
+        url='doExport.html?advertName='+advertName+"&advMaName="+advMaName+"&status="+status;
+        window.location.href=url;
+    }
+</script>
+</body>
+</html>

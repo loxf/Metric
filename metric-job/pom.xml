@@ -11,6 +11,10 @@
 
     <artifactId>metric-job</artifactId>
 
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.quartz-scheduler</groupId>

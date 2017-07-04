@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <link href="${rc.contextPath}/_resources/css/plugins/jqgrid/ui.jqgrid.css" rel="stylesheet">
+    <script src="${rc.contextPath}/_resources/js/plugins/jqgrid/i18n/grid.locale-cn.js"></script>
+    <script src="${rc.contextPath}/_resources/js/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+    <script src="${rc.contextPath}/_resources/js/plugins/layer/laydate/laydate.js"></script>
+    <script src="${rc.contextPath}/_resources/lhgdialog/lhgdialog.js"></script>
+    <script src="${rc.contextPath}/_resources/lhgdialog/lhgdialog.min.js"></script>
+</head>
+<body class="gray-bg">
+<div class="ibox-content">
+    <form role="form" class="form-inline">
+        <div class="form-group">
+            <label>用户名:</label><input type="text" id="userName" class="form-control">
+        </select>
+        </div>
+        <button class="btn btn-white" type="button" onclick="searchList('1')"><i class="glyphicon glyphicon-search"></i>查询</button>
+        #if($permissionTool.hasPermission('system.admin.add'))
+        <button class="btn btn-success" type="button" onclick="detail('')"><i class="glyphicon glyphicon-plus"></i>新建</button>
+        #end
+    </form>
+</div>
+<div class="jqGrid_wrapper">
+    <table id="table_list_1"></table>
+    <div id="pager_list_1"></div>
+</div>
+<script>
+function searchList(page){
+    $("#table_list_1").jqGrid('setGridParam',{
+        url:'list.html?'+getParams(),
+        page:page
+    }).trigger("reloadGrid");
+}
+function getParams(){
+    var userName = $("#userName").val();
+    var roleId=$("#roleId").val();
+    return "userName="+userName+"&roleId="+roleId;
+}
+$(document).ready(function () {
+    $.jgrid.defaults.styleUI = 'Bootstrap';
+    $('#table_list_1').jqGrid({
+        url:'list.html?' + getParams(),
+        datatype: "json",
+        height: jqGridHeight,
+        autowidth: true,
+        shrinkToFit: true,
+        rowNum: 20,
+        viewrecords:true,
+        rownumbers: true,
+        rowList: [20, 30, 50],
+        colNames: ['用户名','真实姓名','状态','角色组','创建时间','操作'],
+        colModel: [
+            {
+                name: 'userName',
+            },
+            {
+                name: 'realName',
+            },
+            {
+                name: 'userStatus',
+                formatter : function(value, row, index) {
+                    if("NORMAL" == value){
+                         return "正常";
+                    }else{
+                         return "禁用";
+                    }
+                 }
+            },
+            {
+                name: 'userRole',
+            },
+            {
+                name: 'createdAtStr',
+            },
+            {
+                name: 'userName',
+                formatter : function(value, row, index) {
+                    var b1 = '';
+                    #if($permissionTool.hasPermission('system.admin.reset'))
+                    b1 = '<a href="javascript:void(0)" onclick="reset(\'' + value + '\')" class="btn btn-info" ><i class="glyphicon glyphicon-repeat"></i>重置密码</a>';
+                    #end
+                    var b2 = '';
+                    #if($permissionTool.hasPermission('system.admin.update'))
+                    b2 = '<a href="javascript:void(0)" onclick="detail(\'' + value + '\')" class="btn btn-primary" ><i class="glyphicon glyphicon-pencil"></i>修改</a>';
+                    #end
+                    return b2 + "&nbsp;&nbsp;" + b1;
+                }
+             },
+        ],
+        pager: "#pager_list_1"
+    });
+});
+ function detail(userName){
+    var tit = '新建管理员';
+    if (userName != '') {
+        tit = '修改管理员'
+    }
+   layer.open({
+     type: 2,
+     area: ['800px', '420px'],
+     fixed: false,
+     maxmin: true,
+     title: tit,
+     content: 'detailAdmin.html?userName='+userName,
+   });
+ }
+ function reset(userName){
+   layer.confirm('确认重置密码？',{icon: 3, title:'重置密码'}, function(){
+       $.ajax({
+         type: "POST",
+         url:"reset.html?userName="+userName,
+         dataType:"json",
+         success: function(data) {
+            if(data.code == 1){
+               searchList();
+               parent.closeLayer(data.msg);
+            }else{
+               layer.msg(data.msg,failIcon);
+            }
+         }
+       });}, function(){
+         layer.closeAll();
+       }
+   );
+ }
+</script>
+</body>
+</html>

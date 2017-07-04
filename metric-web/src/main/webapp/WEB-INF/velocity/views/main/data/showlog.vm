@@ -1,0 +1,29 @@
+<div class="ibox-content">
+    <div class="form-group" style="text-align:center">
+        <table border="1">
+            <tr>
+                <th width="60%">内容</th>
+                <th width="20%">操作员</th>
+                <th width="20%">时间</th>
+            </tr>
+            #foreach(${tmp} in ${list})
+            <tr>
+                <td>$!{tmp.message}</td>
+                <td>$!{tmp.staffId}</td>
+                <td>$date.format("yyyy-MM-dd HH:mm:ss", $!{tmp.createdAt})</td>
+            </tr>
+            #end
+        </table>
+    </div>
+    <div align="center">
+        <button class="btn btn-white" type="button" onclick="closeLayer('0')"><i class="glyphicon glyphicon-remove"></i>返回</button>
+    </div>
+</div>
+<script>
+  function closeLayer(reload){
+     var index = parent.layer.getFrameIndex(window.name);
+     parent.layer.close(index);
+  }
+</script>
+</body>
+</html>

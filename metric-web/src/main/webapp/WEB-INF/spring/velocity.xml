@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="velocityConfig" class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
+        <property name="resourceLoaderPath">
+            <value>/WEB-INF/velocity/</value>
+        </property>
+        <property name="velocityProperties">
+            <props>
+                <prop key="input.encoding">utf-8</prop>
+                <prop key="output.encoding">utf-8</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!--配置试图解析器-->
+    <bean id="viewResolver" class="com.ywwl.oper.velocity.VelocityMultipleLayoutViewResolver">
+        <property name="cache" value="false" />
+        <property name="prefix" value="/views/"/>
+        <property name="suffix" value=".vm"/>
+        <property name="requestContextAttribute" value="rc"/>
+        <property name="contentType" value="text/html;charset=utf-8"/>
+        <property name="toolboxConfigLocation">
+            <value>/WEB-INF/velocity/toolbox/toolbox.xml</value>
+        </property>
+        <property name="layoutKey" value="layout"/>
+        <property name="mappings">
+            <map>
+                <entry key="main/*" value="layout/main_layout.vm" />
+                <entry key="*" value="layout/layout.vm" />
+            </map>
+        </property>
+    </bean>
+</beans>

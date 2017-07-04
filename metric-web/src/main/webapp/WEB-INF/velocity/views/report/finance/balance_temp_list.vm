@@ -1,0 +1,69 @@
+<div class="ibox-content">
+    <form role="form" class="form-inline">
+        <div class="form-group">
+            <label>用户名:</label><input type="text" id="userName" class="form-control">
+            <input class="form-control layer-date" id="reportDate" placeholder="日期" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})">
+            <button class="btn btn-white" type="button" onclick="searchList('1')"><i class="glyphicon glyphicon-search"></i>查询</button>
+            <button class="btn btn-info" type="button" onclick="exportData()"><i class="glyphicon glyphicon-export"></i>导出</button>
+        </div>
+    </form>
+  </div>
+  <div class="jqGrid_wrapper">
+        <table id="table_list_1"></table>
+        <div id="pager_list_1"></div>
+   </div>
+ <script>
+  function searchList(page){
+       $("#table_list_1").jqGrid('setGridParam',{
+            url:'balanceTempJson.html?'+getParams(),
+            page:page
+       }).trigger("reloadGrid");
+   }
+   function getParams(){
+      var userName=$("#userName").val();
+      var startDate,endDate;
+      var reportDate=$("#reportDate").val();
+      if("" != reportDate){
+         startDate = reportDate + ' 00:00:00';
+         endDate = reportDate + ' 23:59:59';
+      }
+      return "userName="+userName+"&startDate="+startDate+"&endDate="+endDate;
+   }
+
+   $(document).ready(function () {
+       $("#reportDate").val(laydate.now(-1));
+       $.jgrid.defaults.styleUI = 'Bootstrap';
+       $('#table_list_1').jqGrid({
+              url:'balanceTempJson.html?'+getParams(),
+              datatype: "json",
+              height: jqGridHeight,
+              autowidth: true,
+              shrinkToFit: true,
+              viewrecords:true,
+              rowNum: 20,
+              rowList: [20, 30, 50],
+              viewrecords : true,
+              colNames: ['用户名','账户余额(￥)','日期'],
+              colModel: [
+                 {
+                   name: 'userName',
+                   width: 10
+                 },
+                 {
+                    name: 'money',
+                    width: 10
+                 },
+                  {
+                    name: 'createdAtStr',
+                    width: 10
+                  }
+              ],
+              pager: "#pager_list_1"
+         });
+   });
+
+   function exportData(){
+        window.location.href="exportBalanceTemp.html?"+getParams();
+    }
+</script>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    #parse("/layout/fragments/js_css.vm")
+    <link href="${rc.contextPath}/_resources/css/jquery/combo.select.css" rel="stylesheet">
+    <script src="${rc.contextPath}/_resources/js/jquery.combo.select.js"></script>
+    <link href="${rc.contextPath}/_resources/css/plugins/iCheck/custom.css" rel="stylesheet">
+    <script src="${rc.contextPath}/_resources/js/plugins/iCheck/icheck.min.js"></script>
+</head>
+<body class="gray-bg">
+<div class="ibox-content">
+    <form class="form-horizontal" id="form1">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">用户名：</label>
+            <div class="col-sm-8">
+                <input type="hidden" name="userId" value="$!{entity.userId}">
+                <input type="text" class="form-control" id="userName" name="userName" value="$!{entity.userName}"
+                       #if($!{entity.userName}) readonly #end
+                       style="width:400px">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">真实姓名：</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="realName" id="realName" value="$!{entity.realName}"
+                       style="width:400px">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">状态：</label>
+            <div class="col-sm-8">
+                <select style="width:400px" name="userStatus">
+                    <option value="NORMAL" #if($!{entity.userStatus}=='NORMAL') selected="selected" #end>启用</option>
+                    <option value="DISABLE" #if($!{entity.userStatus}=='DISABLE') selected="selected" #end>禁用</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">手机号码：</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="userPhone" name="userPhone" value="$!{entity.userPhone}" style="width:400px">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">创建时间：</label>
+            <div class="col-sm-8">
+                <input class="form-control layer-date" id="createdAt" name="createdAt" value="$!date.format('yyyy-MM-dd HH:mm:ss',$!entity.createdAt)" disabled>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">用户角色：</label>
+            <div class="checkbox i-checks">
+                #foreach($item in ${roles})
+                <label class="checkbox-inline i-checks">
+                    <input type="checkbox" name="roleIds" value="$!{item.roleId}"
+                           #foreach($x in ${checks})
+                           #if($!{x.roleId} == $!{item.roleId}) checked=""
+                           #end
+                           #end
+                    >$!{item.roleName}</label>
+                #end
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">所属业务：</label>
+            <div class="checkbox i-checks">
+                #foreach($item in ${bizs})
+                <label class="checkbox-inline i-checks">
+                    <input type="checkbox" name="bizId" value="$!{item.bizId}"
+                           #foreach($check in $!{bizChecked})
+                           #if($check == $!{item.bizId}) checked=""
+                           #end
+                           #end
+                    >$!{item.bizName}</label>
+                #end
+            </div>
+        </div>
+        <div align="center">
+            <button class="btn btn-success" type="button" onclick="updateAdmin()"><i class="glyphicon glyphicon-ok"></i>保存</button>
+            <button class="btn btn-white" type="button" onclick="closeLayer('0')"><i class="glyphicon glyphicon-remove"></i>返回</button>
+        </div>
+    </form>
+</div>
+<script>
+  function closeLayer(reload){
+     if("1" == reload){
+        parent.location.reload();
+     }
+     var index = parent.layer.getFrameIndex(window.name);
+     parent.layer.close(index);
+  }
+  function updateAdmin(){
+    var userName = $('#userName').val();
+    var userPhone = $('#userPhone').val();
+    if (userName == "") {
+        parent.layer.msg("请输入用户名",failIcon);
+        return;
+    }
+    if (userPhone == "") {
+        parent.layer.msg("请输入手机号",failIcon);
+        return;
+    }
+    var roleCheck=document.getElementsByName("roleIds");
+    var roleValue="";
+    for(var i=0;i<roleCheck.length;i++){
+        if(roleCheck[i].checked==true) {
+        roleValue=roleValue+roleCheck[i].value+",";
+        }
+    }
+    if (roleValue == "") {
+        parent.layer.msg("请选择角色",failIcon);
+        return;
+    }
+    var bizCheck=document.getElementsByName("bizId");
+    var bizValue="";
+    for(var i=0;i<bizCheck.length;i++){
+        if(bizCheck[i].checked==true) {
+        bizValue=bizValue+bizCheck[i].value+",";
+        }
+    }
+    if (bizValue == "") {
+        parent.layer.msg("请选择业务",failIcon);
+        return;
+    }
+
+     $.ajax({
+        type: "POST",
+        url:"updateAdmin.html",
+        data:$('#form1').serialize(),
+        success: function(data) {
+           data = eval('(' + data + ')');
+           if(data.code == 1){
+               parent.searchList();
+               parent.closeLayer(data.msg);
+           } else {
+               parent.layer.msg(data.msg,failIcon);
+           }
+        }
+    });
+  }
+  $(document).ready(function() {
+     $('select').comboSelect();
+     $('.i-checks').iCheck({
+         checkboxClass: 'icheckbox_square-green',
+         radioClass: 'iradio_square-green',
+     });
+   });
+</script>
+</body>
+</html>

@@ -1,0 +1,236 @@
+<link href="${rc.contextPath}/_resources/css/bootstrap-select.css" rel="stylesheet">
+<script src="${rc.contextPath}/_resources/js/bootstrap-select.js"></script>
+<link href="${rc.contextPath}/_resources/css/jquery/select2.min.css" rel="stylesheet">
+<script src="${rc.contextPath}/_resources/js/jquery.select2.full.js"></script>
+#parse("/layout/fragments/js_KindEditor.vm")
+<div class="ibox-content">
+   <form class="form-horizontal" id="form1">
+         <div class="form-group">
+             <label class="col-sm-3 control-label">广告名称：</label>
+             <div class="col-sm-8">
+                <input type="hidden" name="advertId" value="$!{entity.advertId}">
+                 <input type="text" class="form-control" name="advertName" value="$!{entity.advertName}"  style="width:400px">
+             </div>
+         </div>
+         <div class="form-group">
+              <label class="col-sm-3 control-label">属于计划:</label>
+              <div class="col-sm-8" style="width:430px">
+                  <select id="planCfgId" name="planAdvertRel.planCfgId" class="selectpicker show-tick form-control" data-live-search="true">
+                    #foreach($item in ${planConfigs})
+                       <option value="$!{item.planCfgId}"  #if($!{entity.planAdvertRel.planCfgId} == $!{item.planCfgId}) selected="selected" #end>$!{item.planCfgName}</option>
+                    #end
+                  </select>
+              </div>
+         </div>
+        <div class="form-group">
+             <label class="col-sm-3 control-label">广告类型:</label>
+             <div class="col-sm-8" style="width:430px">
+                 <select id="advertSubType" name="planAdvertRel.advertSubTypeId" onchange="changeAdvSubType('1')" class="selectpicker show-tick form-control" data-live-search="true">
+                      #foreach($item in $!{advSubTypes})
+                        <option value="$!{item.subTypeId}"  #if($!{entity.planAdvertRel.advertSubTypeId} == $!{item.subTypeId}) selected="selected" #end>$!{item.subTypeName}</option>
+                      #end
+                 </select>
+             </div>
+         </div>
+         <div class="form-group" id="sizeDiv">
+              <label class="col-sm-3 control-label">广告尺寸：</label>
+              <div class="col-sm-8" style="width:430px">
+                 <select id="advertSizeId" name="planAdvertRel.advertSizeId" class="selectpicker show-tick form-control" data-live-search="true">
+                     #foreach($item in $!{advSizes})
+                       <option value="$!{item.advertSizeId}"  #if($!{entity.planAdvertRel.advertSizeId} == $!{item.advertSizeId}) selected="selected" #end>$!{item.width}*$!{item.height}</option>
+                     #end
+                </select>
+              </div>
+          </div>
+          <div class="form-group">
+             <label class="col-sm-3 control-label">广告链接：</label>
+             <div class="col-sm-8">
+                 <input type="text" name="planAdvertRel.url" value="$!{entity.planAdvertRel.url}" class="form-control"  style="width:400px">
+             </div>
+          </div>
+          <div class="form-group" id="imgDiv">
+               <label class="col-sm-3 control-label">广告图片：</label>
+               <div class="col-sm-8">
+                 <input type="hidden" id="imgValue1" name="planAdvertRel.img" value="$!{entity.planAdvertRel.img}">
+                  #if(!${entity.planAdvertRel.img} || $!{entity.planAdvertRel.img} == '')
+                     <img id="imgElem1" src="" style="display:none" />
+                   #else
+                     <img id="imgElem1" src="$!{entity.planAdvertRel.img}"/>
+                   #end
+                 <input type="file" index="1" name="file" accept="image/*" class="upload-file">
+               </div>
+           </div>
+           <div class="form-group" id="weightDiv">
+              <label class="col-sm-3 control-label">广告权重：</label>
+              <div class="col-sm-8">
+                  <input type="text" name="planAdvertRel.weight" value="$!{entity.planAdvertRel.weight}" class="form-control"  style="width:400px">
+              </div>
+          </div>
+          <div class="form-group">
+             <label class="col-sm-3 control-label">ICON：</label>
+             <div class="col-sm-8">
+               <input type="hidden" id="imgValue2" name="icon" value="$!{entity.icon}">
+                #if(!${entity.icon} || $!{entity.icon} == '')
+                   <img id="imgElem2" src=""   style="display:none" />
+                 #else
+                   <img id="imgElem2" src="$!{entity.icon}" />
+                 #end
+               <input type="file" index="2" name="file" accept="image/*" class="upload-file">
+             </div>
+          </div>
+          <div class="form-group">
+             <label class="col-sm-3 control-label">商务:</label>
+             <div class="col-sm-8">
+                <select id="businessId" name="businessId" style="width:400px">
+                   #foreach($item in $!{users})
+                     <option value="$!{item.userId}" #if($!{entity.businessId} == $!{item.userId}) selected="selected" #end>$!{item.userName}</option>
+                   #end
+                </select>
+             </div>
+          </div>
+          <div class="form-group">
+             <label class="col-sm-3 control-label">排序值：</label>
+             <div class="col-sm-8">
+                 <input type="text" value="$!{entity.advertIndex}" onchange="if(/\D/.test(this.value)){this.value='';}"  class="form-control" name="advertIndex"  style="width:400px">
+             </div>
+         </div>
+         <div class="form-group">
+            <label class="col-sm-3 control-label">简介：</label>
+            <div class="col-sm-8">
+                <input type="textarea" class="form-control" value="$!{entity.remark}" name="remark"  style="width:400px">
+            </div>
+         </div>
+         <div class="form-group">
+           <label class="col-sm-3 control-label">详细介绍：</label>
+           <textarea id="content" name="content" style="width:600px;height:300px">$!{entity.content}</textarea>
+         </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">状态:</label>
+            <div class="col-sm-8" style="width:430px">
+                <select name="status" class="selectpicker show-tick form-control">
+                     <option value="1" #if($!{entity.status} == 1) selected="selected" #end >启用</option>
+                     <option value="0" #if($!{entity.status} == 0) selected="selected" #end >禁用 </option>
+                </select>
+            </div>
+         </div>
+         <div align="center">
+           <button class="btn btn-success" type="button" onclick="savePlanConfig()"><i class="glyphicon glyphicon-ok"></i>保存</button>
+           <button class="btn btn-white" type="button" onclick="parent.closeLayer()"><i class="glyphicon glyphicon-remove"></i>返回</button>
+         </div>
+     </form>
+ </div>
+ <script>
+   $(document).ready(function() {
+      if("$!{entity.advertId}" != ''){//编辑
+          $("#planCfgId").attr("disabled","true");
+          $("#advertSubType").attr("disabled","true");
+          $("#advertSizeId").attr("disabled","true");
+      }
+      changeAdvSubType('0');
+   });
+   function changeAdvSubType(reloadFlag){
+     var advSubTypeId = $("#advertSubType").val();
+     if("00000000000000000000000000000004" == advSubTypeId){
+        $("#sizeDiv").hide();
+        $("#imgDiv").hide();
+        $("#weightDiv").show();
+        $("#advertSizeId").html("");
+     }else{
+        $("#sizeDiv").show();
+        $("#imgDiv").show();
+        $("#weightDiv").hide();
+     }
+     if("1" == reloadFlag){//切换广告类型，设置图片尺寸
+        reloadAdvSize(advSubTypeId);
+     }
+   }
+
+   function reloadAdvSize(advSubTypeId){
+     $.ajax({
+           type: "POST",
+           url:"${rc.contextPath}/admin/advSize/listBySubType.html?subTypeId="+advSubTypeId,
+           dataType:"json",
+           success: function(data) {
+             var optionString = "";
+             for(var i=0;i<data.length;i++){
+               optionString+="<option value = '"+data[i].advertSizeId+"'>"+data[i].width+"*"+data[i].height+"</option>";
+             }
+             $("#advertSizeId").html(optionString);
+             $("#advertSizeId").selectpicker('refresh');
+          }
+      });
+  }
+
+   function savePlanConfig(){
+      $.ajax({
+         type: "POST",
+         url:"updatePlanAdvert.html",
+         dataType:"json",
+         data:$('#form1').serialize(),
+         success: function(data) {
+          if(data.code == 1){
+               parent.searchList();
+               parent.closeLayer(data.msg);
+             }else{
+               parent.layer.msg(data.msg,failIcon);
+            }
+         }
+     });
+   }
+   layui.use('upload', function(){
+      var index=1;
+      layui.upload({
+         url: '${rc.contextPath}/upload/uploadFile.html?uploadPath=advert/icon',
+         method: 'post',
+         elem:'.upload-file',
+         unwrap:true,
+         before: function(input){
+            index=$(input).attr("index");
+         },
+         success: function(res){
+           if(res.code == 1){
+              $("#imgValue"+index).val(res.data.id);
+              $("#imgElem"+index).attr('src',res.data.value);
+              $("#imgElem"+index).show();
+           }else{
+             parent.layer.msg(data.msg,failIcon);
+           }
+         }
+      });
+      $("#layui-upload-iframe").hide();
+   });
+  $(function () {
+     $("#businessId").select2({
+        ajax: {
+            url: "${rc.contextPath}/admin/ajaxGetData/getUserByName.html",
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return {
+                    q: params.term,
+                    page: params.page
+                };
+            },
+            processResults: function (data, params) {
+                params.page = params.page || 1;
+                var itemList = [];
+                for(item in data){
+                   itemList.push({id:data[item].userId, text:data[item].userName})
+                }
+                return {
+                    results: itemList,
+                    pagination: {
+                        more: (params.page * 30) < data.total_count
+                    }
+                };
+            },
+           cache: true
+        },
+        escapeMarkup: function (markup) { return markup; },
+        minimumInputLength: 1,
+        formatResult: function formatRepo(repo){return repo.text;}, // 函数用来渲染结果
+        formatSelection: function formatRepoSelection(repo){return repo.text;} // 函数用于呈现当前的选择
+    });
+  });
+</script>
+</html>

@@ -1,0 +1,198 @@
+<div class="ibox-content">
+    <form role="form" class="form-inline">
+        <div class="form-group">
+            <label>用户名:</label><input type="text" id="userName" class="form-control">
+            <input class="form-control layer-date" id="startDate" placeholder="开始时间" onclick="laydate({istime: true, isclear: false, isclear: false, format: 'YYYY-MM-DD'})">
+            <input class="form-control layer-date" id="endDate" placeholder="结束时间" onclick="laydate({istime: true, isclear: false, isclear: false, format: 'YYYY-MM-DD'})">
+            <button class="btn btn-white" type="button" onclick="searchList('1')"><i class="glyphicon glyphicon-search"></i>查询</button>
+            <button class="btn btn-info" type="button" onclick="exportData()"><i class="glyphicon glyphicon-export"></i>导出</button>
+            <input class="form-control layer-date" id="reportDate" placeholder="统计时间" onclick="laydate({istime: true, isclear: false, isclear: false, format: 'YYYY-MM-DD'})">
+            <button class="btn btn-success" type="button" onclick="synReport(this)"><i class="glyphicon glyphicon-refresh"></i>开始统计</button>
+        </div>
+    </form>
+  </div>
+  <div class="jqGrid_wrapper">
+        <table id="table_list_1"></table>
+        <div id="pager_list_1"></div>
+   </div>
+ <script>
+  function searchList(page){
+       $("#table_list_1").jqGrid('setGridParam',{
+            url:'detailReportJson.html?'+getParams(),
+            page:page
+       }).trigger("reloadGrid");
+   }
+   function getParams(){
+      var userName=$("#userName").val();
+      var startDate=$("#startDate").val();
+      var endDate=$("#endDate").val();
+      return "userName="+userName+"&startDate="+startDate+"&endDate="+endDate;
+   }
+
+   $(document).ready(function () {
+       $("#startDate").val(laydate.now(-1));
+       $("#endDate").val(laydate.now(-1));
+       $("#reportDate").val(laydate.now(-1));
+       $.jgrid.defaults.styleUI = 'Bootstrap';
+       $('#table_list_1').jqGrid({
+              url:'detailReportJson.html?'+getParams(),
+              datatype: "json",
+              height: jqGridHeight-20,
+              width: 2000,
+              shrinkToFit: true,
+              viewrecords:true,
+              rowNum: 20,
+              rowList: [20, 30, 50],
+              viewrecords : true,
+              colNames: ['用户id','用户名','期初余额','返点','余额汇款充值','余额在线充值','任务返点','任务奖励','游戏充值退款','转账(收入)','预支','奖励','增拨','申请','补偿','回档','余额退款','游戏充值','转账(支出)','扣点','提现','还款','理论余额','期末余额','差异'],
+              colModel: [
+                 {
+                     name: 'userId',
+                     width: 10,
+                     hidden:true
+                 },
+                 {
+                     name: 'userName',
+                     width: 12
+                 },
+                 {
+                     name: 'startBalance',
+                     width: 10
+                 },
+                 {
+                     name: 'rebateNormal',
+                     width: 6
+                 },
+                 {
+                     name: 'chargeRemit',
+                     width: 12
+                 },
+                 {
+                     name: 'chargeOnline',
+                     width: 12
+                 },
+                 {
+                     name: 'rebateTask',
+                     width: 10
+                 },
+                 {
+                     name: 'rewardTask',
+                     width: 10
+                 },
+                 {
+                    name: 'refundGame',
+                    width: 12,
+                    formatter : function(value, options, rowObject) {
+                         return '<a href="javascript:void(0)" onclick="viewDetail(\'' + rowObject.userId + '\',\'1\')"><font color="#FF0000"><u>'+value+'</font></u></a>';
+                    }
+                 },
+                 {
+                    name: 'transferIncome',
+                    width: 10
+                 },
+                 {
+                    name: 'advancePay',
+                    width: 6
+                 },
+                 {
+                    name: 'reward',
+                    width: 6
+                 },
+                {
+                    name: 'allocation',
+                    width: 6
+                 },
+                {
+                    name: 'apply',
+                    width: 6
+                },
+                  {
+                     name: 'compensate',
+                     width: 6
+                  },
+                  {
+                     name: 'retreated',
+                     width: 6
+                  },
+                  {
+                     name: 'refundBalance',
+                     width: 10
+                  },
+                  {
+                      name: 'chargeGame',
+                      width: 10,
+                      formatter : function(value, options, rowObject) {
+                           return '<a href="javascript:void(0)" onclick="viewDetail(\'' + rowObject.userId + '\',\'2\')"><font color="#FF0000"><u>'+value+'</font></u></a>';
+                      }
+                  },
+                  {
+                      name: 'transferExpend',
+                      width: 10
+                  },
+                  {
+                      name: 'deduct',
+                      width: 6
+                  },
+                  {
+                     name: 'withdraw',
+                     width: 6
+                  },
+                  {
+                     name: 'repayment',
+                     width: 6
+                  },
+                  {
+                     name: 'hopeBalance',
+                     width: 10
+                  },
+                  {
+                     name: 'endBalance',
+                     width: 10
+                  },
+                 {
+                     name: 'differentBalance',
+                     width: 8
+                  }
+              ],
+              pager: "#pager_list_1"
+         });
+   });
+
+   function viewDetail(userId,reportType){
+      var title = "游戏充值退款详情";
+      if("2" == reportType){
+         title = "游戏充值详情";
+      }
+      layer.open({
+        type: 2,
+        area: ['800px', '400px'],
+        fixed: false,
+        maxmin: true,
+        title: title,
+        content: 'viewDetailReport.html?type='+reportType+'&userId='+userId+'&startDate='+$("#startDate").val()+'&endDate='+$("#endDate").val()
+       });
+    }
+
+    function synReport(btnObj){
+      $(btnObj).attr('disabled', true);
+      $.ajax({
+          type: "POST",
+          data:{reportDate:$("#reportDate").val()},
+          url:"synDetailReport.html",
+          dataType:"json",
+          success: function(data) {
+            $(btnObj).attr('disabled', false);
+            if(data.code == 1){
+              closeLayer(data.msg);
+            }else{
+              layer.msg(data.msg,failIcon);
+           }
+         }
+      });
+    }
+
+   function exportData(){
+        window.location.href="exportDetailReport.html?"+getParams();
+    }
+</script>
+</html>

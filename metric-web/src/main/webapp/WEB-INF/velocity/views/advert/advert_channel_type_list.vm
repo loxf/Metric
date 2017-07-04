@@ -1,0 +1,105 @@
+<div class="ibox-content">
+    <form role="form" class="form-inline">
+        <div class="form-group">
+            <label>名称:</label><input type="text" id="name" class="form-control">
+        </div>
+        <div class="form-group">
+            <label>类型</label>
+            <select class="form-control" style="width:130px;height:33px" id="type">
+               <option value="">请选择</option>
+               <option value="1">广告类型</option>
+               <option value="2">渠道类型</option>
+            </select>
+        </div>
+        <button class="btn btn-white" type="button" onclick="searchList('1')"><i class="glyphicon glyphicon-search"></i>查询</button>
+        #if($permissionTool.hasPermission('advert.type.add'))
+        <button class="btn btn-success" type="button" onclick="edit()"><i class="glyphicon glyphicon-plus"></i>新建类型</button>
+        #end
+    </form>
+  </div>
+  <div class="jqGrid_wrapper ">
+     <table id="table_list_1"></table>
+     <div id="pager_list_1"></div>
+  </div>
+<script>
+    function searchList(page){
+         $("#table_list_1").jqGrid('setGridParam',{
+              url:'listjson.html?'+getParams(),
+              page:page
+         }).trigger("reloadGrid");
+    }
+    function getParams(){
+        var name=$("#name").val();
+        var type=$("#type").val();
+        return "name="+name+"&type="+type;
+    }
+   $(document).ready(function () {
+       $.jgrid.defaults.styleUI = 'Bootstrap';
+       $('#table_list_1').jqGrid({
+              url:'listjson.html?'+getParams(),
+              datatype: "json",
+              height: jqGridHeight,
+              autowidth: true,
+              shrinkToFit: true,
+              rowNum: 20,
+              rowList: [20, 30, 50],
+              viewrecords : true,
+              colNames: ['类型名称','类型','状态','创建时间','操作'],
+              colModel: [
+                 {
+                    name: 'name',
+                    width: 10
+                 },
+                 {
+                    name: 'type',
+                    width: 10,
+                    formatter : function(value, row, index) {
+                     if("1" == value){
+                        return "广告类型";
+                     }else{
+                        return "渠道类型";
+                      }
+                    }
+                  },
+                  {
+                     name: 'status',
+                     width: 10,
+                     formatter : function(value, options, rowObject) {
+                        if("1" == value){
+                            return "启用";
+                         }else{
+                            return "禁用";
+                          }
+                      }
+                   },
+                  {
+                      name: 'createdAtStr',
+                      width: 12
+                  },
+                  {
+                      name : "typeId",
+                      width:10,
+                      formatter : function(value, options, rowObject) {
+                         var b = '';
+                         #if($permissionTool.hasPermission('advert.type.update'))
+                          b = '<a href="javascript:void(0)" onclick="edit(\'' + value + '\')" class="btn btn-primary"><i class="glyphicon glyphicon-pencil"></i>编辑</a>';
+                         #end
+                         return b;
+                      }
+                }
+              ],
+              pager: "#pager_list_1"
+         });
+   });
+    function edit(typeId){
+      layer.open({
+        type: 2,
+        area: ['800px', '320px'],
+        fixed: false,
+        title: '编辑类型',
+        maxmin: true,
+        content: 'editType.html?typeId='+typeId
+       });
+     }
+</script>
+</html>

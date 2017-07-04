@@ -1,0 +1,261 @@
+<link rel="shortcut icon" href="favicon.ico">
+<link href="${rc.contextPath}/_resources/okr/static/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+<link href="${rc.contextPath}/_resources/okr/static/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+<link href="${rc.contextPath}/_resources/okr/static/css/animate.css" rel="stylesheet">
+
+<link href="${rc.contextPath}/_resources/okr/static/css/style.css?v=4.1.0" rel="stylesheet">
+<link href="${rc.contextPath}/_resources/okr/static/css/datacenter.min.css?v=1.0.0" rel="stylesheet">
+
+<div class="wrapper wrapper-content">
+    <div class="row">
+        <form onsubmit="return false;" id="J_DataFilter">
+            <div class="col-sm-12">
+                <div class="datacenter-header clearfix">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="title-left">
+                                <span class="title">指标概览</span><span class="note mgl20">以下指标数据均按照您的数据权限统计</span>
+                            </div>
+                            <div class="fr data-Date-area">
+                                以下统计数据截至：<span class="J_dataDateArea"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="datacenter-header clearfix">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <ul class="data-type-nav">
+                                #foreach($item in $bizInfo)
+                                <li><a href="javascript:;" class="J_dataPFSelect #if($!{defaultBusiDomain} == $!{item.value}) cur #end" data-platform="$!{item.value}">$!{item.name}</a></li>
+                                #end
+                            </ul>
+
+                            <div class="fr filter-quick-days mgr10 fl" id="J_filterQuickDays">
+                                <ul>
+                                    <li class="" data-days="thisWeek">本周数据</li>
+                                    <li data-days="thisMonth">本月数据</li>
+                                    <li data-days="lastMonth">上月数据</li>
+                                </ul>
+                            </div>
+
+                            <div class="fr data-Date-select-Area">
+                                <input type="text" name="startCircleTime" value="" id="J_dataStartDay" readonly="readonly" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',lang:'zh-cn',errDealMode:1,maxDate:'%y-%M}',onpicked:function(){chkdate( $dp.cal.getNewDateStr() )}});">至
+                                <input type="text" name="endCircleTime" value="" id="J_dataEndDay" readonly="readonly" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',lang:'zh-cn',errDealMode:1,maxDate:'%y-%M-%d}',onpicked:function(){chkdate( $dp.cal.getNewDateStr() )}});">
+                            </div>
+                            <!--
+                            <div class="fr date-select">
+                                <input type="hidden" name="dataStartTime" id="J_stime" value="">
+                                <input type="hidden" name="dataEndTime" id="J_etime" value="">
+                                <input type="text" id="J_dataDay" readonly="readonly" value="2017-04" onfocus="WdatePicker({dateFmt:'yyyy-MM',lang:'zh-cn',errDealMode:1,maxDate:'%y-%M}',onpicked:function(){chkdate( $dp.cal.getNewDateStr() )}});">
+                            </div>
+                            -->
+                        </div>
+                    </div>
+                </div>
+                <!--<div class="datacenter-header clearfix">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <ul class="data-type-nav">
+                                #foreach($item in $bizInfo)
+                                <li><a href="javascript:;" class="J_dataPFSelect #if($!{defaultBusiDomain} == $!{item.value}) cur #end" data-platform="$!{item.value}">$!{item.name}</a></li>
+                                #end
+                            </ul>
+                            <div class="fr date-select">
+                                <input type="hidden" name="startCircleTime" id="J_stime" value="">
+                                <input type="hidden" name="endCircleTime" id="J_etime" value="">
+                                <input type="text" id="J_dataDay" readonly="readonly" value="" onfocus="WdatePicker({dateFmt:'yyyy-MM',lang:'zh-cn',errDealMode:1,maxDate:'%y-%M}',onpicked:function(){chkdate( $dp.cal.getNewDateStr() )}});">
+                            </div>
+                        </div>
+                    </div>
+                </div>-->
+            </div>
+            <input type="hidden" name="busiDomain" value="$!{defaultBusiDomain}" id="J_dataPlatformval">
+        </form>
+    </div>
+
+    <div class="row">
+        <div class="data-total-list">
+            <div class="row">
+                <div class="col-sm-12">
+                    <!--指标数据区-->
+                    <div id="J_panelsArea">
+                        <div class="col-sm-2">
+                            <div class="panel item panel-box">
+                                <a href="javascript:;">
+                                    <div class="text-muted text-xs">数据加载中</div>
+                                    <div class="text-data">&nbsp;&nbsp;</div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <!--
+                    <div class="col-sm-2">
+                        <div class="panel item panel-box">
+                            <a href="./data_detatil.html?type=000001">
+                                <span class="text-muted text-xs">营业额</span>
+                                <div class="text-data">3,468,165</div>
+                            </a>
+                        </div>
+                    </div>
+                    -->
+                    <!--配置链接-->
+                    <div class="col-sm-2 ">
+                        <div class="panel item panel-box add_more_box">
+                            <a href="" data-href="${rc.contextPath}/admin/okr/setQuota.html">
+                                <div class="add_more">
+                                    <span >配置更多指标</span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <h3 class="row_title">目标进度</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="progress_list clearfix" id="J_targetListArea">
+
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<!--数据列表
+<div class="progress_detial not-reached  fr">
+    <p class="detail_num">10800</p>
+    <p class="detial_name"><span>收入</span></p>
+    <div class="pro_bar">
+        <div class="pro_bar_state" style="width:25%"></div>
+    </div>
+    <p class="pro_bar_num">
+        <span class="fl">目标:18290</span>
+        <span class="fr">25%</span>
+    </p>
+</div>
+-->
+<!--数据模板-->
+<script type="text/html" id="J_tplPanel">
+
+    {{# for(var i in d){ }}
+    {{# if(d[i].type!==2){ }}
+    {{# var updown='', hb= d[i].lastNum;
+        if(hb=='∞'){
+            updown='green';
+        } else {
+            hb = parseFloat(d[i].lastNum);
+            if(hb>0){
+                updown='green';
+                d[i].lastNum=hb+'%';
+            } else if(hb<0){
+                updown='red';
+                d[i].lastNum=Math.abs(hb)+'%';
+            } else {
+                updown='';
+            }
+        }
+    }}
+    <div class="col-sm-2">
+        <div class="panel item panel-box {{updown}}">
+            <a target="_blank" href="${rc.contextPath}/admin/okr/boardShow.html?boardId={{d[i].boardId}}&startCircleTime={{d[i].startCircleTime}}&endCircleTime={{d[i].endCircleTime}}&busiDomain={{d[i].bizid}}&bizname={{d[i].bizname}}">
+                <span class="text-muted text-xs">{{d[i].boardName}}</span><span class="hb-span">{{d[i].lastNum}}</span>
+                <div class="text-data" {{# if(d[i].color!==''){}}style="color:{{d[i].color}}"{{#}}}>{{d[i].num}}</div>
+            </a>
+        </div>
+    </div>
+    {{# }else{ }}
+    <div class="col-sm-2">
+        <div class="panel item panel-box no-data-panel">
+            <a target="_blank" href="${rc.contextPath}/admin/okr/boardShow.html?boardId={{d[i].boardId}}&startCircleTime={{d[i].startCircleTime}}&endCircleTime={{d[i].endCircleTime}}&busiDomain={{d[i].bizid}}&bizname={{d[i].bizname}}">
+                <span class="text-muted text-xs">{{d[i].boardName}}</span>
+            </a>
+        </div>
+    </div>
+    {{# } }}
+    {{# } }}
+</script>
+<script type="text/html" id="J_tplTarget">
+    {{# for(var i in d){}}
+    <div class="progress_item">
+        <a target="_blank" href="${rc.contextPath}/admin/okr/boardShow.html?boardId={{d[i].boardId}}&startCircleTime={{d[i].startCircleTime}}&endCircleTime={{d[i].endCircleTime}}&busiDomain={{d[i].bizid}}&bizname={{d[i].bizname}}">
+            <div class="clearfix">
+                <h3 class="fl">{{d[i].targetName}}</h3>
+                <div class="fr progress-date">{{d[i].dateArea}}</div>
+            </div>
+            <div class="kdp clearfix">
+                <div class="chat-index J-count">
+                    <div class="chat">
+                        <div class="chat-point desc J-count-point">
+                            <div class="chat-needle "></div>
+                        </div>
+                        <div class="chat-circle desc J-count-circle"><em class="J-count-rotate"></em></div>
+                        <em class="chat-degrees-1 J-count-degrees">0</em>
+                        <em class="chat-degrees-2 J-count-degrees">25%</em>
+                        <em class="chat-degrees-3 J-count-degrees">50%</em>
+                        <em class="chat-degrees-4 J-count-degrees">75%</em>
+                        <em class="chat-degrees-5 J-count-degrees">100%</em>
+                    </div>
+                    <div class="text text-title">{{d[i].objName}}</div>
+                    <div class="text text-complete"><small>已完成：</small><span class="J-count-gross">{{d[i].percent}}%</span></div>
+                    <div class="text text-percent"><span class="J-count-percent"><em class="chat-arrow-desc J-count-arrow"></em>{{Math.abs(d[i].trend)}}</span>%</div>
+                </div>
+
+            </div>
+            <div class="progress_detials clearfix">
+                <!--数据列表-->
+                {{# var dd = d[i].data;}}
+                {{# for(var j in dd){}}
+                {{# var percent_width = dd[j].percent < 100 ? dd[j].percent : 100; }}
+                {{# var reached = (dd[j].percent >=100) ? '' : 'not-reached'}}
+                {{# var f = j%2 ? 'fr' : 'fl'}}
+                <div class="progress_detial mgt10 {{reached}} {{f}}">
+                    <p class="detail_num">{{dd[j].num}}</p>
+                    <p class="detial_name"><span>{{dd[j].name}}</span></p>
+                    <div class="pro_bar">
+                        <div class="pro_bar_state" style="width:{{percent_width}}%"></div>
+                    </div>
+                    <p class="pro_bar_num">
+                        <span class="fl">目标:{{dd[j].target}}</span>
+                        <span class="fr">{{dd[j].percent}}%</span>
+                    </p>
+                </div>
+                {{# } }}
+            </div>
+        </a>
+    </div>
+    {{# } }}
+</script>
+<!-- 全局js -->
+<script src="${rc.contextPath}/_resources/okr/static/libs/jquery-1.11.1.min.js"></script>
+<script src="${rc.contextPath}/_resources/okr/static/libs/bootstrap.min.js?v=3.3.6"></script>
+<script src="${rc.contextPath}/_resources/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="${rc.contextPath}/_resources/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="${rc.contextPath}/_resources/okr/static/libs/plugins/layer/layer.min.js"></script>
+<script src="${rc.contextPath}/_resources/okr/static/libs/laytpl.min.js"></script>
+<!-- date -->
+<script src="${rc.contextPath}/_resources/okr/static/libs/plugins/My97DatePicker/WdatePicker.js"></script>
+
+<!--业务js-->
+<script src="${rc.contextPath}/_resources/okr/static/js/common.min.js"></script>
+<script src="${rc.contextPath}/_resources/okr/static/js/utils.min.js"></script>
+<script>
+        var dchome = new OKR.home();
+        dchome.init({
+            'pageDataApi':'${rc.contextPath}/admin/okr/indexInfo.html'
+        });
+        function chkdate(d) {
+            this.value = d;
+            dchome.getData();
+        }
+</script>
+

@@ -1,0 +1,134 @@
+<div class="ibox-content">
+    <form role="form" class="form-inline">
+        <div class="form-group">
+            <label>广告位名称:</label><input type="text" id="name" class="form-control">
+            <label>渠道主:</label><input type="text" id="userName" class="form-control">
+            <label>渠道名称:</label><input type="text" id="channelName" class="form-control">
+            <input class="form-control layer-date" id="startDate" placeholder="开始时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})">
+            <input class="form-control layer-date" id="endDate" placeholder="结束时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})">
+            <button class="btn btn-white" type="button" onclick="searchList('1')"><i class="glyphicon glyphicon-search"></i>查询</button>
+            #if($permissionTool.hasPermission('plan.advertzone.add'))
+            <button class="btn btn-success" type="button" onclick="edit()"><i class="glyphicon glyphicon-plus"></i>新建广告位</button>
+            #end
+        </div>
+    </form>
+  </div>
+  <div class="jqGrid_wrapper">
+        <table id="table_list_1"></table>
+        <div id="pager_list_1"></div>
+   </div>
+ <script>
+  function searchList(page){
+       $("#table_list_1").jqGrid('setGridParam',{
+            url:'listAdvZone.html?'+getParams(),
+            page:page
+       }).trigger("reloadGrid");
+   }
+   function getParams(){
+      var name=$("#name").val();
+      var userName=$("#userName").val();
+      var channelName=$("#channelName").val();
+      var startDate=$("#startDate").val();
+      var endDate=$("#endDate").val();
+      if("" != endDate){
+         endDate = endDate + ' 23:59:59';
+      }
+      return "name="+name+"&userName="+userName+"&channelName="+channelName+"&startDate="+startDate+"&endDate="+endDate;
+   }
+
+   $(document).ready(function () {
+       $.jgrid.defaults.styleUI = 'Bootstrap';
+       $('#table_list_1').jqGrid({
+              url:'listAdvZone.html?'+getParams(),
+              datatype: "json",
+              height: jqGridHeight,
+              autowidth: true,
+              shrinkToFit: true,
+              viewrecords:true,
+              rowNum: 20,
+              rowList: [20, 30, 50],
+              viewrecords : true,
+              colNames: ['广告位名称','渠道主','渠道名称','渠道编号','广告类型','图片尺寸','结算方式','广告模式','创建时间','操作'],
+              colModel: [
+                 {
+                   name: 'name',
+                   width: 10
+                 },
+                 {
+                    name: 'userName',
+                    width: 10
+                 },
+                 {
+                       name: 'channelName',
+                       width: 10
+                  },
+                  {
+                      name: 'channelCode',
+                      width: 10
+                  },
+                  {
+                    name: 'subTypeName',
+                    width: 10
+                  },
+                  {
+                     name:'advSizeStr',
+                     width:10
+                   },
+                   {
+                    name:'settleMethodName',
+                    width:5
+                   },
+                   {
+                     name:'advFilterName',
+                     width:10
+                   },
+                  {
+                    name: 'createdAtStr',
+                    width: 12
+                  },
+                  {
+                   name:'advertZoneId',
+                   width:15,
+                   formatter : function(value, options, rowObject) {
+                       var b = '';
+                       #if($permissionTool.hasPermission('plan.advertzone.update'))
+                        b += '<a href="javascript:void(0)" onclick="edit(\'' + value + '\')" class="btn btn-primary" ><i class="glyphicon glyphicon-pencil"></i>编辑</a>';
+                        b += '&nbsp;&nbsp;<a onclick="delAdvZone(\'' + value + '\')" class="btn btn-danger "><i class="glyphicon glyphicon-remove"></i>删除</a>';
+                        #end
+                        return b;
+                    }
+                  }
+              ],
+              pager: "#pager_list_1"
+         });
+   });
+ function edit(advZoneId){
+   layer.open({
+     type: 2,
+     area: ['800px', '600px'],
+     fixed: false,
+     maxmin: true,
+     content: 'editAdvZone.html?advZoneId='+advZoneId
+    });
+  }
+ function delAdvZone(advZoneId){
+     layer.confirm('确认执行该操作？',{icon: 3, title:'删除广告位'}, function(){
+     $.ajax({
+           type: "POST",
+           url:"delAdvZone.html?advZoneId="+advZoneId,
+           dataType:"json",
+           success: function(data) {
+              if(data.code == 1){
+                 searchList();
+                 closeLayer(data.msg);
+              }else{
+                 layer.msg(data.msg,failIcon);
+             }
+          }
+      });
+     }, function(){
+      layer.closeAll();
+    });
+  }
+</script>
+</html>

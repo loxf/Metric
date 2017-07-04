@@ -1,0 +1,183 @@
+<link href="${rc.contextPath}/_resources/css/bootstrap-select.css" rel="stylesheet">
+ <link href="${rc.contextPath}/_resources/css/jquery/select2.min.css" rel="stylesheet">
+<script src="${rc.contextPath}/_resources/js/bootstrap-select.js"></script>
+<script src="${rc.contextPath}/_resources/js/bootstrap.autocomplete.js"></script>
+<script src="${rc.contextPath}/_resources/js/jquery.select2.full.js"></script>
+<div class="ibox-content">
+   <form class="form-horizontal" id="form1">
+       <div class="form-group">
+           <label class="col-sm-3 control-label">序号：</label>
+           <div class="col-sm-8">
+               <input type="text" readonly class="form-control" id="userAdvDisId" name="userAdvDisId"  value="$!{userAdverDiscount.userAdvDisId}" style="width:400px">
+           </div>
+       </div>
+       <div class="form-group">
+           <label class="col-sm-3 control-label">广告名称：</label>
+           <div class="col-sm-8" style="width:430px">
+               <select id="advertName" style="width:350px;height:33px" name="advertId" class="selectpicker show-tick form-control">
+                   <option value="$!{userAdverDiscount.advertId}" selected="selected">$!{userAdverDiscount.advertName}</option>
+               </select>
+           </div>
+       </div>
+       <div class="form-group">
+           <label class="col-sm-3 control-label">用户名称：</label>
+           <input type="hidden" value="$!{userAdverDiscount.userId}" id="js_userName">
+           <div class="col-sm-8" style="width:430px">
+               <select id="userName" style="height:33px" name="userId" class="form-control">
+               #*<option value="$!{userAdverDiscount.userId}" selected="selected">$!{userAdverDiscount.userName}</option>*#
+           </select>
+           </div>
+       </div>
+       <div class="form-group">
+           <label class="col-sm-3 control-label">折扣：</label>
+           <div class="col-sm-8">
+               <input type="text" id="discount" name="discount"  value="$!{userAdverDiscount.discount}"  class="form-control" placeholder="请输入折扣（如8折）">
+           </div>
+       </div>
+        <div align="center">
+           <button class="btn btn-success" type="button" onclick="saveUserDiscount()"><i class="glyphicon glyphicon-ok"></i>保存</button>
+           <button class="btn btn-white" type="button" onclick="closeLayer('0')"><i class="glyphicon glyphicon-remove"></i>返回</button>
+        </div>
+     </form>
+ </div>
+ <script>
+  $(document).ready(function() {
+           $.ajax({
+                  type:"POST",
+                  url:"${rc.contextPath}/admin/ajaxGetData/getUserInfoByUserId.html",
+                  data:{userId:$("#js_userName").val()},
+                  datatype:  "json",
+                  success:function(data){
+                     data = eval('(' + data + ')');
+                     if(data && data.userId){
+                          $("#userName").empty();
+                          var str='<option value="'+data.userId+'">'+data.userName+'</option>'
+                          $("#userName").append(str);
+                          $("#select2-businessId-container").text(data.userName)
+                      }
+                  } ,
+                  error: function(){
+                      //请求出错处理
+                  }
+          });
+ });
+  function closeLayer(reload){
+     if("1" == reload){
+        parent.location.reload();
+     }
+     var index = parent.layer.getFrameIndex(window.name);
+     parent.layer.close(index);
+  }
+  function saveUserDiscount(){
+
+
+       if($("#advertName").val()==""){
+            alert("请选择广告名称！");
+            return;
+       }
+
+
+      if($("#userName").val()==""){
+                  alert("请选择用户名称！");
+                  return;
+             }
+
+       if($("#discount").val()==""){
+           alert("请输入折扣！");
+           return;
+       }
+     $.ajax({
+        type: "POST",
+        url:"update.html",
+        data:{
+                   userAdvDisId:$("#userAdvDisId").val(),
+                   advertId: $("#advertName").val(),
+                   userId:$("#userName").val() ,
+                   discount:$("#discount").val()
+           },
+        success: function(data) {
+           data = eval('(' + data + ')');
+           if(data.code == 1){
+               closeLayer('1');
+            }else{
+             parent.layer.msg(data.msg,failIcon);
+            }
+        }
+    });
+  }
+    $("#advertName").select2({
+                 ajax: {
+                   url: "${rc.contextPath}/admin/ajaxGetData/getAdvertByName.html",
+                   dataType: 'json',
+                   delay: 250,
+                   data: function (params) {
+                     return {
+                       q: params.term, // search term
+                       page: params.page
+                     };
+                   },
+                   processResults: function (data, params) {
+                    params.page = params.page || 1;
+                   var itemList = [];
+                    for(item in data){
+                        itemList.push({id:data[item].advertId, text:data[item].advertName})
+                    }
+                    return {
+                        results: itemList,
+                        pagination: {
+                                  more: (params.page * 30) < data.total_count
+                          }
+                    };
+                   },
+                   cache: true
+                 },
+                 escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+                 minimumInputLength: 1,
+                 allowClear: true,
+                  placeholder:'请输入广告名称',//默认文字提示
+                 formatResult: function formatRepo(repo){return repo.text;}, // 函数用来渲染结果
+                 formatSelection: function formatRepoSelection(repo){return repo.text;} // 函数用于呈现当前的选择
+       });
+
+         $("#userName").select2({
+                     ajax: {
+                       url: "${rc.contextPath}/admin/ajaxGetData/getFrontUserByName.html",
+                       dataType: 'json',
+                       delay: 250,
+                       data: function (params) {
+                         return {
+                           q: params.term, // search term
+                           page: params.page
+                         };
+                       },
+                       processResults: function (data, params) {
+                        params.page = params.page || 1;
+                       var itemList = [];
+                        for(item in data){
+                            itemList.push({id:data[item].userId, text:data[item].userName})
+                        }
+                        return {
+                            results: itemList,
+                            pagination: {
+                                      more: (params.page * 30) < data.total_count
+                              }
+                        };
+                       },
+                       cache: true
+                     },
+                     escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+                     minimumInputLength: 1,
+                     allowClear: true,
+                      placeholder:'请输入用户名称',//默认文字提示
+                     formatResult: function formatRepo(repo){return repo.text;}, // 函数用来渲染结果
+                     formatSelection: function formatRepoSelection(repo){return repo.text;} // 函数用于呈现当前的选择
+           });
+
+           $("#discount").change(function(){
+                       if(!/^\d+(\.\d+)?$/.test(this.value)){
+                           alert('只能输入数字!(如8或者8.8)');
+                           this.value='';
+                       }
+           });
+</script>
+</html>

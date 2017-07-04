@@ -12,4 +12,5 @@ public interface QuotaScanMapper {
     List<QuotaScan> listQuotaScan(QuotaScan quotaScan);
     int countQuotaScan(QuotaScan record);
     List<QuotaScan> listUserQuotaScanRel(@Param("userId") String userId, @Param("busiDomain") String busiDomain);
+    QuotaScan getQuotaScanById(String quotaScanId);
 }

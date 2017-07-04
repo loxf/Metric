@@ -1,0 +1,494 @@
+<link href="${rc.contextPath}/_resources/css/bootstrap-select.css" rel="stylesheet">
+<link href="${rc.contextPath}/_resources/css/jquery/select2.min.css" rel="stylesheet">
+<script src="${rc.contextPath}/_resources/js/bootstrap-select.js"></script>
+<link href="${rc.contextPath}/_resources/css/plugins/iCheck/custom.css" rel="stylesheet">
+<script src="${rc.contextPath}/_resources/js/plugins/iCheck/icheck.min.js"></script>
+<script src="${rc.contextPath}/_resources/js/jquery.select2.full.js"></script>
+#parse("/layout/fragments/js_KindEditor.vm")
+<div class="ibox-content">
+   <form class="form-horizontal" id="form1">
+
+             <div class="form-group">
+                <label class="col-sm-3 control-label">广告ID：</label>
+                <div class="col-sm-8">
+                    <input type="text" readonly class="form-control" name="advertId" value="$!{advertisement.advertId}"  style="width:400px">
+                </div>
+            </div>
+
+         <div class="form-group">
+             <label class="col-sm-3 control-label">广告名称：</label>
+             <div class="col-sm-8">
+                 <input type="text" class="form-control" name="advertName" value="$!{advertisement.advertName}"  style="width:400px">
+             </div>
+         </div>
+
+         <div class="form-group">
+             <label class="col-sm-3 control-label">广告类型：</label>
+             <div class="col-sm-8" style="width:430px">
+              <select name="advertTypeId"  class="selectpicker show-tick form-control" data-live-search="true">
+                      #foreach($item in $!{advertTypes})
+                              <option value="$!{item.typeId}"  #if($!advertisement.advertTypeId == $!{item.typeId}) selected="selected" #end >$!{item.name}</option>
+                      #end
+              </select>
+           </div>
+         </div>
+         <div class="form-group">
+                    <label class="col-sm-3 control-label">所属业务：</label>
+                    <div class="col-sm-8" style="width:430px">
+                     <select name="bizId"  class="selectpicker show-tick form-control" data-live-search="true" disabled>
+                         #foreach($item in $!{bizList})
+                            <option value="$!{item.bizId}"  #if($!advertisement.bizId == $!{item.bizId}) selected="selected" #end >$!{item.bizName}</option>
+                         #end
+                     </select>
+                  </div>
+                 </div>
+             <div class="form-group">
+                                      <label class="col-sm-3 control-label">广告主:</label>
+                                      <div class="col-sm-8"  style="width:430px">
+                                          <select name="userId" data-relationBuisness="$!{advertisement.businessId}" class="selectpicker show-tick form-control" data-live-search="true">
+                                          #foreach($userDto in $!{userDtos})
+                                               <option value="$!{userDto.userId}"  #if($!advertisement.userId == $!{userDto.userId}) selected="selected" #end>$!{userDto.userName}</option>
+                                           #end
+                                          </select>
+                                      </div>
+              </div>
+                <div class="form-group">
+                              <label class="col-sm-3 control-label">商务:</label>
+                              <div class="col-sm-8" style="width:430px">
+                                    <select id="businessId" name="businessId" class="form-control">
+                                       </select>
+                              </div>
+                 </div>
+                <input type="hidden" name="advertSettleConfigList[0].advSettleType" value="0"/>
+                <input type="hidden" name="advertSettleConfigList[1].advSettleType" value="1"/>
+               <div class="form-group">
+                             <label class="col-sm-3 control-label">上游结算规则:</label>
+                             <div class="col-sm-8" style="width:430px">
+                                 <select name="settleRuleId" class="selectpicker show-tick form-control" data-live-search="true" disabled>
+                                      <option #if($!entity.commonSettleId == -1) selected="selected" #end   value="-1">==自定义== </option>
+                                      #foreach($commonSettleRuleDto in $!{commonSettleRuleDtoList})
+                                        <option value="$!{commonSettleRuleDto.comSetRuId}"  #if($!advertisement.settleRuleId == $!{commonSettleRuleDto.comSetRuId}) selected="selected" #end>$!{commonSettleRuleDto.name}</option>
+                                      #end
+                                 </select>
+                             </div>
+                </div>
+
+                 <div class="form-group">
+                          <label class="col-sm-3 control-label">上游结算方式：</label>
+                          <div class="col-sm-8" style="width:430px">
+                             <select name="advertSettleConfigList[0].settleMethod" class="selectpicker show-tick form-control" data-live-search="true">
+                                #foreach($item in $!{settleMethods.entrySet()})
+                                  #if($!{entity.settleMethod} == $!{item.key})
+                                    <option value="$!{item.key}" selected="selected">$!{item.value}</option>
+                                  #else
+                                    <option value="$!{item.key}">$!{item.value}</option>
+                                  #end
+                                #end
+                            </select>
+                          </div>
+                      </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">上游结算指标：</label>
+                        <div class="col-sm-8">
+                          <input type="text" class="form-control" name="advertSettleConfigList[0].settleTarget" value="$!{entity.settleTarget}" style="width:400px">
+                        </div>
+                     </div>
+                      <div class="form-group">
+                                       <label class="col-sm-3 control-label">上游结算类型：</label>
+                                       <div class="col-sm-8" style="width:430px">
+                                          <select name="advertSettleConfigList[0].settleType" class="selectpicker show-tick form-control" data-live-search="true">
+                                                 <option value="0"></option>
+                                                 <option value="1" #if($!entity.settleType == 1) selected="selected" #end>单价</option>
+                                                 <option value="2" #if($!entity.settleType == 2) selected="selected" #end>比例</option>
+                                         </select>
+                                       </div>
+                             </div>
+                      <div class="form-group">
+                          <label class="col-sm-3 control-label">上游单价/比例：</label>
+                          <div class="col-sm-8">
+                              <input type="text" class="form-control" name="advertSettleConfigList[0].settleTypeNum" value="$!{entity.settleTypeNum}" style="width:400px">
+                          </div>
+                      </div>
+                     <div class="form-group">
+                         <label class="col-sm-3 control-label">上游结算周期：</label>
+                         <div class="col-sm-8" style="width:430px">
+                            <select name="advertSettleConfigList[0].settleCycle" class="selectpicker show-tick form-control" data-live-search="true">
+                               #foreach($item in $!{cycles.entrySet()})
+                                 #if($!{entity.settleCycle} == $!{item.key})
+                                   <option value="$!{item.key}" selected="selected">$!{item.value}</option>
+                                 #else
+                                   <option value="$!{item.key}">$!{item.value}</option>
+                                 #end
+                               #end
+                           </select>
+                         </div>
+                      </div>
+
+               <div class="form-group">
+                                   <label class="col-sm-3 control-label">下游结算规则</label>
+                                   <div class="col-sm-8" style="width:430px">
+                                       <select name="downSettleRuleId" class="selectpicker show-tick form-control" data-live-search="true" disabled>
+                                          <option #if($!downEntity.commonSettleId == -1) selected="selected" #end   value="-1">==自定义== </option>
+                                          #foreach($commonSettleRuleDto in $!{commonSettleRuleDtoList})
+                                              <option value="$!{commonSettleRuleDto.comSetRuId}"  #if($!advertisement.downSettleRuleId == $!{commonSettleRuleDto.comSetRuId}) selected="selected" #end>$!{commonSettleRuleDto.name}</option>
+                                          #end
+                                       </select>
+                                   </div>
+                  </div>
+              <div class="form-group">
+                                <label class="col-sm-3 control-label">下游结算方式：</label>
+                                <div class="col-sm-8" style="width:430px">
+                                   <select name="advertSettleConfigList[1].settleMethod" class="selectpicker show-tick form-control" data-live-search="true">
+                                      #foreach($item in $!{settleMethods.entrySet()})
+                                        #if($!{downEntity.settleMethod} == $!{item.key})
+                                          <option value="$!{item.key}" selected="selected">$!{item.value}</option>
+                                        #else
+                                          <option value="$!{item.key}">$!{item.value}</option>
+                                        #end
+                                      #end
+                                  </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                              <label class="col-sm-3 control-label">下游结算指标：</label>
+                              <div class="col-sm-8">
+                                   <input type="text" class="form-control" name="advertSettleConfigList[1].settleTarget" value="$!{downEntity.settleTarget}" style="width:400px">
+                              </div>
+                           </div>
+                         <div class="form-group">
+                                     <label class="col-sm-3 control-label">下游结算类型：</label>
+                                     <div class="col-sm-8" style="width:430px">
+                                        <select name="advertSettleConfigList[1].settleType" class="selectpicker show-tick form-control" data-live-search="true">
+                                               <option value="0"></option>
+                                               <option value="1" #if($!downEntity.settleType == 1) selected="selected" #end>单价</option>
+                                               <option value="2" #if($!downEntity.settleType == 2) selected="selected" #end>比例</option>
+                                       </select>
+                                     </div>
+                           </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">下游单价/比例：</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="advertSettleConfigList[1].settleTypeNum" value="$!{downEntity.settleTypeNum}" style="width:400px">
+                                </div>
+                            </div>
+                           <div class="form-group">
+                               <label class="col-sm-3 control-label">下游结算周期：</label>
+                               <div class="col-sm-8" style="width:430px">
+                                  <select name="advertSettleConfigList[1].settleCycle" class="selectpicker show-tick form-control" data-live-search="true">
+                                     #foreach($item in $!{cycles.entrySet()})
+                                       #if($!{downEntity.settleCycle} == $!{item.key})
+                                         <option value="$!{item.key}" selected="selected">$!{item.value}</option>
+                                       #else
+                                         <option value="$!{item.key}">$!{item.value}</option>
+                                       #end
+                                     #end
+                                 </select>
+                               </div>
+                            </div>
+             #*<div class="form-group">
+                                      <label class="col-sm-3 control-label">商务：</label>
+                                      <div class="col-sm-8">
+                                          <input readonly="true" value="777777" type="text" class="form-control" name="bussinessName"  style="width:400px">
+              </div>
+             </div>
+            *#
+            <div class="form-group">
+                        <label class="col-sm-3 control-label">状态:</label>
+                        <div class="col-sm-8" style="width:430px">
+                            <select name="status" class="selectpicker show-tick form-control" class="selectpicker show-tick form-control" data-live-search="true">
+                                 <option value="1" #if($!advertisement.status == 1) selected="selected" #end >启用</option>
+                                 <option value="0" #if($!advertisement.status == 0) selected="selected" #end >禁用 </option>
+                            </select>
+                        </div>
+                    </div>
+          <div class="form-group">
+               <label class="col-sm-3 control-label">申请方式:</label>
+               <div class="col-sm-8" style="width:430px;">
+                   <select name="isAudit" class="selectpicker show-tick form-control" data-live-search="true">
+                        <option value="1"   #if($!advertisement.isAudit == 1) selected="selected" #end>需要审核</option>
+                        <option value="0"   #if($!advertisement.isAudit == 0) selected="selected" #end>不需要审核</option>
+                   </select>
+               </div>
+           </div>
+
+          <div class="form-group">
+                             <label class="col-sm-3 control-label">排序值：</label>
+                             <div class="col-sm-8">
+                                 <input type="text" value="$!{advertisement.advertIndex}" onchange="if(!/^\d+(\.\d+)?$/.test(this.value)){alert('只能输入数字');this.value='';}"  class="form-control" name="advertIndex"  style="width:400px">
+                             </div>
+            </div>
+
+
+          <div class="form-group">
+                                <label class="col-sm-3 control-label">每日限额：</label>
+                                <div class="col-sm-8">
+                                    <input type="text" value="$!{advertisement.totalMoney}"  onchange="if(!/^\d+(\.\d+)?$/.test(this.value)){alert('只能输入数字');this.value='';}"  class="form-control" name="totalMoney"  style="width:400px">
+                                </div>
+                    </div>
+         <div class="form-group">
+                 <label class="col-sm-3 control-label">简介：</label>
+                 <div class="col-sm-8">
+                     <input type="textarea" class="form-control" value="$!{advertisement.remark}" name="remark"  style="width:400px">
+                 </div>
+                     </div>
+        <div class="form-group">
+                    <label class="col-sm-3 control-label">详细介绍：</label>
+                    <textarea id="content" name="content" placeholder="这里输入公告" style="width:600px;height:300px">$!{advertisement.content}</textarea>
+                </div>
+
+            <div class="form-group">
+                         <label class="col-sm-3 control-label">是否置顶:</label>
+                         <div class="col-sm-8" style="width:430px">
+                             <select name="isTop" class="selectpicker show-tick form-control" data-live-search="true">
+                                  <option value="1"   #if($!advertisement.isTop == 1) selected="selected" #end>置顶</option>
+                                  <option value="0"   #if($!advertisement.isTop == 0) selected="selected" #end>不置顶</option>
+                             </select>
+                         </div>
+                     </div>
+                <div class="form-group">
+                                     <label class="col-sm-2 control-label">标签:</label>
+                                     <div class="checkbox i-checks">
+                                       #foreach($advertTag in $!{advertTagList})
+                                            <label class="checkbox-inline i-checks">
+                                             <input type="checkbox" value="$!{advertTag.tagId}" name="advertTagIdStr" #if($!advertTag.selectFlag == 1)  checked="checked" #end>$!{advertTag.tagName}</label>
+                                        #end
+                                     </div>
+                 </div>
+           <div class="form-group">
+                       <label class="col-sm-2 control-label">可见渠道类型:</label>
+                       <div class="checkbox i-checks">
+                          #foreach($item in $!{channelLists})
+                           <label class="checkbox-inline i-checks">
+                               <input type="checkbox" name="channelTypeIds" value="$!{item.typeId}" lay-skin="primary" #if($!{item.checked} == '1') checked #end>$!{item.name}</label>
+                           #end
+                       </div>
+          </div>
+         <div class="form-group">
+           <label class="col-sm-3 control-label">ICON：</label>
+           <div class="col-sm-8">
+             <input type="hidden" id="icon" name="icon" value="$!{advertisement.icon}">
+              #if(!${advertisement.icon} || $!{advertisement.icon} == '')
+                 <img src="" id="iconDiv"  style="display:none" />
+               #else
+                 <img src="$!{ossDomain}/$!{advertisement.icon}" id="iconDiv"/>
+               #end
+             <input id="file1" type="file" name="file" accept="image/*">
+           </div>
+         </div>
+        <div align="center">
+           <button class="btn btn-success" type="button" onclick="saveAdvert()"><i class="glyphicon glyphicon-ok"></i>保存</button>
+           <button class="btn btn-white" type="button" onclick="closeLayer('0')"><i class="glyphicon glyphicon-remove"></i>返回</button>
+        </div>
+     </form>
+ </div>
+ <script>
+
+  function saveAdvert(){
+
+              $("[name='advertSettleConfigList[0].settleMethod']").removeAttr("disabled");
+              $("[name='advertSettleConfigList[0].settleTarget']").removeAttr("disabled");
+              $("[name='advertSettleConfigList[0].settleTypeNum']").removeAttr("readonly");
+              $("[name='advertSettleConfigList[0].settleCycle']").removeAttr("disabled");
+              $("[name='advertSettleConfigList[1].settleMethod']").removeAttr("disabled");
+              $("[name='advertSettleConfigList[1].settleTarget']").removeAttr("disabled");
+              $("[name='advertSettleConfigList[1].settleTypeNum']").removeAttr("readonly");
+              $("[name='advertSettleConfigList[1].settleCycle']").removeAttr("disabled");
+             $.ajax({
+                type: "POST",
+                url:"update.html",
+                data:$('#form1').serialize(),
+                success: function(data) {
+                    data = eval('(' + data + ')');
+                     if(data.code == 1){
+                         parent.searchList();
+                         parent.closeLayer(data.msg);
+                      }else{
+                         parent.layer.msg(data.msg,failIcon);
+                     }
+                }
+            });
+
+             $("[name='advertSettleConfigList[0].settleMethod']").attr("disabled","disabled");
+             $("[name='advertSettleConfigList[0].settleTarget']").attr("disabled","disabled");
+             $("[name='advertSettleConfigList[0].settleTypeNum']").attr("readonly","readonly");
+             $("[name='advertSettleConfigList[0].settleCycle']").attr("disabled","disabled");
+             $("[name='advertSettleConfigList[1].settleMethod']").attr("disabled","disabled");
+             $("[name='advertSettleConfigList[1].settleTarget']").attr("disabled","disabled");
+             $("[name='advertSettleConfigList[1].settleTypeNum']").attr("readonly","readonly");
+             $("[name='advertSettleConfigList[1].settleCycle']").attr("disabled","disabled");
+  }
+
+   $("[name='userId']").change(function(){
+      $.ajax({
+             type:"POST",
+             url:"${rc.contextPath}/admin/ajaxGetData/getUserInfoByUserId.html",
+             data:{userId:$(this).val()},
+             datatype:  "json",
+             success:function(data){
+                data = eval('(' + data + ')');
+                 $("#businessId").empty();
+                 var str='<option value="'+data.promoterId+'">'+data.promoterName+'</option>'
+                 $("#businessId").append(str);
+                 $("#select2-businessId-container").text(data.promoterName)
+             } ,
+             error: function(){
+                 //请求出错处理
+             }
+          });
+
+    });
+
+    $(document).ready(function() {
+          $.ajax({
+                 type:"POST",
+                 url:"${rc.contextPath}/admin/ajaxGetData/getUserInfoByUserId.html",
+                 data:{userId:$("[name='userId']").attr("data-relationBuisness")},
+                 datatype:  "json",
+                 success:function(data){
+                    data = eval('(' + data + ')');
+                    if(data && data.promoterId){
+                         $("#businessId").empty();
+                         var str='<option value="'+data.userId+'">'+data.userName+'</option>'
+                         $("#businessId").append(str);
+                         $("#select2-businessId-container").text(data.userName)
+                     }
+                 } ,
+                 error: function(){
+                     //请求出错处理
+                 }
+         });
+        $('.i-checks').iCheck({
+             checkboxClass: 'icheckbox_square-green',
+             radioClass: 'iradio_square-green',
+         });
+       if($("[name='settleRuleId']").val() != -1){
+            $("[name='advertSettleConfigList[0].settleMethod']").attr("disabled","disabled");
+       }else{
+             $("[name='advertSettleConfigList[0].settleMethod']").removeAttr("disabled");
+       }
+        if($("[name='downSettleRuleId']").val() != -1){
+                 $("[name='advertSettleConfigList[1].settleMethod']").attr("disabled","disabled");
+
+            }else{
+                 $("[name='advertSettleConfigList[1].settleMethod']").removeAttr("disabled");
+
+            }
+     });
+
+      $("[name='settleRuleId']").change(function(){
+               if($("[name='settleRuleId']").val() != -1){
+                      $.ajax({
+                              type:"POST",
+                              url:"getCommonSettleRule.html",
+                              data:{commonSettleRuleId:$(this).val()},
+                              datatype:  "json",
+                              success:function(data){
+                                 data = eval('(' + data + ')');
+                                              $("[name='advertSettleConfigList[0].settleMethod']").selectpicker('val',data.settleMethod);
+                                              $("[name='advertSettleConfigList[0].settleTarget']").val(data.settleTarget);
+                                              $("select[name='advertSettleConfigList[0].settleType']").selectpicker('val',data.settleType);
+                                              $("[name='advertSettleConfigList[0].settleTypeNum']").val(data.settleTypeNum);
+                                              $("select[name='advertSettleConfigList[0].settleCycle']").selectpicker('val',data.settleCycle);
+                              } ,
+                              error: function(){
+                                  //请求出错处理
+                              }
+                           });
+                        $("[name='advertSettleConfigList[0].settleMethod']").attr("disabled","disabled");
+
+                   }else{
+                        $("[name='advertSettleConfigList[0].settleMethod']").prev().prev().removeClass("disabled");
+                        $("[name='advertSettleConfigList[0].settleMethod']").removeAttr("disabled");
+                   }
+      });
+
+        $("[name='downSettleRuleId']").change(function(){
+              if($("[name='downSettleRuleId']").val() != -1){
+                     $.ajax({
+                              type:"POST",
+                              url:"getCommonSettleRule.html",
+                              data:{commonSettleRuleId:$(this).val()},
+                              datatype:  "json",
+                              success:function(data){
+                                 data = eval('(' + data + ')');
+                                  $("[name='advertSettleConfigList[1].settleMethod']").selectpicker('val',data.settleMethod);
+                                  $("[name='advertSettleConfigList[1].settleTarget']").val(data.settleTarget);
+                                  $("select[name='advertSettleConfigList[1].settleType']").selectpicker('val',data.settleType);
+                                  $("[name='advertSettleConfigList[1].settleTypeNum']").val(data.settleTypeNum);
+                                  $("select[name='advertSettleConfigList[1].settleCycle']").selectpicker('val',data.settleCycle);
+                              } ,
+                              error: function(){
+                                  //请求出错处理
+                              }
+                           });
+                           $("[name='advertSettleConfigList[1].settleMethod']").attr("disabled","disabled");
+
+                }else{
+                           $("[name='advertSettleConfigList[0].settleMethod']").prev().prev().removeClass("disabled");
+                           $("[name='advertSettleConfigList[0].settleMethod']").removeAttr("disabled");
+
+
+                }
+         });
+
+      layui.use('upload', function(){
+            layui.upload({
+               url: '${rc.contextPath}/upload/uploadFile.html?uploadPath=advert/icon',
+               elem: '#file1',
+               method: 'post',
+               unwrap:true,
+               success: function(res){
+                 if(res.code == 1){
+                    $("#icon").val(res.data.id);
+                    $("#iconDiv").attr('src',res.data.value);
+                    $("#iconDiv").show();
+                 }else{
+                   parent.layer.msg(data.msg,failIcon);
+                 }
+               }
+            });
+            $("#layui-upload-iframe").hide();
+        });
+     function closeLayer(reload) {
+            if ("1" == reload) {
+                parent.location.reload();
+            }
+            var index = parent.layer.getFrameIndex(window.name);
+            parent.layer.close(index);
+        }
+     $("#businessId").select2({
+                         ajax: {
+                           url: "${rc.contextPath}/admin/ajaxGetData/getUserByName.html",
+                           dataType: 'json',
+                           delay: 250,
+                           data: function (params) {
+                             return {
+                               q: params.term, // search term
+                               page: params.page
+                             };
+                           },
+                           processResults: function (data, params) {
+                            params.page = params.page || 1;
+                           var itemList = [];
+                            for(item in data){
+                                itemList.push({id:data[item].userId, text:data[item].userName})
+                            }
+                            return {
+                                results: itemList,
+                                pagination: {
+                                          more: (params.page * 30) < data.total_count
+                                  }
+                            };
+                           },
+                           cache: true
+                         },
+                         escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+                         minimumInputLength: 1,
+                         allowClear: true,
+                          placeholder:'请输商务名称',//默认文字提示
+                         formatResult: function formatRepo(repo){return repo.text;}, // 函数用来渲染结果
+                         formatSelection: function formatRepoSelection(repo){return repo.text;} // 函数用于呈现当前的选择
+               });
+</script>
+</html>

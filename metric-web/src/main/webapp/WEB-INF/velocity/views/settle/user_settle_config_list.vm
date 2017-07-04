@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <link href="${rc.contextPath}/_resources/css/plugins/jqgrid/ui.jqgrid.css" rel="stylesheet">
+    <link href="${rc.contextPath}/_resources/css/jquery/select2.min.css" rel="stylesheet">
+    <script src="${rc.contextPath}/_resources/js/plugins/jqgrid/i18n/grid.locale-cn.js"></script>
+    <script src="${rc.contextPath}/_resources/js/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+    <script src="${rc.contextPath}/_resources//layui/layui.js"></script>
+    <script src="${rc.contextPath}/_resources/js/jquery.select2.full.js"></script>
+
+</head>
+<body class="gray-bg">
+  <div class="ibox-content">
+    <form role="form" class="form-inline" id="form1">
+        <div class="form-group">
+            <select id="advertName" style="width:250px" name="advertId" class="form-control">
+              <option value="" selected="selected">广告名称</option>
+            </select>
+           <select id="advertMaName" style="width:250px" name="advertMaId" class="form-control">
+                     <option value="" selected="selected">素材名称</option>
+           </select>
+          <select id="userName" style="width:250px" name="userId" class="form-control">
+                      <option value="" selected="selected">用户名称</option>
+           </select>
+        </div>
+        <br><br>
+        <div class="form-group">
+            <label>生效时间</label>
+            <input class="form-control layer-date" id="startTime" placeholder="开始时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})">
+            <input class="form-control layer-date" id="endTime" placeholder="结束时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})">
+            <button class="btn btn-white" type="button" onclick="searchList('1')"><i class="glyphicon glyphicon-search"></i>查询</button>
+            <button class="btn btn-info"  onclick="exportList()" type="button"><i class="glyphicon glyphicon-export"></i>导出</button>
+            #if($permissionTool.hasPermission('settle.user.import'))
+            <button class="btn btn-warning" onclick="importPage()" type="button"><i class="glyphicon glyphicon-import"></i>导入配置</button>
+            #end
+        </div>
+    </form>
+  </div>
+  <div class="jqGrid_wrapper ">
+     <table id="table_list_1"></table>
+     <div id="pager_list_1"></div>
+  </div>
+<script>
+    function exportList(){
+        window.open("exportList.html?" + $('#form1').serialize());
+    }
+
+    function searchList(page){
+         $("#table_list_1").jqGrid('setGridParam',{
+              url:'listUserSettleConfig.html',
+              postData:{
+                  advertId: function() {
+                         return   $("#advertName").val();
+                  },
+                  advertMaId: function() {
+                    return  $("#advertMaName").val();
+                  },
+                  userId: function() {
+                      return   $("#userName").val();
+                   },
+                  startDate: function() { return $("#startTime").val(); },
+                  endDate: function() { return $("#endTime").val(); }
+             },
+             page:page
+         }).trigger("reloadGrid");
+    }
+
+   $(document).ready(function () {
+       $.jgrid.defaults.styleUI = 'Bootstrap';
+       $('#table_list_1').jqGrid({
+              url:'listUserSettleConfig.html',
+              datatype: "json",
+              height: jqGridHeight,
+              autowidth: true,
+              shrinkToFit: true,
+              rownumbers:true,
+              viewrecords:true,
+              rowNum: 20,
+              rowList: [20, 30, 50],
+              colNames: ['广告名称','素材名称','用户名称','结算单价/比例','生效日期','配置人员','状态','操作'],
+              colModel: [
+                 {
+                    name: 'advertName',
+                    width: 10
+                  },
+                  {
+                      name: 'advertMaName',
+                      width: 10
+                  },
+                  {
+                     name: 'userName',
+                     width: 10
+                   },
+                   {
+                        name: 'settleTypeNum',
+                        width: 10,
+                        formatter : function(value, row, index) {
+                          if(2 == index.settleType){
+                              return value+"%";
+                           }else{
+                              return value;
+                            }
+                        }
+                       },
+                   {
+                      name: 'validTimeStr',
+                      width: 10
+
+                  },
+                  {
+                      name: 'adminUserName',
+                      width: 10
+                  },
+
+                  {
+                        name: 'status',
+                        width: 10,
+                       formatter : function(value, row, index) {
+                                  if("1" == value){
+                                      return "启用";
+                                   }else{
+                                      return "禁用";
+                                    }
+                                }
+                   },
+
+                  {
+                      name : "userSettleCfgId",
+                      width:15,
+                      formatter : function(value, options, rowObject) {
+                       var h1 = '';
+                       var h2= '<a href="javascript:void(0)" onclick="showPopupBox(\'' + value + '\')" class="btn btn-primary"><i class="glyphicon glyphicon-pencil"></i>编辑</a>';
+                       if(rowObject.status!='2'){
+                                  var statusName = '禁用';
+                                  var status = '0';
+                                  var className = 'danger';
+                                  var tag = 'ban-circle';
+                                  if(rowObject.status=='0'){
+                                      statusName='启用';
+                                      status = '1';
+                                      className = 'success';
+                                      tag = 'ok-circle';
+                                  }
+                                  h1 = '<a href="javascript:statusConfig(\'' + value + '\',\'' + status + '\')" class="btn btn-' + className + ' "><i class="glyphicon glyphicon-'+ tag + '"></i>' + statusName + '</a>';
+                              }
+                       return h2 + "&nbsp;&nbsp;" + h1;
+                      }
+                  }
+              ],
+              pager: "#pager_list_1"
+         });
+   });
+
+ function statusConfig(userSettleCfgId, status) {
+        var qes = "确定启用吗?";
+        if(status == '0') {
+            qes = "确定禁用吗?";
+        }
+        layer.confirm(qes,{icon: 3, title:'修改状态'}, function(){
+       $.ajax({
+         type: "POST",
+         url:"updateUserSettleConfig.html?userSettleCfgId="+userSettleCfgId+"&status="+status,
+         dataType:"json",
+         success: function(data) {
+            if(data.code == 1){
+               searchList();
+               closeLayer(data.msg);
+            }else{
+               layer.msg(data.msg,failIcon);
+            }
+         }
+       });
+       }, function(){
+         layer.closeAll();
+       });
+    }
+    function showPopupBox(userSettleCfgId){
+        var url="";
+
+        url="toEditUserSettleConfig.html?userSettleCfgId="+userSettleCfgId;
+
+        layer.open({
+            type: 2,
+            title: '修改用户结算单配置',
+            shadeClose: true,
+            shade: false,
+            maxmin: false, //开启最大化最小化按钮
+            area: ['893px', '600px'],
+            content: url
+        });
+    }
+    $("#advertName").select2({
+              ajax: {
+                url: "${rc.contextPath}/admin/ajaxGetData/getAdvertByName.html",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                  return {
+                    q: params.term, // search term
+                    page: params.page
+                  };
+                },
+                processResults: function (data, params) {
+                 params.page = params.page || 1;
+                var itemList = [];
+                 for(item in data){
+                     itemList.push({id:data[item].advertId, text:data[item].advertName})
+                 }
+                 return {
+                     results: itemList,
+                     pagination: {
+                               more: (params.page * 30) < data.total_count
+                       }
+                 };
+                },
+                cache: true
+              },
+              allowClear: true,
+              escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+              minimumInputLength: 1,
+               placeholder:'请输入广告名称',//默认文字提示
+              formatResult: function formatRepo(repo){return repo.text;}, // 函数用来渲染结果
+              formatSelection: function formatRepoSelection(repo){return repo.text;} // 函数用于呈现当前的选择
+    });
+
+
+      $("#advertMaName").select2({
+                  ajax: {
+                    url: "${rc.contextPath}/admin/ajaxGetData/getAdvertMaByName.html",
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                      return {
+                        q: params.term, // search term
+                        page: params.page
+                      };
+                    },
+                    processResults: function (data, params) {
+                     params.page = params.page || 1;
+                    var itemList = [];
+                     for(item in data){
+                         itemList.push({id:data[item].advertMaId, text:data[item].advMaDisplayName})
+                     }
+                     return {
+                         results: itemList,
+                         pagination: {
+                                   more: (params.page * 30) < data.total_count
+                           }
+                     };
+                    },
+                    cache: true
+                  },
+                  allowClear: true,
+                  escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+                  minimumInputLength: 1,
+                   placeholder:'请输入素材名称',//默认文字提示
+                  formatResult: function formatRepo(repo){return repo.text;}, // 函数用来渲染结果
+                  formatSelection: function formatRepoSelection(repo){return repo.text;} // 函数用于呈现当前的选择
+        });
+
+
+      $("#userName").select2({
+                  ajax: {
+                    url: "${rc.contextPath}/admin/ajaxGetData/getFrontUserByName.html",
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                      return {
+                        q: params.term, // search term
+                        page: params.page
+                      };
+                    },
+                    processResults: function (data, params) {
+                     params.page = params.page || 1;
+                    var itemList = [];
+                     for(item in data){
+                         itemList.push({id:data[item].userId, text:data[item].userName})
+                     }
+                     return {
+                         results: itemList,
+                         pagination: {
+                                   more: (params.page * 30) < data.total_count
+                           }
+                     };
+                    },
+                    cache: true
+                  },
+                  escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+                  minimumInputLength: 1,
+                  allowClear: true,
+                   placeholder:'请输入用户名称',//默认文字提示
+                  formatResult: function formatRepo(repo){return repo.text;}, // 函数用来渲染结果
+                  formatSelection: function formatRepoSelection(repo){return repo.text;} // 函数用于呈现当前的选择
+        });
+
+       function importPage(advSettleCfgId){
+            layer.open({
+                type: 2,
+                title: '导入配置',
+                shadeClose: true,
+                shade: false,
+                maxmin: false, //开启最大化最小化按钮
+                area: ['500px', '300px'],
+                content: 'importPage.html'
+            });
+        }
+
+</script>
+</body>
+</html>

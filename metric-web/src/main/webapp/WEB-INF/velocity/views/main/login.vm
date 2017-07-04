@@ -1,0 +1,59 @@
+﻿<script>
+  if(self != top){
+     top.location.href=location.href;
+  }
+</script>
+<script src="${rc.contextPath}/_resources/js/jquery.md5.js"></script>
+<div class="middle-box text-center loginscreen  animated fadeInDown">
+  <div>
+        <div>
+            <img src="${rc.contextPath}/_resources/img/a4.png" class="img-circle  m-b-md" alt="profile">
+        </div>
+        <h3>欢迎使用营销平台</h3>
+
+        <form class="m-t" id="form1">
+            <div class="form-group">
+                <input type="text" name="username" id="username" class="form-control" placeholder="用户名">
+            </div>
+            <div class="form-group">
+                <input type="password" id="pwdText" class="form-control" placeholder="密码">
+                <input type="hidden" name="password" id="password" required="true">
+            </div>
+            <button type="button" onclick="login()" id="logButton" class="btn btn-info block full-width m-b">登 录</button>
+
+        </form>
+    </div>
+</div>
+<script>
+    $('#pwdText').keyup(function (e) {
+        if (e.keyCode === 13) {
+            $('#logButton').click();
+        }
+    });
+    function login() {
+        $("#password").val($.md5($("#pwdText").val()));
+        var username = $('#username').val();
+        var password = $('#password').val();
+        if (username == "") {
+            layer.msg("请输入用户名");
+            return;
+        }
+        if (password == "") {
+            layer.msg("请输入密码");
+            return;
+        }
+        $.ajax({
+            type: "POST",
+            url:"${rc.contextPath}/login.html",
+            data:$('#form1').serialize(),
+            success: function(data) {
+                data = eval('(' + data + ')');
+                if(data.code == 1){
+                    window.location.href=data.data;
+                }else{
+                    layer.msg(data.msg);
+                }
+            }
+        });
+    }
+</script>

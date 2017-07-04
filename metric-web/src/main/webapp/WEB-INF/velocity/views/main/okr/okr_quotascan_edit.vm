@@ -1,0 +1,145 @@
+<link href="${rc.contextPath}/_resources/css/bootstrap-select.css" rel="stylesheet">
+<link href="${rc.contextPath}/_resources/css/jquery/select2.min.css" rel="stylesheet">
+<script src="${rc.contextPath}/_resources/js/bootstrap-select.js"></script>
+<script src="${rc.contextPath}/_resources/js/jquery.select2.full.js"></script>
+<div class="ibox-content">
+   <form class="form-horizontal" id="form1">
+         <input type="hidden" name="scanId" value="$!{quotascan.scanId}">
+         <div class="form-group">
+              <label class="col-sm-3 control-label">展示类型：</label>
+              <div class="col-sm-8" style="width:430px">
+               <select style="width:400px;height:30px"  name="quotaScanType" id="quotaScanType">
+                   <option value="1" #if($!quotascan.quotaScanType=='1') selected="selected" #end>指标</option>
+                   <option value="2" #if($!quotascan.quotaScanType=='2') selected="selected" #end>非指标</option>
+               </select>
+            </div>
+         </div>
+       #if($!quotascan.quotaScanType != '2')
+       <div class="form-group"  id="js_relQuota">
+           <label class="col-sm-3 control-label">关键指标：</label>
+           <div class="col-sm-8" style="width:430px">
+               <select style="width:400px;height:30px"  name="quotaId" id="quotaId" class="single_quota_select">
+                   <option value="" data-showOper="" >请选择关键指标</option>
+                   #foreach($item in ${quotas})
+                   <option data-showOper="$!{item.showOperation}"
+                           value="$!{item.quotaId}" #if($!item.quotaId == $!quotascan.quotaId) selected="selected" #end>$!{item.quotaDisplayName}</option>
+                   #end
+               </select>
+           </div>
+       </div>
+       <div class="form-group"  id="js_relQuotaDim" style="#if($!{showOper}=='COUNT') display:block #else display:none #end">
+           <label class="col-sm-3 control-label">指标维度：</label>
+           <div class="col-sm-8" style="width:430px">
+               <select style="width:400px;height:30px"  name="quotaDim" id="quotaDim">
+                   #if($!{showOper}=='COUNT')
+                   #foreach($item in $dimList)
+                   <option value="$!item.columnCode" #if($!quotascan.quotaDim==$!item.columnCode) selected="selected" #end>$!item.columnName</option>
+                   #end
+                   #else
+                   <option value="CIRCLE_TIME">账期</option>
+                   #end
+               </select>
+           </div>
+       </div>
+       #end
+       <div class="form-group">
+           <label class="col-sm-3 control-label">展示名称：</label>
+           <div class="col-sm-8" style="width:430px">
+               <input type="text" class="form-control" id="quotaScanShowName" name="quotaScanShowName" value="$!{quotascan.quotaScanShowName}"
+                      style="width:400px">
+           </div>
+       </div>
+         <div class="form-group">
+              <label class="col-sm-3 control-label">业务类型：</label>
+              <div class="col-sm-8">
+                  <select style="width:400px;height:30px"  name="busiDomain">
+                       <option value="" >请选择所属业务</option>
+                      #foreach($item in $bizInfo)
+                      <option #if($!quotascan.busiDomain == $!{item.value}) selected=\"selected\"  #end value="$!{item.value}">$!{item.name}</option>
+                      #end
+                  </select>
+              </div>
+          </div>
+
+          <div class="form-group">
+               <label class="col-sm-3 control-label">关联看板：</label>
+               <div class="col-sm-8">
+                   <select style="width:400px;height:30px"  name="boardId">
+                     #foreach($item in ${boards})
+                        <option value="$!{item.boardId}" #if($!item.boardId == $!quotascan.boardId) selected="selected" #end>$!{item.boardName}</option>
+                     #end
+                   </select>
+               </div>
+           </div>
+        <div align="center">
+           <button class="btn btn-success" type="button" onclick="saveTarget()"><i class="glyphicon glyphicon-ok"></i>保存</button>
+           <button class="btn btn-white" type="button" onclick="parent.closeLayer()"><i class="glyphicon glyphicon-remove"></i>返回</button>
+        </div>
+     </form>
+ </div>
+ <script>
+  $(document).ready(function() {
+        $(".single_quota_select").select2();
+  });
+  function saveTarget(){
+     $.ajax({
+        type: "POST",
+        url:"saveQuotaScan.html",
+        dataType:"json",
+        data:$('#form1').serialize(),
+        success: function(data) {
+           if(data.code == 1){
+               parent.searchList();
+               parent.closeLayer(data.msg);
+            }else{
+              parent.layer.msg(data.msg,failIcon);
+            }
+        }
+    });
+  }
+
+  $(".single_quota_select").change(function(){
+        var value=$("#quotaId").find("option:selected").text();
+        $("#quotaScanShowName").val(value.trim());
+        var showOper = $("#quotaId").find("option:selected").attr("data-showOper");
+        if(showOper && showOper.indexOf("COUNT")>-1){
+            var quotaId = $("#quotaId").val();
+            $("#js_relQuotaDim").show();
+            // 加载维度
+            $.ajax({
+                type: "POST",
+                url: "${rc.contextPath}/admin/okr/chart/queryDimension.html",
+                dataType:"json",
+                data:{"quotaId":quotaId},
+                success: function(data) {
+                   if(data.code == 1){
+                        $("#quotaDim").html("");
+                        var html = '<option value=\'\'>请选择维度</option>';
+                        for(var item in data.data){
+                            html += '<option value=\''+ data.data[item].columnCode + '\'>' +  data.data[item].columnName + '</option>';
+                        }
+                        $("#quotaDim").html(html);
+                   }
+                }
+            });
+        } else {
+            // 默认CIRCLE_TIME
+            $("#js_relQuotaDim").hide();
+            $("#quotaDim").html("");
+            var html = '<option value=\'CIRCLE_TIME\' selected=\'selected\'>账期</option>';
+            $("#quotaDim").html(html);
+        }
+  });
+   $("#quotaScanType").change(function(){
+     var value=$(this).val();
+     if(value == '1'){
+        $("#js_relQuota").css('display','block');
+        $("#js_relQuotaDim").hide();//隐藏维度
+     }else if(value == '2'){
+        $("#js_relQuota").css('display','none')
+        $("#js_relQuotaDim").hide();//隐藏维度
+        $("#quotaDim").html("");
+        $("#quotaId").val("");
+     }
+   });
+</script>

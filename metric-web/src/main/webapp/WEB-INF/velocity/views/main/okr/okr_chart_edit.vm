@@ -1,0 +1,158 @@
+<link href="${rc.contextPath}/_resources/css/bootstrap-select.css" rel="stylesheet">
+<link href="${rc.contextPath}/_resources/css/jquery/select2.min.css" rel="stylesheet">
+<script src="${rc.contextPath}/_resources/js/bootstrap-select.js"></script>
+<script src="${rc.contextPath}/_resources/js/jquery.select2.full.js"></script>
+<div class="ibox-content">
+    <form class="form-horizontal" id="form1">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">图名称：</label>
+            <div class="col-sm-8">
+                <input type="hidden" name="chartId" value="$!{target.chartId}">
+                <input type="text" class="form-control" id="chartName" name="chartName" value="$!{target.chartName}"
+                       style="width:400px">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">图描述：</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="chartDesc" value="$!{target.chartDesc}"
+                       style="width:400px">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">图类型：</label>
+            <div class="col-sm-8">
+                <select style="width:400px;height:30px" name="type" id="chartType" onchange="changeChartType()">
+                    <option value="">请选择图样式</option>
+                    #foreach($item in $!{chartType})
+                    <option value="$!{item.value}">$!{item.name}</option>
+                    #end
+                </select>
+            </div>
+        </div>
+        <div class="form-group relQuotaDiv">
+            <label class="col-sm-2 control-label">关联指标:</label>
+            <div class="col-sm-8 newQuotaSelectDiv" >
+                <button class="btn btn-success" type="button" onclick="addNewQuotaSelect()">新增指标</button>
+            </div>
+        </div>
+        <div class="form-group relQuotaDiv relQuotaDivAppend">
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">状态：</label>
+            <div class="col-sm-8">
+                <select style="width:400px;height:30px" name="state">
+                    <option value="">请选择状态</option>
+                    <option value="1" #if($!target.state=='1') selected="selected" #end>启用</option>
+                    <option value="0" #if($!target.state=='0') selected="selected" #end>禁用</option>
+                </select>
+            </div>
+        </div>
+        <div align="center">
+            <button class="btn btn-success" type="button" onclick="saveChart()"><i class="glyphicon glyphicon-ok"></i>保存
+            </button>
+            <button class="btn btn-white" type="button" onclick="parent.closeLayer()"><i
+                    class="glyphicon glyphicon-remove"></i>返回
+            </button>
+        </div>
+    </form>
+</div>
+<script type="text/html" id="relQuotaDivScript">
+    <div class="col-sm-8 quotaSelectDiv">
+        <div class="childQuotaSelectDiv">
+            <select name="quotaId" onchange="firstQuotaSelect(this)">
+                <option value="-1">请选择</option>
+                #foreach($item in $!{quotas})
+                <option value="$!{item.quotaId}">$!{item.quotaName}</option>
+                #end
+            </select>
+        </div>
+    </div>
+</script>
+<script>
+   $(function(){
+        $('.relQuotaDiv').hide();
+        $('.newQuotaSelectDiv').hide();
+   })
+  function saveChart(){
+    if($('#chartType')==''||$('#chartName').val()==''){
+        parent.layer.msg('请填写关键参数',failIcon);
+        return ;
+    }
+     $.ajax({
+        type: "POST",
+        url:"saveChart.html",
+        dataType:"json",
+        data:$('#form1').serialize(),
+        success: function(data) {
+           if(data.code == 1){
+               parent.searchList();
+               parent.closeLayer(data.msg);
+            }else{
+              parent.layer.msg(data.msg,failIcon);
+            }
+        }
+    });
+  }
+  function changeChartType(){
+    var type = $('#chartType').val();
+    if(type=='histogramHorizontal' || type=='round'){
+        // 水平柱状 可以选择维度
+        $('.relQuotaDivAppend').html('');
+        $('.relQuotaDivAppend').html($('#relQuotaDivScript').html());
+        $('.relQuotaDiv').show();
+        $('.newQuotaSelectDiv').hide();
+    } else {
+        // 默认 多指标
+        $('.relQuotaDivAppend').html('');
+        $('.relQuotaDivAppend').html($('#relQuotaDivScript').html());
+        $('.relQuotaDiv').show();
+        $('.newQuotaSelectDiv').show();
+    }
+  }
+  function addNewQuotaSelect(){
+    var html = '<div class="childQuotaSelectDiv">' + $('.childQuotaSelectDiv').eq(0).html() + '<a class="deleteQuotaDiv" onclick="deleteQuotaDiv(this)">删除</a></div>';
+    $('.quotaSelectDiv').append(html);
+  }
+  function firstQuotaSelect(obj){
+    var type = $('#chartType').val();
+    var value = $(obj).val();
+    if(value=="-1"){
+        $(obj).siblings().remove();
+        return ;
+    }
+
+    if(type=='histogramHorizontal' || type=='round'){
+        // 水平柱状 饼图 可以选择维度
+        // 获取指标维度
+        $.ajax({
+            type: "POST",
+            url:"queryDimension.html",
+            dataType:"json",
+            data:{"quotaId":value},
+            success: function(data) {
+               if(data.code == 1){
+                    var html = '<select name=\'quotaDimension\'>';
+                    for(var item in data.data){
+                        html += '<option value=\''+ data.data[item].columnCode + '\'>' +  data.data[item].columnName + '</option>';
+                    }
+                    html += '</select>';
+                    $(obj).siblings().remove();
+                    $(obj).after(html);
+                }else{
+                    var html = '<select name=\'quotaDimension\'><option>' + data.msg + '</option></select>';
+                    $(obj).siblings().remove();
+                    $(obj).after(html);
+                }
+            }
+        });
+    } else {
+        // 默认 多指标
+        $(obj).siblings("input").remove();
+        $(obj).after('<input type=\'hidden\' value=\'CIRCLE_TIME\' name=\'quotaDimension\'/>');
+    }
+  }
+   function deleteQuotaDiv(obj){
+        $(obj).parent(".childQuotaSelectDiv").remove();
+   }
+</script>

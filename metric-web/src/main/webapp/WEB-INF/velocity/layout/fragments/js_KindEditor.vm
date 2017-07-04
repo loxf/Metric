@@ -1,0 +1,27 @@
+<script src="${rc.contextPath}/_resources/js/Kindeditor/kindeditor-min.js"></script>
+<script>
+ var editor;
+ jQuery("body").ready(function(){
+    if(editor && !+[1,]){
+        editor.remove();
+        editor = null;
+    }
+    KindEditor.basePath = '${rc.contextPath}/_resources/js/Kindeditor/';
+    jQuery.getScript('${rc.contextPath}/_resources/js/Kindeditor/kindeditor-min.js', function() {
+        editor = KindEditor.create('textarea[name="content"]',{
+            readonlyMode : false,
+            resizeType : 1,
+            allowPreviewEmoticons : false,
+            uploadJson : '${rc.contextPath}/upload/kindEditor.html?uploadPath=notice/img',
+            allowImageUpload : true,
+            afterBlur: function(){this.sync();},
+            filterMode : false,
+            items : [
+                'source', '|', 'cut', 'copy', 'paste', 'plainpaste', '|', 'fontname', 'fontsize', '|',
+                'forecolor', 'hilitecolor', 'bold', 'italic', 'underline',
+                'removeformat', '|', 'justifyleft', 'justifycenter', 'justifyright', 'insertorderedlist',
+                'insertunorderedlist', 'clearhtml', 'quickformat', 'selectall', '|', 'emoticons', 'image', 'link', '|', 'fullscreen']
+        });
+    });
+});
+</script>

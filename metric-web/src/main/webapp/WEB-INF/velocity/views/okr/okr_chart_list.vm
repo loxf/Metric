@@ -1,0 +1,204 @@
+<div class="ibox-content">
+    <form role="form" class="form-inline" id="form">
+        <div class="form-group">
+            <label>单图名称:</label><input type="text" name="chartName" class="form-control">
+        </div>
+        <div class="form-group">
+            <label>单图样式:</label>
+            <select name="type" class="form-control">
+                <option value="">请选择</option>
+                #foreach($item in $!{chartType})
+                <option value="$!{item.value}">$!{item.name}</option>
+                #end
+            </select>
+        </div>
+        <br><br>
+        <div class="form-group">
+           <button class="btn btn-white" type="button" onclick="searchList('1')"><i class="glyphicon glyphicon-search"></i>查询</button>
+            <button class="btn btn-success" type="button" onclick="edit()"><i class="glyphicon glyphicon-plus"></i>新建单图</button>
+        </div>
+    </form>
+  </div>
+  <div class="jqGrid_wrapper">
+        <table id="table_list_1"></table>
+        <div id="pager_list_1"></div>
+  </div>
+<input type="hidden" id="cChartId" >
+<input type="hidden" id="cType" >
+<script type="text/html" id="chooseDomain">
+    <div class="ibox-content">
+        <select id="preViewDomain" onchange="changePreViewDomain()">
+            <option value="" >选择预览业务</option>
+            #foreach($item in $bizInfo)
+            <option value="$!{item.value}">$!{item.name}</option>
+            #end
+        </select>
+    </div>
+</script>
+ <script>
+  function changePreViewDomain(){
+    var preViewDomain = $("#preViewDomain").val();
+    if(preViewDomain==""){
+        return;
+    }
+    var bizname = $('#preViewDomain option:selected').text();
+    var chartId = $("#cChartId").val();
+    var cType = $("#cType").val();
+    var startCircleTime = "";
+    var endCircleTime = "";
+    if(cType=="表格"){// 表格取昨天数据
+        startCircleTime = formatDate(1);
+        endCircleTime = formatDate(1);
+    } else {// 图取当月数据
+        startCircleTime = formatDate(2);
+        endCircleTime = formatDate(3);
+    }
+    var url = "${rc.contextPath}/admin/okr/chartShow.html?chartId=" + chartId + "&busiDomain=" + preViewDomain + "&startCircleTime=" + startCircleTime
+     + "&endCircleTime=" + endCircleTime + "&bizname=" + bizname;
+    window.open(url,'_blank');
+  }
+
+    function formatDate(type)   {
+      var date = new Date();
+      var y = date.getFullYear();
+      var m = date.getMonth() + 1;
+      m = m < 10 ? ('0' + m) : m;
+      var d = date.getDate();
+      if(type==0){// 今天
+        d = d < 10 ? ('0' + d) : d;
+      } else if(type==1){// 昨天
+        var yesterday_milliseconds = date.getTime()-1000*60*60*24;
+        var yesterday=new Date();
+        yesterday.setTime(yesterday_milliseconds);
+        var strYear=yesterday.getFullYear();
+        var strMonth=yesterday.getMonth()+1;
+        strMonth = strMonth < 10 ? ('0' + strMonth) : strMonth;
+        var strDay=yesterday.getDate();
+        strDay = strDay < 10 ? ('0' + strDay) : strDay;
+        return strYear + '-' + strMonth + '-' + strDay;
+      } else if(type==2){// 本月第一天
+        d = '01';
+      } else if(type==3){// 本月最后一天
+        var nextDay = new Date(y,m,0);
+        d = nextDay.getDate();//获取月份的最后一天
+      }
+      return y + '-' + m + '-' + d;
+    }
+  function searchList(page){
+       $("#table_list_1").jqGrid('setGridParam',{
+            url:'listjson.html',
+            postData: getParams(),
+            page:page
+       }).trigger("reloadGrid");
+   }
+
+   function getParams(){
+        var data=$('#form').serialize();
+        data = decodeURIComponent(data,true);
+        return formToJson(data);
+    }
+   function formToJson(data) {
+       data=data.replace(/&/g,"\",\"");
+       data=data.replace(/=/g,"\":\"");
+       data="{\""+data+"\"}";
+       var json =  eval('(' + data + ')');
+       return json;
+    }
+   $(document).ready(function () {
+       $.jgrid.defaults.styleUI = 'Bootstrap';
+       $('#table_list_1').jqGrid({
+              url:'listjson.html',
+              postData: getParams(),
+              datatype: "json",
+              height: jqGridHeight,
+              autowidth: true,
+              shrinkToFit: true,
+              viewrecords:true,
+              rowNum: 20,
+              rowList: [20, 30, 50],
+              viewrecords : true,
+              colNames: ['单图名称','样式','修改人','修改时间','创建者','创建时间','操作'],
+              colModel: [
+                 {
+                   name: 'chartName',
+                   width: 10
+                 },
+                 {
+                    name: 'type',
+                    width: 10
+                 },
+                 {
+                       name: 'updateUserName',
+                       width: 10
+                  },
+                  {
+                      name: 'updateAtStr',
+                      width: 10
+                  },
+                  {
+                    name: 'createUserName',
+                    width: 10
+                  },
+                  {
+                    name: 'createAtStr',
+                    width: 12
+                  },
+                  {
+                   name:'chartId',
+                   width:10,
+                   formatter : function(value, options, rowObject) {
+                       var b = '<a href="javascript:void(0)" onclick="preView(\'' + value + '\',\'' + rowObject.type  + '\',\'' + rowObject.chartName + '\')" class="btn btn-primary" ><i class="glyphicon"></i>预览</a>';
+                        // b = '<a href="javascript:void(0)" onclick="edit(\'' + value + '\')" class="btn btn-primary" ><i class="glyphicon glyphicon-pencil"></i>编辑</a>';
+                        b =b+ '&nbsp;&nbsp;<a onclick="deleteChart(\'' + rowObject.chartId + '\')" class="btn btn-danger "><i class="glyphicon glyphicon-remove"></i>删除</a>';
+                        return b;
+                    }
+                  }
+              ],
+              pager: "#pager_list_1"
+         });
+   });
+ function preView(chartId, type, chartName){
+    $("#cChartId").val(chartId);
+    $("#cType").val(type);
+    layer.open({
+        type: 1,
+        title: '[' + chartName + ']选择预览域',
+        shadeClose: true,
+        closeBtn: 0, //不显示关闭按钮
+        maxmin: false, //开启最大化最小化按钮
+        area: ['300px', '100px'],
+        content: $("#chooseDomain").html()
+     });
+ }
+
+ function edit(chartId){
+   var width = (document.body.clientWidth-220)+"px";
+   var addPage = layer.open({
+     type: 2,
+     area: [width, '100%'],
+     offset: ['0px', '220px'],
+     fixed: false,
+     maxmin: true,
+     content: 'toAdd.html'
+    });
+  }
+  function deleteChart(chartId){
+    layer.confirm('确认执行该操作？',{icon: 3, title:'删除指标图'}, function(){
+             $.ajax({
+                   type: "POST",
+                   url:"deleteChart.html?chartId="+chartId,
+                   dataType:"json",
+                   success: function(data) {
+                      if(data.code == 1){
+                         searchList();
+                         closeLayer(data.msg);
+                      }else{
+                         layer.msg(data.msg,failIcon);
+                     }
+                  }
+              });
+             }, function(){
+              layer.closeAll();
+            });
+  }
+</script>

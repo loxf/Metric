@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <link href="${rc.contextPath}/_resources/css/plugins/jqgrid/ui.jqgrid.css" rel="stylesheet">
+    <script src="${rc.contextPath}/_resources/js/plugins/jqgrid/i18n/grid.locale-cn.js"></script>
+    <script src="${rc.contextPath}/_resources/js/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+    <script src="${rc.contextPath}/_resources//layui/layui.js"></script>
+</head>
+<body class="gray-bg">
+  <div class="ibox-content">
+    <form role="form" class="form-inline">
+        <div class="form-group">
+            <label>广告名称:</label>
+            <input type="text" id="advertName" class="form-control">
+            <label>广告类型</label>
+            <select style="width:130px;height:33px" class="form-control" id="advertTypeId" >
+               <option value="">请选择</option>
+                #foreach($item in $!{advertTypes})
+                    <option value="$!{item.typeId}">$!{item.name}</option>
+                #end
+            </select>
+            <label>结算周期</label>
+            <select style="width:130px;height:33px" class="form-control" id="settleCycle" >
+                <option value="">请选择</option>
+                <option value="1">日结</option>
+                <option value="2">周结</option>
+                <option value="3">双周</option>
+                <option value="4">月结</option>
+            </select>
+            <label>状态</label>
+            <select style="width:130px;height:33px" class="form-control" id="status" >
+                <option value="">请选择</option>
+                <option value="0">待业务审核</option>
+                <option value="1">待财务审核</option>
+                <option value="2">待出纳审核</option>
+                <option value="3">已审核</option>
+            </select>
+        </div>
+        <br><br>
+        <div class="form-group">
+            <label>结算时间</label>
+            <input class="form-control layer-date" id="startDate" placeholder="开始时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})" value="$!{startDate}">
+            <input class="form-control layer-date" id="endDate" placeholder="结束时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})" value="$!{endDate}">
+            <button class="btn btn-white" type="button" onclick="searchList('1')"><i class="glyphicon glyphicon-search"></i>查询</button>
+            <button class="btn btn-info" type="button" onclick="doExport()"><i class="glyphicon glyphicon-export"></i>导出</button>
+            <input class="form-control layer-date" id="settleDate" placeholder="结算时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})">
+            #if($permissionTool.hasPermission('data.detail.import'))
+                <button class="layui-btn layui-btn-radius" type="button" onclick="generateSettleOrder()">重新生成结算单</button>
+            #end
+        </div>
+    </form>
+  </div>
+  <div class="jqGrid_wrapper ">
+     <table id="table_list_1"></table>
+     <div id="pager_list_1"></div>
+  </div>
+<script>
+    function searchList(page){
+         $("#table_list_1").jqGrid('setGridParam',{
+              url:'listPageAdvStlOrders.html',
+              postData:{
+                  advertName: function() { return $("#advertName").val(); },
+                  advertTypeId: function() { return $("#advertTypeId").val(); },
+                  settleCycle: function() { return $("#settleCycle").val(); },
+                  status: function() { return $("#status").val(); },
+                  startDate: function() { return $("#startDate").val(); },
+                  endDate: function() { return $("#endDate").val(); }
+             },
+            page:page
+         }).trigger("reloadGrid");
+    }
+
+    function doExport(){
+        var advertName=$("#advertName").val();
+        var advertTypeId=$("#advertTypeId").val();
+        var settleCycle=$("#settleCycle").val();
+        var status=$("#status").val();
+        var startDate=$("#startDate").val();
+        var endDate=$("#endDate").val();
+        url='doExport.html?advertName='+advertName+"&advertTypeId="+advertTypeId+"&settleCycle="+settleCycle+"&status="+status+"&startDate="+startDate+"&endDate="+endDate;
+        window.location.href=url;
+    }
+
+    function generateSettleOrder() {
+        var settleDate=$("#settleDate").val();
+        $.ajax({
+            type: "POST",
+            url:"genSettleOrder.html?settleDate="+settleDate,
+            dataType:"json",
+            data:$('#form1').serialize(),
+            success: function(data) {
+                layer.alert('调用成功！');
+            }
+        });
+    }
+
+   $(document).ready(function () {
+       $.jgrid.defaults.styleUI = 'Bootstrap';
+       $('#table_list_1').jqGrid({
+              url:'listPageAdvStlOrders.html',
+              postData:{
+               startDate: function() { return $("#startDate").val(); },
+               endDate: function() { return $("#endDate").val(); }
+              },
+              datatype: "json",
+              height: jqGridHeight,
+              autowidth: true,
+              shrinkToFit: true,
+              rowNum: 20,
+              rowList: [20, 30, 50],
+              colNames: ['广告名称','广告类型','结算周期','结算时间','审核人员','状态','操作'],
+              colModel: [
+                 {
+                    name: 'advertName',
+                    width: 10
+                 },
+                 {
+                    name: 'advertTypeName',
+                    width: 10
+                  },
+                  {
+                      name: 'settleCycleName',
+                      width: 10
+                  },
+                  {
+                     name: 'settleTimeStr',
+                     width: 10
+                   },
+                   {
+                      name: 'auditUserName',
+                      width: 10,
+                      formatter : function(value, options, rowObject) {
+                          if(!value||value=='undefined'){
+                              return '暂无';
+                          }
+                          return '<a href="javascript:void(0)" onclick="showAuditPopupBox(\'' + rowObject.advStlOrderId+ '\')">'+value+'</a>';
+                      }
+                  },
+                  {
+                      name: 'statusName',
+                      width: 10
+                  },
+                  {
+                      name : "advStlOrderId",
+                      width:10,
+                      formatter : function(value, options, rowObject) {
+                          return '<a href="javascript:void(0)" onclick="showDetailPopupBox(\'' + value+ '\')" class="btn btn-primary"><i class="glyphicon glyphicon-eye-open"></i>查看</a>';
+                      }
+                  }
+              ],
+              pager: "#pager_list_1"
+         });
+   });
+
+    function showAuditPopupBox(advStlOrderId){
+        layer.open({
+            type: 2,
+            title: "广告结算单审核人员记录",
+            shadeClose: true,
+            shade: false,
+            maxmin: false, //开启最大化最小化按钮
+            area: ['893px', '600px'],
+            content: "listAdvStlOrdAuditRec.html?advStlOrderId="+advStlOrderId
+        });
+    }
+
+    function showDetailPopupBox(advStlOrderId){
+        var width = (document.body.clientWidth-220)+"px";
+        layer.open({
+            type: 2,
+            shadeClose: true,
+            title:"广告结算单详情",
+            area: [width, '100%'],
+            offset: ['0px', '220px'],
+            fixed: false,
+            maxmin: true,
+            content: "listAdvStlOrdDetail.html?advStlOrderId="+advStlOrderId
+        });
+    }
+</script>
+</body>
+</html>

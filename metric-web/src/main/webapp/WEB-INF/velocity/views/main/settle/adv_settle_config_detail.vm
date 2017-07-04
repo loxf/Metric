@@ -1,0 +1,77 @@
+<link href="${rc.contextPath}/_resources/css/bootstrap-select.css" rel="stylesheet">
+<script src="${rc.contextPath}/_resources/js/bootstrap-select.js"></script>
+<div class="ibox-content">
+    <form class="form-horizontal" id="form1">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">广告名称：</label>
+            <div class="col-sm-8">
+                <input type="hidden" name="advSettleCfgId" value="$!{entity.advSettleCfgId}">
+                <input type="text" class="form-control" value="$!{entity.advertName}" readonly style="width:400px">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">素材名称：</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" value="$!{entity.advertMaName}" readonly style="width:400px">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">
+                结算比例（上游）：
+            </label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="upRate" value="$!{entity.upRate}" style="width:400px">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">
+                #if($!{entity.settleType}=='1')
+                结算单价（下游）：
+                #elseif($!{entity.settleType}=='2')
+                结算比例（下游）：
+                #end
+            </label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="settleTypeNum" value="$!{entity.settleTypeNum}" style="width:400px">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">生效日期：</label>
+            <div class="col-sm-8">
+                <input class="form-control layer-date" name="validTime" value="$!date.format('yyyy-MM-dd',$!entity.validTime)" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})">
+                <small class="text-navy">不可为空</small>
+            </div>
+        </div>
+        <div align="center">
+            <button class="btn btn-success" type="button" onclick="update()"><i class="glyphicon glyphicon-ok"></i>保存</button>
+            <button class="btn btn-white" type="button" onclick="closeLayer('0')"><i class="glyphicon glyphicon-remove"></i>返回</button>
+        </div>
+    </form>
+</div>
+<script>
+  function closeLayer(reload){
+     if("1" == reload){
+        parent.location.reload();
+     }
+     var index = parent.layer.getFrameIndex(window.name);
+     parent.layer.close(index);
+  }
+  function update(){
+     $.ajax({
+        type: "POST",
+        url:"update.html",
+        data:$('#form1').serialize(),
+        success: function(data) {
+           data = eval('(' + data + ')');
+           if(data.code == 1){
+               parent.searchList();
+               parent.closeLayer(data.msg);
+            } else {
+               parent.layer.msg(data.msg,failIcon);
+            }
+        }
+    });
+  }
+</script>
+</body>
+</html>

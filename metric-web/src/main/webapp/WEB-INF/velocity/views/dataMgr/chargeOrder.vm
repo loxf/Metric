@@ -1,0 +1,310 @@
+<script src="${rc.contextPath}/_resources/js/jquery.md5.js"></script>
+<script src="${rc.contextPath}/_resources/js/plugins/layer/extend/layer.ext.js"></script>
+<script src="${rc.contextPath}/_resources/js/plugins/layer/laydate/laydate.js"></script>
+<div class="ibox-content">
+    <form role="form" id="orderForm" class="form-inline" action="">
+        <div class="form-group">
+            <input type="hidden" value="$!{orderType}" id="orderType" name="orderTypeStr">
+            <label>订单号:</label><input type="text" id="orderId" name="orderId" class="form-control">
+            <label>平台用户名:</label><input type="text" id="userName" name="userName" class="form-control">
+            <label>支付方式</label>
+            <select data-placeholder="支付方式" name="payType" class="form-control"
+                    style="width:130px;height:33px">
+                <option value="-1" hassubinfo="true">请选择</option>
+                #foreach(${_payType} in ${payTypeList})
+                <option value="$!{_payType.value}" hassubinfo="true">$!{_payType.name}</option>
+                #end
+            </select>
+            <label>订单状态</label>
+            <select data-placeholder="订单状态" name="state" id="state" class="form-control"
+                    style="width:130px;height:33px">
+                <option value="-1" hassubinfo="true">全部订单</option>
+                #foreach(${_orderState} in ${orderStateList})
+                <option value="$!{_orderState.value}" hassubinfo="true">$!{_orderState.name}</option>
+                #end
+            </select>
+        </div>
+        <br>
+        <br>
+        <div class="form-group">
+            <label>创建时间</label>
+            <input class="form-control layer-date" name="createdAtStart" id="createdAtStart" placeholder="开始时间"
+                   onclick="laydate({istime: true, format: 'YYYY-MM-DD'})">
+            -<input class="form-control layer-date" name="createdAtEnd" id="createdAtEnd" placeholder="结束时间"
+                    onclick="laydate({istime: true, format: 'YYYY-MM-DD'})">
+            <button class="btn btn-white" type="button" onclick="searchList('1')"><i
+                    class="glyphicon glyphicon-search"></i>查询
+            </button>
+            <button class="btn btn-info" type="button" onclick="exportList()"><i class="glyphicon glyphicon-export"></i>导出
+            </button>
+        </div>
+    </form>
+</div>
+<div>
+    <div class="jqGrid_wrapper">
+        <table id="table_list_1"></table>
+        <div id="pager_list_1"></div>
+    </div>
+</div>
+
+<script>
+  function searchList(page){
+       $('#table_list_1').jqGrid('setGridParam',{
+            url:'queryOrder.html',
+              postData: getParams(),
+              page:page
+       }).trigger("reloadGrid");
+   }
+   var exportList = function(){
+        window.open("exportListCharge.html?" + $('#orderForm').serialize());
+   }
+   $(document).ready(function () {
+       $("#createdAtStart").val(laydate.now(-7));
+       $("#createdAtEnd").val(laydate.now());
+       $.jgrid.defaults.styleUI = 'Bootstrap';
+       $('#table_list_1').jqGrid({
+              url:'queryOrder.html',
+              datatype: "json",
+              height: jqGridHeight-50,
+              postData: getParams(),
+              autowidth: true,
+              shrinkToFit: true,
+              viewrecords:true,
+              rowNum: 20,
+              rowList: [20, 30, 50],
+              footerrow : true,
+              userDataOnFooter : true,
+              gridComplete: function () {
+                 $(this).footerData("set", {userName: "合计:"});
+              },
+              colNames: ['订单号','用户名', '充值金额','支付金额','折扣','支付方式','创建时间','订单状态','操作'],
+              colModel: [
+                 {
+                   name: 'orderId',
+                   width : 10
+                 },
+                 {
+                    name: 'userName',
+                    width: 10
+                 },
+                  {
+                      name: 'chargeFee',
+                      width: 10,
+                      formatter:function(cellvalue){
+                        return (parseFloat(cellvalue)/parseFloat(100)).toFixed(2);
+                      }
+                  },
+                  {
+                      name: 'payFee',
+                      width: 10,
+                      formatter:function(cellvalue){
+                        return (parseFloat(cellvalue)/parseFloat(100)).toFixed(2);
+                      }
+                  },
+                  {
+                      name: 'discount',
+                      width: 10
+                  },
+                  {
+                      name: 'payType',
+                      width: 10,
+                      formatter:function(cellvalue){
+                        if(cellvalue=='1')
+                            return "余额支付";
+                        else if(cellvalue=='3')
+                            return "微信支付";
+                        else if(cellvalue=='2')
+                            return "支付宝支付";
+                        else if(cellvalue=='4')
+                            return "网银支付";
+                        else if(cellvalue=='9')
+                            return "汇款支付";
+                        else if(cellvalue=='99')
+                            return "系统拨付";
+                        else if(cellvalue=='10')
+                            return "银盛微信支付";
+                        else if(cellvalue=='11')
+                            return "银盛支付宝支付";
+                        else if(cellvalue=='12')
+                            return "易宝支付宝支付";
+                        else if(cellvalue=='13')
+                            return "易宝微信支付";
+                        else if(cellvalue=='14')
+                            return "易宝银联支付";
+                        else
+                            return "";
+                      }
+                  },
+                  {
+                      name: 'createdAt',
+                      width: 10,
+                      formatter:formatDate
+                  },
+                  {
+                      name: 'state',
+                      width: 10,
+                      formatter:function(cellvalue){
+                        if(cellvalue==1)
+                            return "待支付";
+                        else if(cellvalue==3)
+                            return "支付中";
+                        else if(cellvalue==5)
+                            return "支付成功";
+                        else if(cellvalue==-5)
+                            return "支付失败";
+                        else if(cellvalue==13)
+                            return "交易中";
+                        else if(cellvalue==15)
+                            return "交易成功";
+                        else if(cellvalue==-15)
+                            return "交易失败";
+                        else if(cellvalue==23)
+                            return "退款中";
+                        else if(cellvalue==25)
+                            return "退款完成";
+                        else if(cellvalue==-25)
+                            return "退款失败";
+                        else if(cellvalue==90)
+                            return "订单异常";
+                        else if(cellvalue==98)
+                            return "用户取消订单";
+                        else if(cellvalue==99)
+                            return "关闭订单";
+                        else
+                            return "";
+                      }
+                  },
+                  {
+                      name: 'orderId',
+                      width: 18,
+                      formatter:formatterOperHtml
+                  }
+              ],
+              pager: "#pager_list_1"
+         });
+   });
+
+    function formatDate(cellvalue)   {
+      var date = new Date(cellvalue);
+        var y = date.getFullYear();
+        var m = date.getMonth() + 1;
+        m = m < 10 ? ('0' + m) : m;
+        var d = date.getDate();
+        d = d < 10 ? ('0' + d) : d;
+        var h = date.getHours();
+        h = h < 10 ? ('0' + h) : h;
+        var minute = date.getMinutes();
+        var second = date.getSeconds();
+        minute = minute < 10 ? ('0' + minute) : minute;
+        second = second < 10 ? ('0' + second) : second;
+        return y + '-' + m + '-' + d+' '+h+':'+minute+':'+second;
+    }
+
+   var formatterOperHtml = function(cellvalue, options, rowObject) {
+       var h1 = '<a href="javascript:showLogs(\'' + rowObject.orderId + '\')" class="btn btn-white"><i class="glyphicon"></i>查看</a>';
+       if(rowObject.state%10==3){
+           var text = '';
+           var hasPermission = false;
+           if(rowObject.state==3 && rowObject.payType!=9){
+                #if($permissionTool.hasPermission('data.account.pay'))
+                text = '支付';
+                hasPermission = true;
+                #end
+           } else if(rowObject.state==13){
+                #if($permissionTool.hasPermission('data.account.trade'))
+                text = '交易';
+                hasPermission = true;
+                #end
+           }  else if(rowObject.state==23){
+                #if($permissionTool.hasPermission('data.account.refund'))
+                text = '退款';
+                hasPermission = true;
+                #end
+           } else {
+                return h1;
+           }
+           if(hasPermission){
+               h1 = h1 + '\t<a href="javascript:enOrDisabledTradeOrder(\'' + rowObject.orderId + '\',\''+ rowObject.state + '\',\''  +
+                    'enable' + '\')" class="btn btn-success "><i class="glyphicon glyphicon-ok-circle"></i>' + text + '成功' + '</a>';
+               h1 = h1 + "\t";
+               h1 = h1 + '<a href="javascript:enOrDisabledTradeOrder(\'' + rowObject.orderId + '\',\''+ rowObject.state + '\',\'' +
+                    'disable' + '\')" class="btn btn-danger "><i class="glyphicon glyphicon-ban-circle"></i>' + text + '失败' + '</a>';
+           }
+       }
+       return h1;
+   }
+   function showLogs(orderId){
+        layer.open({
+            type: 2,
+            title: '订单日志',
+            shadeClose: true,
+            shade: false,
+            maxmin: false, //开启最大化最小化按钮
+            area: ['600px', '400px'],
+            content: 'showOrderLogs.html?orderId=' + orderId
+        });
+   }
+   function enOrDisabledTradeOrder(orderId, state, oper){
+        if(oper=='enable'){
+            if(state==3){
+                // 系统密码
+                layer.prompt({
+                        title: '输入系统密码，并确认',
+                        formType: 1
+                    },
+                    function(str){
+                        $.ajax({
+                            type: "POST",
+                            url:"checkSysPwd.html?pwd=" + $.md5(str),
+                            dataType:"json",
+                            success: function(data) {
+                                if(data.code==1){
+                                    doAction(orderId, state, oper);
+                                } else {
+                                    layer.msg(data.msg, {time:2000});
+                                }
+                            }
+                        });
+                    });
+            } else {
+                doAction(orderId, state, oper);
+            }
+        } else {
+            layer.confirm('确认执行该操作？',{icon: 3, title:'订单手动确认'}, function(){
+                    doAction(orderId, state, oper);
+                }, function(){
+                    layer.closeAll();
+                });
+        }
+   }
+
+   function doAction(orderId, state, oper){
+        $.ajax({
+            type: "POST",
+            url:"enOrDisabledTradeOrder.html?orderId=" + orderId + "&oper=" + oper + "&state=" + state ,
+            dataType:"json",
+            success: function(data) {
+                layer.msg(data.msg, {time:2000}, function(){
+                    searchList(1);
+                    layer.closeAll();
+                });
+            }
+        });
+   }
+
+   function getParams(){
+        var data=$('#orderForm').serialize();
+        data= decodeURIComponent(data,true);
+        return formToJson(data);
+    }
+   function formToJson(data) {
+       data=data.replace(/&/g,"\",\"");
+       data=data.replace(/=/g,"\":\"");
+       data="{\""+data+"\"}";
+       var json =  eval('(' + data + ')');
+       return json;
+    }
+
+
+</script>
+</html>

@@ -1,0 +1,170 @@
+
+<link href="${rc.contextPath}/_resources/okr/static/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+<link href="${rc.contextPath}/_resources/okr/static/css/font-awesome.min.css?v=4.4.0" rel="stylesheet">
+<link href="${rc.contextPath}/_resources/okr/static/css/animate.css" rel="stylesheet">
+<link href="${rc.contextPath}/_resources/okr/static/css/style.css?v=4.1.0" rel="stylesheet">
+<link href="${rc.contextPath}/_resources/okr/static/css/datacenter.min.css?v=1.1.0" rel="stylesheet">
+<link href="${rc.contextPath}/_resources/css/jquery/select2.min.css" rel="stylesheet">
+
+<div class="wrapper wrapper-content">
+    <div class="row">
+        <div class="col-sm-6">
+            <form id="J_frmChartSetting" onsubmit="return false;">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>1. 输入单图名称</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <input type="text" placeholder="请输入单图名称" name="chartName" id="J_chartName" class="form-control">
+                    </div>
+                </div>
+
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>2. 图表描述</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <input type="text" placeholder="请输入图表描述" name="chartDesc" id="J_chartDesc" class="form-control">
+                    </div>
+                </div>
+
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>3. 选择图表样式</h5>
+                    </div>
+                    <div class="ibox-content clearfix">
+                        <ul class="chartItems" id="J_chartItems">
+                            <!--选中样式：selected-->
+                            #foreach($item in $!{chartType})
+                            <li class="chartItem J_chartItem" data-type="$!{item.text}" data-code="$!{item.value}">$!{item.name}</li>
+                            #end
+                        </ul>
+                        <input type="hidden" name="type" id="J_chartType" value="">
+                    </div>
+                </div>
+
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>4. 指标配置</h5>
+                    </div>
+                    <!--指标-->
+                    <div class="ibox-content clearfix indexArea" id="J_indexArea">
+                        <div class="left-lable col-sm-2">指标：</div>
+                        <div class=" col-sm-10 index-area ">
+                            <a class="btn btn-primary" id="J_addIndexItem">+ 添加指标</a>
+                            <div id="J_indexItemArea">
+                                <!--<div class="col-index J_indexItem">
+                                <select name="index" class="item_select" id="J_index_001">
+                                    <option value="1">顶顶顶顶</option>
+                                </select>
+                                <a href="javascript:;" class="btn-del mgl20">删除</a>
+                            </div>-->
+                            </div>
+                        </div>
+
+                    </div>
+                    <!--维度-->
+                    <div class="ibox-content clearfix dimensionArea" id="J_dimensionArea">
+                        <div class="left-lable col-sm-2">维度：</div>
+                        <div class=" col-sm-10 dimension-area ">
+                            <a class="btn btn-primary" id="J_addDimensionItem">+ 添加维度</a>
+                            <div id="J_dimensionItemArea">
+                                <!--<div class="col-index J_dimensionItem">
+                            <select name="jd" class="item_select" id="J_dimension_001">
+                                <option value="1">xxxxx</option>
+                            </select>
+                        </div>-->
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>5. 是否启用</h5>
+                    </div>
+                    <div class="ibox-content clearfix">
+                        <div class="radio-inline">
+                            <label>
+                                <input type="radio" value="1" name="state" checked="checked">启用</label>
+                        </div>
+                        <div class="radio-inline">
+                            <label>
+                                <input type="radio" value="0" name="state">禁用</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class=" col-sm-12 dimension-area mgt30">
+                    <a class="btn btn-primary mgl50 mgr30" id="J_submit">保存</a>
+                    <a class="btn btn btn-white" id="J_closeBtn" onclick="javascript:parent.closeLayer();">返回</a>
+                </div>
+            </form>
+        </div>
+
+        <!--right-->
+        <div class="col-sm-6">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>图表预览</h5>
+                </div>
+                <div class="ibox-content" style="min-height:300px;">
+                    <h2>暂无图表预览功能</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!--模版-->
+<!--指标-->
+<script type="text/html" id="J_tplIndexItem">
+    <div class="col-index J_indexItem mgb10">
+        <select name="quotaCode" class="item_select J_indexItemSelect" id="J_indexItemSelect_{{d.index}}">
+            <option value="" data-granularity="0">请选择</option>
+            {{# for (var i in d.data){ }}
+            {{# var granularity=''; if(d.data[i].particleSize==-1){ granularity='周'; } else if(d.data[i].particleSize==-2){ granularity='月'; } else if(d.data[i].particleSize==-3){ granularity='年'; } else if(d.data[i].particleSize=1440){ granularity='天'; } else { granularity=d.data[i].particleSize; } }}
+            <option value="{{d.data[i].quotaCode}}" data-granularity="{{d.data[i].particleSize}}">{{d.data[i].quotaName}}({{granularity}})</option>
+            {{# } }}
+        </select>
+        <a href="javascript:;" class="btn-del mgl20 J_delBtn">删除</a>
+    </div>
+</script>
+<!--维度-->
+<script type="text/html" id="J_tplDimensionItem">
+    <div class="col-index J_dimensionItem mgb10">
+        <select name="quotaDimension" class="item_select J_dimensionItemSelect" id="J_dimensionItemSelect_{{d.index}}">
+            <option value="">请选择</option>
+            {{# for (var i in d.data){ }}
+            <option value="{{d.data[i].columnCode}}" >{{d.data[i].columnName}}</option>
+            {{# } }}
+        </select>
+        <a href="javascript:;" class="btn-del mgl20 J_delBtn">删除</a>
+    </div>
+</script>
+<!-- 全局js -->
+<script src="${rc.contextPath}/_resources/okr/static/libs/jquery-1.11.1.min.js"></script>
+<script src="${rc.contextPath}/_resources/okr/static/libs/bootstrap.min.js?v=3.3.6"></script>
+<script src="${rc.contextPath}/_resources/okr/static/libs/plugins/layer/layer.min.js"></script>
+<script src="${rc.contextPath}/_resources/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="${rc.contextPath}/_resources/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="${rc.contextPath}/_resources/okr/static/libs/laytpl.min.js"></script>
+<script src="${rc.contextPath}/_resources/js/jquery.select2.full.js"></script>
+
+<!--业务js-->
+<script src="${rc.contextPath}/_resources/okr/static/js/utils.min.js"></script>
+<script src="${rc.contextPath}/_resources/okr/static/js/common.min.js"></script>
+<script>
+  $(document).ready(function() {
+        $(".single_quota_select").select2();
+  });
+    var chartSet = new OKR.chartSetting();
+    chartSet.init({
+        indexApi: '${rc.contextPath}/admin/okr/chart/getQuotaList.html',
+        dimensionApi: '${rc.contextPath}/admin/okr/chart/getQuotaDimsByQuotas.html',
+        submitApi: '${rc.contextPath}/admin/okr/chart/saveChart.html'
+    });
+
+</script>

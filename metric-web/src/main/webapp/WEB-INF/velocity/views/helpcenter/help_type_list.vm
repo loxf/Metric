@@ -1,0 +1,157 @@
+<link href="${rc.contextPath}/_resources/css/jquery/combo.select.css" rel="stylesheet">
+<script src="${rc.contextPath}/_resources/js/jquery.combo.select.js"></script>
+<div class="ibox-content">
+    <form role="form" class="form-inline">
+        <div class="form-group">
+            <label>分类名称:</label><input type="text" id="helpTypeName" class="form-control">
+            <label>状态:</label>
+            <select class="form-control" style="width:130px;height:33px" name="status" id="status">
+                <option value="">请选择</option>
+                <option value="1">正常</option>
+                <option value="0">禁用</option>
+            </select>
+            <button class="btn btn-white" type="button" onclick="searchList('1')"><i class="glyphicon glyphicon-search"></i>查询</button>
+
+            <button class="btn btn-success" type="button" onclick="newHelpType()"><i class="glyphicon glyphicon-plus"></i>新增分类</button>
+
+        </div>
+    </form>
+</div>
+<div class="jqGrid_wrapper ">
+        <table id="table_list_1"></table>
+        <div id="pager_list_1"></div>
+    </div>
+</div>
+<script>
+  function searchList(page){
+       $("#table_list_1").jqGrid('setGridParam',{
+            url:'listHelpType.html?'+getParams(),
+            page:page
+       }).trigger("reloadGrid");
+   }
+    function getParams(){
+      var helpTypeName=$("#helpTypeName").val();
+      var status=$("#status").val();
+      return "helpTypeName="+helpTypeName+"&status="+status;
+   }
+
+   $(document).ready(function () {
+       $.jgrid.defaults.styleUI = 'Bootstrap';
+       $('#table_list_1').jqGrid({
+              url:'listHelpType.html',
+              datatype: "json",
+              autowidth: true,
+              height: jqGridHeight,
+              viewrecords:true,
+              shrinkToFit: true,
+              rowNum: 20,
+              rowList: [20, 30, 50],
+              colNames: ['分类名称','排序号','渠道可见偏好','创建人 ','状态','操作'],
+              colModel: [
+                 {
+                    name: 'helpTypeName',
+                    width: 10
+                 },
+                 {
+                       name: 'sortNum',
+                       width: 10
+                  },
+                  {
+                     name: 'channelTypeNames',
+                     width: 10
+                  },
+                  {
+                      name: 'userName',
+                      width: 8
+                  },
+
+                   {
+                            name: 'status',
+                            width: 8,
+                           formatter:  customFmatter
+                    },
+                  {
+                  name : "helpTypeId",
+                  title : false,
+                  width:10,
+                  formatter : actFormatter
+                  }
+              ],
+              pager: "#pager_list_1"
+         });
+   });
+
+
+function customFmatter(cellvalue, options, rowObject){
+    var result="";
+    if(cellvalue=='1'){
+         result='正常';
+    }else{
+        result='禁用';
+    }
+    return result;
+}
+
+ var actFormatter = function(value, options, rowObject ) {
+          var h1 = '';
+          var h2= '<a href="javascript:void(0)" onclick="showPopupBox(\'' + value + '\')" class="btn btn-primary"><i class="glyphicon glyphicon-pencil"></i>编辑</a>';
+          if(rowObject.status!='2'){
+                     var statusName = '禁用';
+                     var status = '0';
+                     var className = 'danger';
+                     var tag = 'ban-circle';
+                     if(rowObject.status=='0'){
+                         statusName='启用';
+                         status = '1';
+                         className = 'success';
+                         tag = 'ok-circle';
+                     }
+                     h1 = '<a href="javascript:statusConfig(\'' + value + '\',\'' + status + '\')" class="btn btn-' + className + ' "><i class="glyphicon glyphicon-'+ tag + '"></i>' + statusName + '</a>';
+                 }
+          return h2 + "&nbsp;&nbsp;" + h1;
+   };
+
+function statusConfig(helpTypeId, status) {
+        var qes = "确定启用吗?";
+        if(status == '0') {
+            qes = "确定禁用吗?";
+        }
+        layer.confirm(qes,{icon: 3, title:'修改状态'}, function(){
+       $.ajax({
+         type: "POST",
+         url:"updateStatus.html?helpTypeId="+helpTypeId+"&status="+status,
+         dataType:"json",
+         success: function(data) {
+            if(data.code == 1){
+               searchList();
+               closeLayer(data.msg);
+            }else{
+               layer.msg(data.msg,failIcon);
+            }
+         }
+       });
+       }, function(){
+         layer.closeAll();
+       });
+    }
+function showPopupBox(helpTypeId){
+   layer.open({
+     type: 2,
+     area: ['900px', '400px'],
+     fixed: false,
+     title: '编辑帮助类别',
+     maxmin: true,
+     content: 'toEditHelpType.html?helpTypeId='+helpTypeId
+    });
+  }
+function newHelpType(){
+   layer.open({
+     type: 2,
+     area: ['900px', '400px'],
+     fixed: false,
+     title: '新建分类',
+     maxmin: true,
+     content: 'toAddHelpType.html'
+    });
+  }
+</script>

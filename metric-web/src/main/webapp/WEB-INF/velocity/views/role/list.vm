@@ -1,0 +1,129 @@
+<div class="ibox-content">
+<div >
+    <form id="form1" class="form-horizontal" method="post" action="update.html"></form>
+</div>
+<div >
+    #if($permissionTool.hasPermission('system.role.add'))
+    <a onclick="add()" class="btn btn-success "><i class="glyphicon glyphicon-plus"></i>添加</a>
+    #end
+</div>
+<div class="jqGrid_wrapper ">
+    <table id="table_list_1"></table>
+    <div id="pager_list_1"></div>
+</div>
+</div>
+<script>
+var grid;
+function searchList(){
+   grid.trigger("reloadGrid");
+}
+
+function getUrl(){
+    return "list.html?"+$('#form1').serialize();
+}
+
+$(document).ready(function () {
+   grid=$('#table_list_1').jqGrid({
+          url:getUrl(),
+          datatype: "json",
+          autowidth: true,
+          height: jqGridHeight,
+          viewrecords:true,
+          shrinkToFit: true,
+          rowNum: 20,
+          rowList: [20, 30, 50],
+          colNames: ['角色名称','角色描述','操作'],
+          colModel: [
+             {
+                   name: 'roleName',
+                   width: 10,
+                   editable:true
+              },
+              {
+                  name: 'roleRemark',
+                  width: 10
+              },
+              {
+              name : "roleId",
+              title : false,
+              width:12,
+              formatter : actFormatter
+              }
+          ],
+          pager: "#pager_list_1"
+     });
+});
+
+function actFormatter(cellvalue, options, rawObject) {
+   var detailHref = '';
+   #if($permissionTool.hasPermission('system.role.update'))
+   detailHref = '<a onclick="edit(\'' + rawObject.roleId + '\')" class="btn btn-primary "><i class="glyphicon glyphicon-pencil"></i>修改</a>';
+   #end
+   var deleteHref = '';
+   #if($permissionTool.hasPermission('system.role.allot'))
+   deleteHref = '<a onclick="deleteRole(\'' + rawObject.roleId + '\')" class="btn btn-danger "><i class="glyphicon glyphicon-remove"></i>删除</a>';
+   #end
+   var allotHref = '';
+   #if($permissionTool.hasPermission('system.role.delete'))
+   allotHref  ='<a onclick="allot(\'' + rawObject.roleId + '\')" class="btn btn-info "><i class="glyphicon glyphicon-edit"></i>分配权限</a>'
+   #end
+   return detailHref + "\t" + allotHref + "\t" + deleteHref;
+};
+
+function edit(roleId){
+   layer.open({
+     type: 2,
+     area: ['800px', '320px'],
+     fixed: false,
+     maxmin: true,
+     title: '修改角色',
+     content: 'edit.html?roleId='+roleId
+    });
+}
+ function add(){
+   layer.open({
+     type: 2,
+     area: ['800px', '320px'],
+     fixed: false,
+     maxmin: true,
+     title: '新建角色',
+     content: 'add.html'
+    });
+}
+
+function deleteRole(roleId){
+layer.confirm('确定要删除吗？', {
+  btn: ['确定','取消'] //按钮
+}, function(){
+    $.ajax({
+        type: "get",
+        url:"delete.html",
+        dataType:"json",
+        data:{
+            roleId:roleId
+        },
+        success: function(data) {
+            if(data.code == 1){
+                searchList();
+                layer.msg(data.msg,successIcon);
+            }else{
+                layer.msg(data.msg,failIcon);
+            }
+        }
+    });
+}, function(){
+});
+}
+
+function allot(roleId){
+    var width = (document.body.clientWidth-220)+"px";
+    layer.open({
+     type: 2,
+     area: [width, '100%'],
+     offset: ['0px', '220px'],
+     fixed: false,
+     maxmin: true,
+     content: 'toAllot.html?roleId='+roleId
+    });
+}
+</script>

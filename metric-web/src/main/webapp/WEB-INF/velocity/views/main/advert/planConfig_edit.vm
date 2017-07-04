@@ -1,0 +1,298 @@
+<link href="${rc.contextPath}/_resources/css/bootstrap-select.css" rel="stylesheet">
+<script src="${rc.contextPath}/_resources/js/bootstrap-select.js"></script>
+<div class="ibox-content">
+   <form class="form-horizontal" id="form1">
+         <div class="form-group">
+             <label class="col-sm-3 control-label">计划名称：</label>
+             <div class="col-sm-8">
+                <input type="hidden" name="planCfgId" value="$!{entity.planCfgId}">
+                 <input type="text" class="form-control" name="planCfgName" value="$!{entity.planCfgName}"  style="width:400px">
+             </div>
+         </div>
+         <div class="form-group">
+              <label class="col-sm-3 control-label">广告主:</label>
+              <div class="col-sm-8" style="width:430px">
+                  <select id="userId" name="userId" class="selectpicker show-tick form-control" data-live-search="true">
+                    #foreach($item in ${userList})
+                       <option value="$!{item.userId}"  #if($!{entity.userId} == $!{item.userId}) selected="selected" #end>$!{item.userName}</option>
+                    #end
+                  </select>
+              </div>
+         </div>
+        <div class="form-group">
+             <label class="col-sm-3 control-label">上游结算规则:</label>
+             <div class="col-sm-8" style="width:430px">
+                 <select id="settleRule0" name="planConfigSettleRule0.commonSettleId" onchange="changeSettleRule('0')"  class="selectpicker show-tick form-control" data-live-search="true">
+                      #foreach($item in $!{commonSettleRuleList})
+                        <option value="$!{item.comSetRuId}"  #if($!{entity.planConfigSettleRule0.commonSettleId} == $!{item.comSetRuId}) selected="selected" #end>$!{item.name}</option>
+                      #end
+                 </select>
+             </div>
+         </div>
+         <div class="form-group">
+              <label class="col-sm-3 control-label">上游结算方式：</label>
+              <div class="col-sm-8" style="width:430px">
+                 <select id="settleMethod0" name="planConfigSettleRule0.settleMethod" class="selectpicker show-tick form-control">
+                    #foreach($item in $!{settleMethods.entrySet()})
+                      <option value="$!{item.key}" #if($!{entity.planConfigSettleRule0.settleMethod} == $!{item.key}) selected="selected"  #end>$!{item.value}</option>
+                    #end
+                </select>
+              </div>
+          </div>
+          <div class="form-group">
+               <label class="col-sm-3 control-label">上游结算指标：</label>
+               <div class="col-sm-8">
+                 <input type="text" class="form-control" id="settleTarget0" name="planConfigSettleRule0.settleTarget" value="$!{entity.planConfigSettleRule0.settleTarget}" style="width:400px">
+                </div>
+           </div>
+            <div class="form-group">
+                 <label class="col-sm-3 control-label">上游结算类型：</label>
+                 <div class="col-sm-8" style="width:430px">
+                    <select id="settleType0" name="planConfigSettleRule0.settleType" class="selectpicker show-tick form-control">
+                       #foreach($item in $!{settleTypes.entrySet()})
+                         <option value="$!{item.key}" #if($!{entity.planConfigSettleRule0.settleType} == $!{item.key}) selected="selected"  #end>$!{item.value}</option>
+                       #end
+                   </select>
+                 </div>
+            </div>
+           <div class="form-group">
+                <label class="col-sm-3 control-label">上游结算值：</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" id="settlePrice0" name="planConfigSettleRule0.settlePrice" value="$!{entity.planConfigSettleRule0.settlePrice}" style="width:400px">
+                </div>
+           </div>
+             <div class="form-group">
+                 <label class="col-sm-3 control-label">上游结算周期：</label>
+                 <div class="col-sm-8" style="width:430px">
+                    <select  id="settleCycle0" name="planConfigSettleRule0.settleCycle" class="selectpicker show-tick form-control">
+                       #foreach($item in $!{settleCycles.entrySet()})
+                          <option value="$!{item.key}" #if($!{entity.planConfigSettleRule0.settleCycle} == $!{item.key}) selected="selected" #end>$!{item.value}</option>
+                       #end
+                   </select>
+                 </div>
+              </div>
+              <div class="form-group">
+                   <label class="col-sm-3 control-label">下游结算规则:</label>
+                   <div class="col-sm-8" style="width:430px">
+                       <select id="settleRule1" name="planConfigSettleRule1.commonSettleId" onchange="changeSettleRule('1')" class="selectpicker show-tick form-control" data-live-search="true">
+                            #foreach($item in $!{commonSettleRuleList})
+                              <option value="$!{item.comSetRuId}"  #if($!{entity.planConfigSettleRule1.commonSettleId} == $!{item.comSetRuId}) selected="selected" #end>$!{item.name}</option>
+                            #end
+                       </select>
+                   </div>
+               </div>
+               <div class="form-group">
+                    <label class="col-sm-3 control-label">下游结算方式：</label>
+                    <div class="col-sm-8" style="width:430px">
+                       <select id="settleMethod1" name="planConfigSettleRule1.settleMethod" class="selectpicker show-tick form-control">
+                          #foreach($item in $!{settleMethods.entrySet()})
+                            <option value="$!{item.key}" #if($!{entity.planConfigSettleRule1.settleMethod} == $!{item.key}) selected="selected" #end>$!{item.value}</option>
+                          #end
+                      </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                     <label class="col-sm-3 control-label">下游结算指标：</label>
+                     <div class="col-sm-8">
+                       <input type="text" class="form-control" id="settleTarget1" name="planConfigSettleRule1.settleTarget" value="$!{entity.planConfigSettleRule1.settleTarget}" style="width:400px">
+                      </div>
+                 </div>
+                 <div class="form-group">
+                      <label class="col-sm-3 control-label">下游结算类型：</label>
+                      <div class="col-sm-8" style="width:430px">
+                         <select id="settleType1" name="planConfigSettleRule1.settleType" class="selectpicker show-tick form-control">
+                            #foreach($item in $!{settleTypes.entrySet()})
+                              <option value="$!{item.key}" #if($!{entity.planConfigSettleRule1.settleType} == $!{item.key}) selected="selected"  #end>$!{item.value}</option>
+                            #end
+                        </select>
+                      </div>
+                 </div>
+                 <div class="form-group">
+                      <label class="col-sm-3 control-label">下游结算值：</label>
+                      <div class="col-sm-8">
+                          <input type="text" class="form-control" id="settlePrice1" name="planConfigSettleRule1.settlePrice" value="$!{entity.planConfigSettleRule1.settlePrice}" style="width:400px">
+                      </div>
+                 </div>
+               <div class="form-group">
+                   <label class="col-sm-3 control-label">下游结算周期：</label>
+                   <div class="col-sm-8" style="width:430px">
+                      <select id="settleCycle1" name="planConfigSettleRule1.settleCycle" class="selectpicker show-tick form-control">
+                         #foreach($item in $!{settleCycles.entrySet()})
+                            <option value="$!{item.key}" #if($!{entity.planConfigSettleRule1.settleCycle} == $!{item.key}) selected="selected"  #end>$!{item.value}</option>
+                         #end
+                     </select>
+                   </div>
+                </div>
+                <div class="form-group">
+                     <label class="col-sm-3 control-label">默认扣量比例：</label>
+                     <div class="col-sm-8">
+                         <input type="text" name="deductedRate" value="$!{entity.deductedRate}" class="form-control"  style="width:400px">
+                     </div>
+                 </div>
+                 <div class="form-group">
+                     <label class="col-sm-3 control-label">每日限额：</label>
+                     <div class="col-sm-8">
+                         <input type="text"  name="dailyPrice" value="$!{entity.dailyPrice}" onchange="if(/\D/.test(this.value)){this.value='';}"  class="form-control" name="totalMoney"  style="width:400px">
+                     </div>
+                 </div>
+                 <div class="form-group">
+                    <label class="col-sm-3 control-label">申请方式:</label>
+                    <div class="col-sm-8" style="width:430px">
+                        <select name="needAudit" class="selectpicker show-tick form-control">
+                             <option value="1" #if($!{entity.needAudit} == '1') selected="selected" #end>需要审核</option>
+                             <option value="0" #if($!{entity.needAudit} == '0') selected="selected" #end>不需要审核</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">投放平台:</label>
+                    <div class="col-sm-8" style="width:430px">
+                        <select  name="platform" class="selectpicker show-tick form-control">
+                             <option value="1" #if($!{entity.platform} == '1') selected="selected" #end>Android</option>
+                             <option value="2" #if($!{entity.platform} == '2') selected="selected" #end>IOS</option>
+                             <option value="3" #if($!{entity.platform} == '3') selected="selected" #end>Android+IOS</option>
+                        </select>
+                    </div>
+                </div>
+                 <div class="form-group">
+                     <label class="col-sm-3 control-label">站长限制:</label>
+                     <div class="col-sm-8" style="width:430px">
+                        <select name="masterLimit" id="masterLimit" onchange="changeMasterLimit()" class="selectpicker show-tick form-control">
+                          <option value="1"  #if($!{entity.masterLimit} == '1') selected="selected" #end>不限制</option>
+                          <option value="2"  #if($!{entity.masterLimit} == '2') selected="selected" #end>允许以下站长</option>
+                          <option value="3"  #if($!{entity.masterLimit} == '3') selected="selected" #end>屏蔽以下站长</option>
+                        </select>
+                        <input type="text" id="userIds" name="userIds" value="$!{entity.userIds}"  class="form-control"  style="width:400px;margin-top:10px">
+                     </div>
+                 </div>
+                 <div class="form-group">
+                      <label class="col-sm-3 control-label">展示时间：</label>
+                      <div class="checkbox i-checks">
+                         #foreach($item in $!{weeks})
+                             <label class="checkbox-inline i-checks">
+                             <input type="checkbox" name="week" value="$!{item.key}" lay-skin="primary" #if($!{item.checked} == '1') checked #end>$!{item.value}</label>
+                          #end
+                      </div>
+                  </div>
+                  <div class="form-group">
+                       <label class="col-sm-3 control-label">展示时间段：</label>
+                       <div class="col-sm-8">
+                           <input type="text" class="form-control" name="viewTime" value="$!{entity.viewTime}"  style="width:400px">
+                           <font color="red">多个时间段以英文逗号分隔,如:08-12,15-18</font>
+                       </div>
+                  </div>
+                 <div class="form-group">
+                     <label class="col-sm-3 control-label">投放结束日期:</label>
+                     <div class="col-sm-8">
+                          <input class="form-control layer-date" name="endTimeStr" value="$!{entity.endTimeStr}" placeholder="结束日期" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})">
+                     </div>
+                 </div>
+                 <div class="form-group">
+                      <label class="col-sm-3 control-label">投放区域:</label>
+                      <div class="col-sm-8">
+                        <input type="radio" name="putRegion" value="1" onclick="changePutRegion()" checked id="noLimit"><label for="noLimit">不限区域</label>&nbsp;
+                        <input type="radio" name="putRegion" value="2" onclick="changePutRegion()" #if($!{entity.putRegion} == '2') checked #end id="allowId"><label for="allowId">允许如下区域</label>&nbsp;
+                        <input type="radio" name="putRegion" value="3" onclick="changePutRegion()" #if($!{entity.putRegion} == '3') checked #end id="limitId"><label for="limitId">拒绝如下区域</label>&nbsp;
+                        #parse("/layout/fragments/plan_config_city.vm")
+                      </div>
+                  </div>
+                 <div class="form-group">
+                    <label class="col-sm-3 control-label">渠道偏好：</label>
+                    <div class="col-sm-8 checkbox i-checks">
+                      #foreach($item in $!{entity.channelTypeList})
+                        <label class="checkbox-inline i-checks">
+                        <input type="checkbox" name="channelTypeIds" value="$!{item.typeId}" lay-skin="primary" #if($!{item.checked} == '1') checked #end>$!{item.name}</label>
+                      #end
+                    </div>
+                 </div>
+                 <div class="form-group">
+                    <label class="col-sm-3 control-label">标签:</label>
+                    <div class="col-sm-8 checkbox i-checks">
+                      #foreach($item in $!{tags})
+                           <label class="checkbox-inline i-checks">
+                           <input type="checkbox" value="$!{item.tagId}" name="tagIds" #if($!item.selectFlag == '1')  checked="checked" #end>$!{item.tagName}</label>
+                       #end
+                    </div>
+                 </div>
+                 <div class="form-group">
+                   <label class="col-sm-3 control-label">状态：</label>
+                   <div class="col-sm-8" style="width:430px">
+                       <select name="status" class="selectpicker show-tick form-control">
+                           <option value="1" #if($!entity.status == 1) selected="selected" #end>启用</option>
+                           <option value="0" #if($!entity.status == 0) selected="selected" #end>禁用</option>
+                       </select>
+                   </div>
+                </div>
+                <div align="center">
+                   <button class="btn btn-success" type="button" onclick="savePlanConfig()"><i class="glyphicon glyphicon-ok"></i>保存</button>
+                   <button class="btn btn-white" type="button" onclick="parent.closeLayer()"><i class="glyphicon glyphicon-remove"></i>返回</button>
+               </div>
+     </form>
+ </div>
+ <script>
+   $(document).ready(function() {
+      if("$!{entity.planCfgId}" != ''){//编辑
+         $("#userId").attr("disabled","true");
+         $("#settleRule0").attr("disabled","true");
+         $("#settleMethod0").attr("disabled","true");
+         $("#settleRule1").attr("disabled","true");
+         $("#settleMethod1").attr("disabled","true");
+      }else{//新增计划配置
+         changeSettleRule('0');
+         changeSettleRule('1');
+      }
+      changeMasterLimit();//站长限制
+      changePutRegion();//投放区域
+   });
+
+   function changeMasterLimit(){
+      if("1" == $("#masterLimit").val()){
+        $("#userIds").hide();
+      }else{
+        $("#userIds").show();
+      }
+   }
+
+   function changePutRegion(){
+     var putRegion = $("input[name='putRegion']:checked").val();
+     if("1" == putRegion){
+       $("#putRegionDiv").hide();
+     }else{
+       $("#putRegionDiv").show();
+     }
+   }
+
+   function savePlanConfig(){
+      $.ajax({
+         type: "POST",
+         url:"updateConfig.html",
+         dataType:"json",
+         data:$('#form1').serialize(),
+         success: function(data) {
+          if(data.code == 1){
+               parent.searchList();
+               parent.closeLayer(data.msg);
+             }else{
+               parent.layer.msg(data.msg,failIcon);
+            }
+         }
+     });
+   }
+   //修改上、下游结算规则联动配置
+   function changeSettleRule(type){
+     var comSetRuId = $("#settleRule"+type).val();
+     $.ajax({
+            type: "POST",
+            url:"${rc.contextPath}/admin/advert/settleRuleInfo.html?comSetRuId="+comSetRuId,
+            dataType:"json",
+            success: function(data) {
+              $("#settleMethod"+type).selectpicker('val',data.settleMethod);
+              $("#settleTarget"+type).val(data.settleTarget);
+              $("#settleType"+type).selectpicker('val',data.settleType);
+              $("#settlePrice"+type).val(data.settleTypeNum);
+              $("#settleCycle"+type).selectpicker('val',data.settleCycle);
+            }
+        });
+   }
+</script>
+</html>

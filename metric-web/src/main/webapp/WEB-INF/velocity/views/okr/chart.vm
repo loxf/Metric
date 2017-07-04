@@ -1,0 +1,167 @@
+
+    <title>单图页面</title>
+
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="${rc.contextPath}/_resources/okr/static/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="${rc.contextPath}/_resources/okr/static/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link href="${rc.contextPath}/_resources/okr/static/css/animate.css" rel="stylesheet">
+    <link href="${rc.contextPath}/_resources/okr/static/libs/plugins/select2/select2.min.css?v=4.0.3" rel="stylesheet">
+    <link href="${rc.contextPath}/_resources/okr/static/css/plugins/jqgrid/ui.jqgrid.css?v=0820" rel="stylesheet">
+    <link href="${rc.contextPath}/_resources/okr/static/css/style.css?v=4.1.0" rel="stylesheet">
+    <link href="${rc.contextPath}/_resources/okr/static/css/datacenter.min.css?v=1.0.0" rel="stylesheet">
+
+
+    <div class="wrapper wrapper-content">
+        <div class="row">
+            <form onsubmit="return false;" id="J_DataFilter">
+                <div class="col-sm-12">
+                    <div class="datacenter-kanban-header clearfix">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="title-left">
+                                    <span class="title" id="J_dataBoardName"></span>
+                                </div>
+                                <div class="fr filter-quick-days mgr10 fl" id="J_filterViewType">
+                                    <ul class="hide">
+                                        <li class="cur" data-viewtype="chart">
+                                            <span class="vtype-chart">图表</span>
+                                        </li>
+                                        <li data-viewtype="table">
+                                            <span class="vtype-table">表格</span>
+                                        </li>
+                                    </ul>
+                                    <input type="hidden" name="viewType" id="J_viewType" value="chart">
+                                </div>
+                                <div class="fr filter-quick-days mgr10 fl" id="J_filterQuickDays">
+                                    <ul>
+                                        <li data-days="thisWeek">本周数据</li>
+                                        <li data-days="thisMonth">本月数据</li>
+                                        <li data-days="lastMonth">上月数据</li>
+                                    </ul>
+                                </div>
+
+                                <div class="fr data-Date-select-Area mgr10">
+                                    <input type="text" name="startCircleTime" value="$!{startCircleTime}" id="J_dataStartDay" readonly="readonly" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',lang:'zh-cn',errDealMode:1,maxDate:'%y-%M}',onpicked:function(){chkdate( $dp.cal.getNewDateStr() )}});">至
+                                    <input type="text" name="endCircleTime" value="$!{endCircleTime}" id="J_dataEndDay" readonly="readonly" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',lang:'zh-cn',errDealMode:1,maxDate:'%y-%M-%d}',onpicked:function(){chkdate( $dp.cal.getNewDateStr() )}});">
+                                </div>
+                                <input type="hidden" name="filterRule" value="" id="J_filerRule">
+                                <!--这里可以添加带入的过滤条件-->
+                                <input type="hidden" name="chartId" value="$!{chartId}">
+                                <input type="hidden" name="busiDomain" value="$!{busiDomain}">
+                                <input type="hidden" name="bizname" value="$!{bizname}">
+                                <!--这里可以添加带入的过滤条件-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="row mgt10">
+            <div class="col-sm-12">
+                <div class="data-filter-bar clearfix">
+                    <div class="rule-list fl">
+                        <div class="rule-name fl">$!{bizname}</div>
+                        <div class="fl mgl20 rule-foruser rule-name" id="J_userRule"><i id="J_delUserRule"></i><div id="J_userRulearea"></div></div>
+                    </div>
+                    <div class="rule-name rule-option fr" id="J_ruleOption">过滤条件</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mgt10">
+            <div class="col-sm-12">
+                <!-- id="" -->
+                <a href="javascript:;" id="J_expExcel" class="btn btn-info fr mgb10" style="display:none;">导出Excel</a>
+                <div class="row" id="J_dataViewArea">
+                    <!--
+                    <div class="col-sm-4 chart-item">
+                        <div class="chart-box">
+                            <a href="chart.html?id=23928392">
+                                <h3>数据图表001</h3>
+                            </a>
+                        </div>
+                    </div>
+                    -->
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!--过滤筛选-->
+    <div class="popup-bg" id="J_popupBG"></div>
+    <div class="popup-filter-box" id="J_popupFilter">
+        <form id="J_frmFilterRule" onsubmit="return false;">
+            <a href="javascript:;" class="btn-close J_closePopup">关闭</a>
+            <div class="popup-title">过滤条件</div>
+            <p class="filter-one mgt20 mgb10">符合以下<select name="relation" id="J_relation">
+                <option value="AND">全部</option>
+                <option value="OR">任意</option>
+            </select>条件</p>
+            <div class="filter-item-list" id="J_filterItemList"></div>
+            <div class="filter-item mgt20 mgb20">
+                <a href="javascript:;" id="J_addNewRule"><div class="btn_add mgr10">添加</div>添加一个新的过滤条件</a>
+            </div>
+            <div class="filter-doarea">
+                <a href="javascript:;" class="btn-ok mgr40" id="J_submitRule">确定</a>
+                <a href="javascript:;" class="btn-ok btn-cal J_closePopup">取消</a>
+            </div>
+        </form>
+    </div>
+
+    <script type="text/html" id="J_tplfilterItem">
+        <div class="filter-item mgt20 J_ruleItem" id="J_rule_{{$id}}" data-index="{{$id}}">
+            <select name="condition.code" class="J_ruleItemNode1" id="J_rule_{{$id}}_01">
+                <!--条件数据-->
+                <option value="0">请选择</option>
+                #foreach($item in $quotaDimensionList)
+                <option value="$!{item.columnCode}">$!{item.columnName}</option>
+                #end
+            </select>
+            <select name="condition.oper" class="s_tj J_ruleItemNode2" id="J_rule_{{$id}}_02">
+                <option value="eq">=</option>
+                <option value="<>">≠</option>
+                <option value="in">in</option>
+                <option value="not in">not in</option>
+            </select>
+            <select name="condition.value" class="s_val J_ruleItemNode3" multiple="multiple" id="J_rule_{{$id}}_03">
+                <!--条件数据-->
+            </select>
+            <div class="btn_remove mgl10 J_delNewRule">删除</div>
+        </div>
+    </script>
+    <!-- 全局js -->
+    <script src="${rc.contextPath}/_resources/okr/static/libs/jquery-1.11.1.min.js"></script>
+    <script src="${rc.contextPath}/_resources/okr/static/libs/bootstrap.min.js?v=3.3.6"></script>
+    <script src="${rc.contextPath}/_resources/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+    <script src="${rc.contextPath}/_resources/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="${rc.contextPath}/_resources/okr/static/libs/plugins/layer/layer.min.js"></script>
+    <script src="${rc.contextPath}/_resources/okr/static/libs/plugins/select2/select2.min.js?v=4.0.3"></script>
+    <script src="${rc.contextPath}/_resources/okr/static/libs/plugins/My97DatePicker/WdatePicker.js"></script>
+    <script src="${rc.contextPath}/_resources/okr/static/libs/plugins/jqgrid/i18n/grid.locale-cn.js?0820"></script>
+    <script src="${rc.contextPath}/_resources/okr/static/libs/plugins/jqgrid/jquery.jqGrid.min.js?0820"></script>
+    <script src="${rc.contextPath}/_resources/okr/static/libs/echarts.min.js"></script>
+    <script src="${rc.contextPath}/_resources/okr/static/js/utils.min.js"></script>
+    <!--业务js-->
+    <script src="${rc.contextPath}/_resources/okr/static/js/common.min.js"></script>
+    <script>
+            var dbs = new OKR.dataBoardSimple();
+            dbs.init({
+                // 图表展示数据格式
+                getPageDataApi: '${rc.contextPath}/admin/okr/chart.html',
+                getFilterValApi: '${rc.contextPath}/admin/okr/conditionValue.html'
+            });
+            function chkdate(d) {
+                this.value = d;
+                $('#J_filterQuickDays li').removeClass('cur');
+                dbs.getData();
+            }
+            //获取数据
+            dbs.getData();
+
+            $("#J_expExcel").click(function(){
+                window.open("${rc.contextPath}/admin/okr/exportChartData.html?" + $('#J_DataFilter').serialize());
+            });
+    </script>
+

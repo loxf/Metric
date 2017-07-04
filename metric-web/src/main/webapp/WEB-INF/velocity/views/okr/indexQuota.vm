@@ -1,0 +1,136 @@
+
+    <title>首页展示指标配置</title>
+
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="${rc.contextPath}/_resources/okr/static/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="${rc.contextPath}/_resources/okr/static/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link href="${rc.contextPath}/_resources/okr/static/css/animate.css" rel="stylesheet">
+
+    <link href="${rc.contextPath}/_resources/okr/static/css/style.css?v=4.1.0" rel="stylesheet">
+    <link href="${rc.contextPath}/_resources/okr/static/css/datacenter.min.css?v=1.0.0" rel="stylesheet">
+
+<div class="wrapper wrapper-content">
+    <div class="row">
+        <form onsubmit="return false;" id="J_DataFilter">
+            <div class="col-sm-12">
+                <div class="datacenter-kanban-header clearfix">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="title-left">
+                                <span class="title">首页展示指标</span><span class="note mgl20">拖动可以调整排序</span>
+                            </div>
+                            <div class="fr">
+                                <a href="javascript:;" data-href="${rc.contextPath}/admin/index.html" class="btn-btn mgr20 J_goback">返回</a><a href="javascript:;" class="btn-btn btn-white" id="J_saveSetting">完成</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <input type="hidden" value="${busiDomain}" name="busiDomain">
+        </form>
+    </div>
+
+    <div class="row">
+        <div class="data-total-list">
+            <div class="row">
+                <div class="col-sm-12">
+                    <!--指标数据区-->
+                    <div id="J_panelsArea">
+                        <!--只可删除
+                        <div class="col-sm-2 J_panelItem">
+                            <div class="panel item target-item" data-id="23232" data-sort="1">
+                                <h3>营业额</h3>
+                                <i class="icon-del"></i>
+                            </div>
+                        </div>
+                        -->
+                        <!--已添加
+                        <div class="col-sm-2 J_panelItem">
+                            <div class="panel item target-item  item-added" data-id="33232" data-sort="2">
+                                <h3>毛利</h3>
+                                <i class="icon-added"></i>
+                            </div>
+                        </div>
+                        -->
+                        <!--未添加
+                        <div class="col-sm-2 J_panelItem">
+                            <div class="panel item target-item item-add" data-id="43232" data-sort="3">
+                                <h3>利润</h3>
+                                <i class="icon-add"></i>
+                            </div>
+                        </div>
+                        -->
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <h3 class="row_title">可选指标</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="progress_list clearfix" id="J_targetListArea">
+
+            </div>
+        </div>
+    </div>
+
+</div>
+<form id="J_frmSave" onsubmit="return false;">
+    <input type="hidden" name="userQuotaScanData" value="" id="J_targetListDatas">
+</form>
+<!--数据模板-->
+<script type="text/html" id="J_tplPanel">
+    {{# for(var i in d){}}
+    <div class="col-sm-2 J_panelItem" data-id="{{d[i].targetId}}">
+        <div class="panel item target-item">
+            <h3>{{d[i].targetName}}</h3>
+            <i class="icon-btn icon-del J_dobtn" data-id="{{d[i].targetId}}"></i>
+        </div>
+    </div>
+    {{# } }}
+</script>
+<script type="text/html" id="J_tplTarget">
+    {{# for(var i in d){}}
+    {{# if(d[i].added){ }}
+    <div class="col-sm-2 J_panelItem" data-id="{{d[i].targetId}}">
+        <div class="panel item target-item item-added">
+            <h3>{{d[i].targetName}}</h3>
+            <i class="icon-btn icon-added J_dobtn" data-id="{{d[i].targetId}}"></i>
+        </div>
+    </div>
+    {{# }else{ }}
+    <div class="col-sm-2 J_panelItem" data-id="{{d[i].targetId}}">
+        <div class="panel item target-item item-add">
+            <h3>{{d[i].targetName}}</h3>
+            <i class="icon-btn icon-add J_dobtn" data-id="{{d[i].targetId}}"></i>
+        </div>
+    </div>
+    {{# } }}
+    {{# } }}
+</script>
+<!-- 全局js -->
+<script src="${rc.contextPath}/_resources/okr/static/libs/jquery-1.11.1.min.js"></script>
+<script src="${rc.contextPath}/_resources/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="${rc.contextPath}/_resources/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="${rc.contextPath}/_resources/okr/static/libs/bootstrap.min.js?v=3.3.6"></script>
+<script src="${rc.contextPath}/_resources/okr/static/libs/plugins/layer/layer.min.js"></script>
+<script src="${rc.contextPath}/_resources/okr/static/libs/laytpl.min.js"></script>
+<script src="${rc.contextPath}/_resources/okr/static/libs/jquery.drag-arrange.js"></script>
+<!--业务js-->
+<script src="${rc.contextPath}/_resources/okr/static/js/utils.min.js"></script>
+<script src="${rc.contextPath}/_resources/okr/static/js/common.min.js"></script>
+<script>
+        var setting = new OKR.setting();
+        setting.init({
+            'MAXNUM': 11,
+            'pageDataApi': '${rc.contextPath}/admin/okr/queryUserQuota.html?busiDomain=$!{busiDomain}',
+            'SaveDataApi': '${rc.contextPath}/admin/okr/saveUserQuotaScan.html?busiDomain=$!{busiDomain}'
+        });
+        setting.getData();
+</script>

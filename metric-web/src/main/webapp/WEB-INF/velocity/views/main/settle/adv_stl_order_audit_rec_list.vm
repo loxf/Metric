@@ -1,0 +1,44 @@
+  <div class="jqGrid_wrapper ">
+     <table id="table_list_1"></table>
+     <div id="pager_list_1"></div>
+  </div>
+<script>
+   $(document).ready(function () {
+       $.jgrid.defaults.styleUI = 'Bootstrap';
+       $('#table_list_1').jqGrid({
+              url:'listPageAdvStlOrdAuditRec.html?advStlOrderId=$!{advStlOrderId}',
+              datatype: "json",
+              height: 'auto',
+              autowidth: true,
+              shrinkToFit: true,
+              rowNum: 20,
+              rowList: [20, 30, 50],
+              colNames: ['审核人员','审核状态','审核时间','备注'],
+              colModel: [
+                 {
+                    name: 'auditUserName',
+                    width: 10
+                 },
+                 {
+                    name: 'statusName',
+                    width: 10
+                  },
+                  {
+                      name: 'auditTime',
+                      width: 10
+                  },
+                  {
+                     name: 'remark',
+                     width: 10,
+                      formatter : function(value, options, rowObject) {
+                         if(!value||value==''){
+                             return '';
+                         }
+                         return '<a href="javascript:layer.alert(\''+value+'\')"class="btn btn-primary">查看</a>';
+                      }
+                   }
+              ],
+              pager: "#pager_list_1"
+         });
+   });
+</script>

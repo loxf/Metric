@@ -1,0 +1,22 @@
+<link rel="shortcut icon" href="favicon.ico">
+
+<link href="${rc.contextPath}/_resources/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+<link href="${rc.contextPath}/_resources/css/font-awesome.min.css?v=4.4.0" rel="stylesheet">
+<link href="${rc.contextPath}/_resources/css/animate.css" rel="stylesheet">
+<link href="${rc.contextPath}/_resources/css/style.css?v=4.1.0" rel="stylesheet">
+<link href="${rc.contextPath}/_resources/css/plugins/jqgrid/ui.jqgrid.css" rel="stylesheet">
+<link href="${rc.contextPath}/_resources/layui/css/layui.css" rel="stylesheet">
+<link href="${rc.contextPath}/static/css/style.css" rel="stylesheet">
+
+<script src="${rc.contextPath}/_resources/js/jquery.min.js?v=2.1.4"></script>
+<script src="${rc.contextPath}/_resources/js/bootstrap.min.js?v=3.3.6"></script>
+<script src="${rc.contextPath}/_resources/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="${rc.contextPath}/_resources/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="${rc.contextPath}/_resources/js/plugins/layer/layer.min.js"></script>
+<script src="${rc.contextPath}/_resources/js/hAdmin.js?v=4.1.0"></script>
+<script src="${rc.contextPath}/_resources/js/plugins/jqgrid/i18n/grid.locale-cn.js"></script>
+<script src="${rc.contextPath}/_resources/js/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+<script src="${rc.contextPath}/_resources/js/plugins/jqgrid/i18n/grid.locale-cn.js"></script>
+<script src="${rc.contextPath}/_resources/js/plugins/layer/laydate/laydate.js"></script>
+<script src="${rc.contextPath}/_resources//layui/layui.js"></script>
+<script src="${rc.contextPath}/static/js/index.js"></script>

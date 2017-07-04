@@ -1,0 +1,223 @@
+<script src="${rc.contextPath}/_resources/js/plugins/layer/extend/layer.ext.js"></script>
+<div class="ibox-content">
+    <form class="form-inline" id="jobForm">
+        <div class="form-group">
+            <label>JOB名称:</label>
+            <select name="jobCode" class="form-control" style="width:130px;height:33px">
+                <option value="">全部</option>
+                #foreach(${_job} in ${jobList})
+                <option value="$!{_job.value}" hassubinfo="true">$!{_job.name}</option>
+                #end
+            </select>
+            <label>类型:</label>
+            <select name="jobType" class="form-control" style="width:130px;height:33px">
+                <option value="">全部</option>
+                <option value="DEV" hassubinfo="true">DEV</option>
+                <option value="EXCEL" hassubinfo="true">EXCEL</option>
+            </select>
+        </div>
+        <br><br>
+        <div class="form-group">
+            <button class="btn btn-white" type="button" onclick="searchList('1')"><i class="glyphicon glyphicon-search"></i>查询</button>
+            <!--<button class="btn btn-success" type="button" onclick="add()"><i class="glyphicon glyphicon-plus"></i>创建业务目标</button>-->
+        </div>
+    </form>
+</div>
+<div class="jqGrid_wrapper">
+    <table id="table_list_1"></table>
+    <div id="pager_list_1"></div>
+</div>
+<script>
+  function searchList(page){
+       $("#table_list_1").jqGrid('setGridParam',{
+            url:'queryJob.html',
+            postData: getParams(),
+            page:page
+       }).trigger("reloadGrid");
+   }
+   $(document).ready(function () {
+       $.jgrid.defaults.styleUI = 'Bootstrap';
+       $('#table_list_1').jqGrid({
+              url:'queryJob.html',
+              datatype: "json",
+              postData: getParams(),
+              height: jqGridHeight,
+              autowidth: true,
+              shrinkToFit: true,
+              viewrecords:true,
+              rowNum: 20,
+              rowList: [20, 30, 50],
+              viewrecords : true,
+              colNames: ['JOB编码','类型','名称','CRON表达式','间隔（分钟）','数据表','状态','上一次账期','最后运行时间','最早账期','操作'],
+              colModel: [
+                 {
+                   name: 'jobCode',
+                   width: 10
+                 },
+                 {
+                    name: 'jobType',
+                    width: 10
+                 },
+                 {
+                       name: 'jobName',
+                       width: 10
+                  },
+                 {
+                       name: 'cron',
+                       width: 10
+                  },
+                  {
+                      name: 'particleSize',
+                      width: 10,
+                      formatter:function(cellvalue){
+                        if(cellvalue>0)
+                            return cellvalue + "分钟";
+                        else if(cellvalue==-1)
+                            return "周";
+                        else if(cellvalue==-2)
+                            return "月";
+                        else if(cellvalue==-3)
+                            return "年";
+                    }
+                  },
+                   {
+                      name: 'dataTable',
+                      width: 12
+                    },
+                  {
+                    name: 'status',
+                    width: 10,
+                    formatter:function(cellvalue){
+                        if(cellvalue=='0')
+                            return "待运行";
+                        else if(cellvalue=='1')
+                            return "执行中";
+                        else
+                            return cellvalue;
+                    }
+                  },
+                  {
+                    name: 'lastCircleTime',
+                    width: 10,
+                    formatter:formatDate
+                  },
+                  {
+                    name: 'runLastTime',
+                    width: 10,
+                    formatter:formatDate
+                  },
+                  {
+                    name: 'firstRunTime',
+                    width: 10,
+                    formatter:formatDate
+                  },
+                  {
+                   name:'status',
+                   width:20,
+                   formatter : function(value, options, rowObject) {
+                        var html = '';
+                        #if($permissionTool.hasPermission('okr.jobModifyCron'))
+                        html = html + '<a onclick="modifyCron(\'' + rowObject.jobCode + '\')" class="btn btn-danger "><i class="glyphicon glyphicon-ok-circle"></i>修改cron</a>';
+                        #end
+                        #if($permissionTool.hasPermission('okr.jobAllRecovery'))
+                        if(value==0){
+                            html = html +  '\t<a onclick="recoveryAllTask(\'' + rowObject.jobCode + '\')" class="btn btn-danger "><i class="glyphicon glyphicon-ok-circle"></i>重做任务</a>';
+                        }
+                        #end
+                        #if($permissionTool.hasPermission('okr.jobUploadExcel'))
+                        if(rowObject.jobType=='EXCEL'){
+                            html = html + '\t<a onclick="uploadExcel(\'' + rowObject.jobCode + '\',\'' + rowObject.jobName + '\')" class="btn btn-white "><i class="glyphicon glyphicon-import"></i>上传数据</a>';
+                        }
+                        #end
+                        return html;
+                   }
+                 }
+              ],
+              pager: "#pager_list_1"
+         });
+   });
+ function modifyCron(jobCode){
+           layer.confirm('该任务很危险，确认执行该操作？',{icon: 3, title:'修改CRON表达式'}, function(){
+           layer.prompt({
+                        formType: 2,
+                        title: '请填写CRON表达式'
+                    },
+                    function(text, index){
+                       $.ajax({
+                             type: "POST",
+                             url:"modifyCron.html?jobCode="+jobCode + "&cron=" + text,
+                             dataType:"json",
+                             success: function(data) {
+                                if(data.code == 1){
+                                   searchList();
+                                   closeLayer(data.msg);
+                                }else{
+                                   layer.msg(data.msg,failIcon);
+                               }
+                            }
+                        });
+                    });
+           }, function(){
+            layer.closeAll();
+          });
+        }
+ function recoveryAllTask(jobCode){
+           layer.confirm('该任务将重做JOB所有账期，确认执行该操作？',{icon: 3, title:'重做全部任务'}, function(){
+           $.ajax({
+                 type: "POST",
+                 url:"recoveryAllTask.html?jobCode="+jobCode ,
+                 dataType:"json",
+                 success: function(data) {
+                    if(data.code == 1){
+                       searchList();
+                       closeLayer(data.msg);
+                    }else{
+                       layer.msg(data.msg,failIcon);
+                   }
+                }
+            });
+           }, function(){
+            layer.closeAll();
+          });
+        }
+
+   function uploadExcel(jobCode, jobName){
+        layer.open({
+                type: 2,
+                title: jobName + '数据导入',
+                shadeClose: true,
+                shade: false,
+                maxmin: false, //开启最大化最小化按钮
+                area: ['500px', '300px'],
+                content: 'importPage.html?jobCode=' + jobCode
+            });
+   }
+
+   function getParams(){
+        var data=$('#jobForm').serialize();
+        data= decodeURIComponent(data,true);
+        return formToJson(data);
+    }
+   function formToJson(data) {
+       data=data.replace(/&/g,"\",\"");
+       data=data.replace(/=/g,"\":\"");
+       data="{\""+data+"\"}";
+       var json =  eval('(' + data + ')');
+       return json;
+    }
+    function formatDate(cellvalue)   {
+      var date = new Date(cellvalue);
+        var y = date.getFullYear();
+        var m = date.getMonth() + 1;
+        m = m < 10 ? ('0' + m) : m;
+        var d = date.getDate();
+        d = d < 10 ? ('0' + d) : d;
+        var h = date.getHours();
+        h = h < 10 ? ('0' + h) : h;
+        var minute = date.getMinutes();
+        var second = date.getSeconds();
+        minute = minute < 10 ? ('0' + minute) : minute;
+        second = second < 10 ? ('0' + second) : second;
+        return y + '-' + m + '-' + d+' '+h+':'+minute+':'+second;
+    }
+</script>

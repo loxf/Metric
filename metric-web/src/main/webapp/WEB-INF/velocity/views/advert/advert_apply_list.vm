@@ -1,0 +1,153 @@
+<script src="${rc.contextPath}/_resources/js/plugins/layer/extend/layer.ext.js"></script>
+<script src="${rc.contextPath}/_resources/js/plugins/layer/laydate/laydate.js"></script>
+ <div class="ibox-content">
+    <form role="form" class="form-inline">
+        <div class="form-group">
+            <label>广告名称:</label><input type="text" id="advertName" class="form-control">
+            <label>渠道名称:</label><input type="text" id="channelName" class="form-control">
+            <label>状态</label>
+             <div class="input-group">
+              <select class="form-control" style="width:130px;height:33px" id="status">
+                  <option value="">请选择</option>
+                   #foreach($item in $!{status.entrySet()})
+                     <option value="$!{item.key}" #if($!{item.key} == '0') selected="selected" #end>$!{item.value}</option>
+                   #end
+              </select>
+            </div>
+        </div>
+        <br><br>
+        <div class="form-group">
+            <label>申请时间</label>
+            <input class="form-control layer-date" id="startDate" placeholder="开始时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})">
+            <input class="form-control layer-date" id="endDate" placeholder="结束时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})">
+        </div>
+        <button class="btn btn-white" type="button" onclick="searchList('1')"><i class="glyphicon glyphicon-search"></i>查询</button>
+    </form>
+  </div>
+  <div class="jqGrid_wrapper ">
+     <table id="table_list_1"></table>
+     <div id="pager_list_1"></div>
+  </div>
+<script>
+    function searchList(page){
+         $("#table_list_1").jqGrid('setGridParam',{
+              url:'listApplyjson.html?'+getParams(),
+              page:page
+         }).trigger("reloadGrid");
+    }
+    function getParams(){
+        var advertName=$("#advertName").val();
+        var channelName=$("#channelName").val();
+        var status=$("#status").val();
+        var startDate=$("#startDate").val();
+        var endDate=$("#endDate").val();
+        if("" != endDate){
+           endDate = endDate + ' 23:59:59';
+        }
+        return "advertName="+advertName+"&channelName="+channelName+"&status="+status+"&startDate="+startDate+"&endDate="+endDate;
+    }
+   $(document).ready(function () {
+       $("#startDate").val(laydate.now(-7));
+       $("#endDate").val(laydate.now());
+       $.jgrid.defaults.styleUI = 'Bootstrap';
+       $('#table_list_1').jqGrid({
+              url:'listApplyjson.html?'+getParams(),
+              datatype: "json",
+              height: jqGridHeight,
+              autowidth: true,
+              shrinkToFit: true,
+              rowNum: 20,
+              rowList: [20, 30, 50],
+              viewrecords : true,
+              colNames: ['广告名称','用户名','真实姓名','渠道名称','渠道编号','申请时间','状态','审核人','审核时间','操作'],
+              colModel: [
+                 {
+                    name: 'advertName',
+                    width: 10
+                 },
+                 {
+                     name: 'userName',
+                     width: 10
+                  },
+                  {
+                      name: 'userRelName',
+                      width: 10
+                  },
+                 {
+                    name: 'channelName',
+                    width: 10
+                  },
+                  {
+                     name: 'channelCode',
+                     width: 10
+                   },
+                  {
+                    name: 'createdAtStr',
+                    width: 12
+                  },
+                  {
+                    name: 'statusName',
+                    width: 10
+                  },
+                  {
+                    name: 'auditUserName',
+                    width: 10
+                  },
+                  {
+                    name: 'auditTimeStr',
+                    width: 12
+                  },
+                  {
+                    name : "opt",
+                    width:10,
+                    #if($permissionTool.hasPermission('audit.advert.audit'))
+                    formatter : function(value, options, rowObject) {
+                     if(rowObject.status == '0'){
+                       var html = '<a href="javascript:void(0)" onclick="updateAudit(\'' + rowObject.advertAplId + '\',\'1\')" class="btn btn-success"><i class="glyphicon glyphicon-ok-circle"></i>通过</a>';
+                       html += '&nbsp;&nbsp;<a href="javascript:void(0)" onclick="updateAudit(\'' + rowObject.advertAplId + '\',\'2\')" class="btn btn-danger"><i class="glyphicon glyphicon-ban-circle"></i>拒绝</a>';
+                       return html;
+                     }else{
+                       return "";
+                    }
+                    #end
+                  }
+                }
+              ],
+              pager: "#pager_list_1"
+         });
+   });
+
+  function updateAudit(advertAplId, status){
+    if("1" == status){
+       layer.confirm('确认执行该操作？',{icon: 3, title:'广告申请审核'}, function(){
+         doAudit(advertAplId,status,"");
+       }, function(){
+         layer.closeAll();
+      });
+     }else if("2" == status){
+      layer.prompt({
+         formType: 2,
+         title: '请填写拒绝原因'
+      },
+      function(text, index){
+         doAudit(advertAplId,status,text);
+      });
+    }
+  }
+  function doAudit(advertAplId, status, remark){
+    $.ajax({
+         type: "POST",
+         url:"updateAudit.html?advertAplId="+advertAplId+"&status="+status+"&remark="+remark,
+         dataType:"json",
+         success: function(data) {
+            if(data.code == 1){
+               searchList();
+               closeLayer(data.msg);
+            }else{
+               layer.msg(data.msg,failIcon);
+           }
+        }
+    });
+  }
+</script>
+</html>

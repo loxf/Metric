@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">
+
+    <mvc:annotation-driven/>
+    <mvc:resources mapping="/_resources/**" location="/_resources/"/>
+    <mvc:resources mapping="/static/**" location="/static/"/>
+    <context:component-scan base-package="com.ywwl.oper.web,com.ywwl.oper.velocity"/>
+
+    <mvc:annotation-driven>
+        <mvc:message-converters register-defaults="true">
+            <!-- 将StringHttpMessageConverter的默认编码设为UTF-8 -->
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <constructor-arg value="UTF-8"/>
+                <property name = "supportedMediaTypes">
+                    <list>
+                        <value>text/html;charset=UTF-8</value>
+                        <value>application/json;charset=UTF-8</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <import resource="dubbo.xml"/>
+    <import resource="velocity.xml"/>
+    <import resource="classpath:ywwl-oper-biz.xml"/>
+    <import resource="classpath:ywwl-oper-dal.xml"/>
+
+    <aop:aspectj-autoproxy proxy-target-class="true" />
+    <bean id="permissionAop" class="com.ywwl.oper.filter.PermissionAop" />
+
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize"><value>15728640</value></property>
+        <property name="defaultEncoding"><value>UTF-8</value></property>
+    </bean>
+
+    <mvc:interceptors>
+        <bean class="com.ywwl.oper.base.interceptor.BaseInterceptor" />
+    </mvc:interceptors>
+</beans>

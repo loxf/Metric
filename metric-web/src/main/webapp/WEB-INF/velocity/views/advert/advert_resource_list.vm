@@ -1,0 +1,143 @@
+<div class="ibox-content">
+    <form role="form" class="form-inline">
+        <div class="form-group">
+            <label>附件名称:</label><input type="text" id="advResName" class="form-control">
+            <label>广告名称:</label><input type="text" id="advertName" class="form-control">
+            <label>子广告名称:</label><input type="text" id="advertMaName" class="form-control">
+        </div>
+        <br><br>
+        <div class="form-group">
+            <label>附件类型</label>
+            <select style="width:130px;height:33px" class="form-control" id="advResType">
+                <option value="">请选择</option>
+                #foreach($item in $!{advResType.entrySet()})
+                <option value="$!{item.key}">$!{item.value}</option>
+                #end
+            </select>
+            <label>领取方式</label>
+            <select style="width:130px;height:33px" class="form-control" id="advResTakeMethod">
+                <option value="">请选择</option>
+                #foreach($item in $!{takeTypes.entrySet()})
+                <option value="$!{item.key}">$!{item.value}</option>
+                #end
+            </select>
+            <label>状态</label>
+            <select style="width:130px;height:33px" class="form-control" id="status">
+                <option value="">请选择</option>
+                <option value="1">启用</option>
+                <option value="0">禁用</option>
+            </select>
+        </div>
+        <button class="btn btn-white" type="button" onclick="searchList('1')"><i class="glyphicon glyphicon-search"></i>查询</button>
+        #if($permissionTool.hasPermission('advert.resource.add'))
+        <button class="btn btn-success" type="button" onclick="edit()"><i class="glyphicon glyphicon-plus"></i>新建附件</button>
+        #end
+        <small class="text-navy"><a href="${rc.contextPath}/static/excel/package_code.xlsx" class="btn btn-primary ">礼包码模板下载</a></small>
+    </form>
+</div>
+  <div class="jqGrid_wrapper ">
+     <table id="table_list_1"></table>
+     <div id="pager_list_1"></div>
+  </div>
+<script>
+    function searchList(page){
+         $("#table_list_1").jqGrid('setGridParam',{
+              url:'listRecjson.html?'+getParams(),
+              page:page
+         }).trigger("reloadGrid");
+    }
+    function getParams(){
+        var advResName=$("#advResName").val();
+        var advertName=$("#advertName").val();
+        var advertMaName=$("#advertMaName").val();
+        var advResType=$("#advResType").val();
+        var advResTakeMethod=$("#advResTakeMethod").val();
+        var status=$("#status").val();
+        return "advResName="+advResName+"&advertName="+advertName+"&advertMaName="+advertMaName+"&advResType="+advResType+"&advResTakeMethod="+advResTakeMethod+"&status="+status;
+    }
+   $(document).ready(function () {
+       $.jgrid.defaults.styleUI = 'Bootstrap';
+       $('#table_list_1').jqGrid({
+              url:'listRecjson.html?'+getParams(),
+              datatype: "json",
+              height: jqGridHeight,
+              autowidth: true,
+              shrinkToFit: true,
+              rowNum: 20,
+              rowList: [20, 30, 50],
+              viewrecords : true,
+              colNames: ['附件名称','附件类型','领取方式','广告名称','子广告名称','附件数量','状态','有效期','创建时间','操作'],
+              colModel: [
+                 {
+                    name: 'advResName',
+                    width: 10
+                 },
+                 {
+                    name: 'advResTypeName',
+                    width: 10
+                  },
+                  {
+                     name: 'advResTakeMethodName',
+                     width: 10
+                   },
+                   {
+                    name: 'advertName',
+                    width: 10
+                  },
+                   {
+                      name: 'advertMaName',
+                      width: 10
+                   },
+                  {
+                      name: '',
+                      width: 10,
+                      formatter : function(value, options, rowObject ) {
+                        return rowObject.advResTakeNum+"/"+rowObject.advresTotalNum;
+                     }
+                   },
+                   {
+                   name: 'status',
+                   width: 10,
+                   formatter : function(value, options, rowObject) {
+                      if("1" == value){
+                          return "启用";
+                       }else{
+                          return "禁用";
+                        }
+                    }
+                  },
+                  {
+                    name: 'validAtStr',
+                    width: 12
+                  },
+                  {
+                      name: 'createdAtStr',
+                      width: 12
+                  },
+                  {
+                      name : "advRecId",
+                      width:10,
+                      formatter : function(value, options, rowObject) {
+                         var b = '';
+                         #if($permissionTool.hasPermission('advert.resource.update'))
+                         b = '<a href="javascript:void(0)" onclick="edit(\'' + value + '\')" class="btn btn-primary"><i class="glyphicon glyphicon-pencil"></i>编辑</a>';
+                         #end
+                         return b;
+                      }
+                }
+              ],
+              pager: "#pager_list_1"
+         });
+   });
+   function edit(advRecId){
+      layer.open({
+        type: 2,
+        area: ['800px', '500px'],
+        fixed: false,
+        title: '编辑附件',
+        maxmin: true,
+        content: 'editResource.html?advRecId='+advRecId
+       });
+    }
+</script>
+</html>

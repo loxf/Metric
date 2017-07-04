@@ -1,28 +1,23 @@
 package org.loxf.metric.service;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.loxf.metric.base.exception.MetricException;
 import org.loxf.metric.base.utils.IdGenerator;
 import org.loxf.metric.common.constants.QuotaType;
 import org.loxf.metric.common.constants.State;
-import org.loxf.metric.common.dto.BaseResult;
-import org.loxf.metric.common.dto.PageData;
-import org.loxf.metric.common.dto.QuotaDimensionDto;
-import org.loxf.metric.common.dto.QuotaDto;
+import org.loxf.metric.common.dto.*;
 import org.loxf.metric.dal.dao.QuotaDimensionMapper;
 import org.loxf.metric.dal.dao.QuotaMapper;
 import org.loxf.metric.dal.po.Quota;
 import org.loxf.metric.dal.po.QuotaDimension;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  * Created by luohj on 2017/5/4.
@@ -128,8 +123,25 @@ public class QuotaManager {
         return quotaMapper.selectList(quota);
     }
 
-    public List<Map> queryBySql(String sql){
-        return quotaMapper.queryBySql(sql);
+    public QuotaDataList queryBySql(String sql){
+        List<Map> list = quotaMapper.queryBySql(sql);
+        QuotaDataList quotaDataList = new QuotaDataList();
+        if(CollectionUtils.isNotEmpty(list)){
+            for (Map map : list){
+                QuotaData quotaData = new QuotaData();
+                Iterator ite = map.keySet().iterator();
+                while (ite.hasNext()){
+                    String key = (String) ite.next();
+                    if(key.equals("value")){
+                        quotaData.setValue(new BigDecimal(map.get(key)==null?"0":map.get(key).toString()));
+                    } else {
+                        quotaData.putDim(key, map.get(key)==null?"":map.get(key).toString());
+                    }
+                }
+                quotaDataList.add(quotaData);
+            }
+        }
+        return quotaDataList;
     }
 
     public BaseResult<List<QuotaDto>> queryQuotaNameAndId(QuotaDto quotaDto) {
@@ -187,8 +199,14 @@ public class QuotaManager {
 
     public List<Map> queryDimenListByQuotaCode(String[] quotaCodes){
         if(quotaCodes!=null && quotaCodes.length>0) {
-            int count = quotaCodes.length;
-            List<Map> list = quotaMapper.queryDimenListByQuotaCodes(quotaCodes);
+            // 去重
+            Set set = new  HashSet();
+            for(String quotaStr : quotaCodes){
+                set.add(quotaStr);
+            }
+            String [] quotaCodesResult = (String[])set.toArray(new String[set.size()]);
+            int count = quotaCodesResult.length;
+            List<Map> list = quotaMapper.queryDimenListByQuotaCodes(quotaCodesResult);
             List<Map> result = new ArrayList<>();
             List<String> existsColumn = new ArrayList<>();
             Map<String, Integer> countMap = new HashMap();
@@ -233,6 +251,7 @@ public class QuotaManager {
             ret.add(dto);
         }
         return new PageData<QuotaDto>(totalPage, count, ret);
+
     }
     @Transactional
     public BaseResult<String> delQuota(QuotaDto quotaDto) {

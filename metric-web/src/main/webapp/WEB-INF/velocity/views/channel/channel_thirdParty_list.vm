@@ -1,0 +1,139 @@
+<div class="ibox-content">
+    <form role="form" class="form-inline">
+        <div class="form-group">
+            <label>渠道编号:</label><input type="text" id="channelCode" class="form-control">
+            <label>广告名称:</label><input type="text" id="advertName" class="form-control">
+            <input class="form-control layer-date" id="startDate" placeholder="开始时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})">
+            <input class="form-control layer-date" id="endDate" placeholder="结束时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})">
+            <button class="btn btn-white" type="button" onclick="searchList('1')"><i class="glyphicon glyphicon-search"></i>查询</button>
+            #if($permissionTool.hasPermission('channel.channel.add'))
+            <button class="btn btn-success" type="button" onclick="importData()"><i class="glyphicon glyphicon-plus"></i>导入</button>
+            #end
+            <button class="btn btn-info" type="button" onclick="exportData()"><i class="glyphicon glyphicon-export"></i>导出</button>
+        </div>
+    </form>
+  </div>
+  <div class="jqGrid_wrapper">
+        <table id="table_list_1"></table>
+        <div id="pager_list_1"></div>
+   </div>
+ <script>
+  function searchList(page){
+       $("#table_list_1").jqGrid('setGridParam',{
+            url:'listJson.html?'+getParams(),
+            page:page
+       }).trigger("reloadGrid");
+   }
+   function getParams(){
+      var channelCode=$("#channelCode").val();
+      var advertName=$("#advertName").val();
+      var startDate=$("#startDate").val();
+      var endDate=$("#endDate").val();
+      if("" != endDate){
+         endDate = endDate + ' 23:59:59';
+      }
+      return "channelCode="+channelCode+"&advertName="+advertName+"&startDate="+startDate+"&endDate="+endDate;
+   }
+
+   $(document).ready(function () {
+       $("#startDate").val(laydate.now(-7));
+       $("#endDate").val(laydate.now());
+       $.jgrid.defaults.styleUI = 'Bootstrap';
+       $('#table_list_1').jqGrid({
+              url:'listJson.html?'+getParams(),
+              datatype: "json",
+              height: jqGridHeight,
+              autowidth: true,
+              shrinkToFit: true,
+              viewrecords:true,
+              rowNum: 20,
+              rowList: [20, 30, 50],
+              viewrecords : true,
+              colNames: ['广告名称','渠道编号','渠道名称','三方渠道id','三方渠道编号','创建时间','操作'],
+              colModel: [
+                 {
+                   name: 'advertName',
+                   width: 10
+                 },
+                 {
+                   name: 'channelCode',
+                   width: 10
+                 },
+                 {
+                    name: 'channelName',
+                    width: 10
+                 },
+                 {
+                       name: 'channelIdOut',
+                       width: 10
+                  },
+                  {
+                      name: 'channelCodeOut',
+                      width: 10
+                  },
+                  {
+                    name: 'createdAtStr',
+                    width: 12
+                  },
+                  {
+                   name:'pkId',
+                   width:10,
+                   formatter : function(value, options, rowObject) {
+                       var b = '';
+                        #if($permissionTool.hasPermission('channel.channel.update'))
+                        b += '<a href="javascript:void(0)" onclick="edit(\'' + value + '\')" class="btn btn-primary" ><i class="glyphicon glyphicon-pencil"></i>编辑</a>';
+                        b += '&nbsp;&nbsp;<a onclick="delChannel(\'' + value + '\')" class="btn btn-danger "><i class="glyphicon glyphicon-remove"></i>删除</a>';
+                        #end
+                        return b;
+                    }
+                  }
+              ],
+              pager: "#pager_list_1"
+         });
+   });
+
+  function importData(){
+   layer.open({
+        type: 2,
+        area: ['800px', '400px'],
+        fixed: false,
+        maxmin: true,
+        content: 'importChannel.html'
+     });
+  }
+
+ function edit(pkId){
+   layer.open({
+     type: 2,
+     area: ['800px', '400px'],
+     fixed: false,
+     maxmin: true,
+     content: 'editChannel.html?pkId='+pkId
+    });
+  }
+
+   function delChannel(pkId){
+       layer.confirm('确认执行该操作？',{icon: 3, title:'删除渠道关联'}, function(){
+       $.ajax({
+             type: "POST",
+             url:"deleteChannel.html?pkId="+pkId,
+             dataType:"json",
+             success: function(data) {
+                if(data.code == 1){
+                   searchList();
+                   closeLayer(data.msg);
+                }else{
+                   layer.msg(data.msg,failIcon);
+               }
+            }
+        });
+       }, function(){
+        layer.closeAll();
+      });
+    }
+
+  function exportData(){
+      window.location.href="export.html?"+getParams();
+   }
+</script>
+</html>

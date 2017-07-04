@@ -1,0 +1,114 @@
+<script src="${rc.contextPath}/_resources/js/plugins/layer/laydate/laydate.js"></script>
+<div class="ibox-content">
+    <form role="form" class="form-inline">
+        <div class="form-group">
+            <label>时间范围</label>
+            <input class="form-control layer-date" id="startDate" placeholder="开始时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})">
+            <input class="form-control layer-date" id="endDate" placeholder="结束时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})">
+            <button class="btn btn-white" type="button" onclick="searchList('1')"><i class="glyphicon glyphicon-search"></i>查询</button>
+            <button class="btn btn-info" type="button" onclick="exportData()"><i class="glyphicon glyphicon-export"></i>导出</button>
+        </div>
+        <div class="form-group">
+            <label>同步日期</label>
+            <input class="form-control layer-date" id="synDate" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})">
+            <button class="layui-btn layui-btn-small" type="button" onclick="doSyn()">同步</button>
+        </div>
+    </form>
+  </div>
+  <div class="jqGrid_wrapper ">
+     <table id="table_list_1"></table>
+     <div id="pager_list_1"></div>
+  </div>
+<script>
+    function searchList(page){
+         $("#table_list_1").jqGrid('setGridParam',{
+              url:'reportJson.html?'+getParams(),
+              page:page
+         }).trigger("reloadGrid");
+    }
+    function getParams(){
+        var startDate=$("#startDate").val();
+        var endDate=$("#endDate").val();
+        if("" != endDate){
+           endDate = endDate + ' 23:59:59';
+        }
+        return "startDate="+startDate+"&endDate="+endDate;
+    }
+   $(document).ready(function () {
+       $("#startDate").val(laydate.now(-15));
+       $("#endDate").val(laydate.now(-1));
+       $("#synDate").val(laydate.now(-1));
+       $.jgrid.defaults.styleUI = 'Bootstrap';
+       $('#table_list_1').jqGrid({
+              url:'reportJson.html?'+getParams(),
+              datatype: "json",
+              height: jqGridHeight-50,
+              autowidth: true,
+              shrinkToFit: true,
+              rowNum: 20,
+              rowList: [20, 30, 50],
+              viewrecords : true,
+              footerrow : true,
+              userDataOnFooter : true,
+              colNames: ['日期','广告总收入','渠道总支出','利润','操作'],
+              colModel: [
+                 {
+                    name: 'reportDateStr',
+                    width: 10
+                 },
+                  {
+                     name: 'income',
+                     width: 10
+                  },
+                  {
+                    name: 'expend',
+                    width: 10
+                  },
+                  {
+                    name: 'profit',
+                    width: 10
+                  },
+                 {
+                    name:'',
+                    width:5,
+                    formatter : function(value, options, rowObject) {
+                      return '<a href="javascript:void(0)" onclick="viewDetail(\'' + rowObject.reportDateStr + '\')" class="btn btn-primary" ><i class="glyphicon glyphicon-eye-open"></i>详情</a>';
+                  }
+                }
+              ],
+              pager: "#pager_list_1"
+         });
+   });
+
+   function viewDetail(reportDate){
+      var width = (document.body.clientWidth-220)+"px";
+      layer.open({
+        type: 2,
+        area: [width, '100%'],
+        offset: ['0px', '220px'],
+        fixed: false,
+        title: '财务明细',
+        maxmin: true,
+        shadeClose: true,
+        content: 'reportDetail.html?reportDate='+reportDate
+       });
+    }
+    function doSyn(){
+        $.ajax({
+           type: "POST",
+           dataType:"json",
+           url:"updateSyn.html?synDate="+$("#synDate").val(),
+           success: function(data) {
+              if(data.code == 1){
+                 searchList();
+               }else{
+                 layer.msg(data.msg);
+               }
+           }
+       });
+    }
+   function exportData(){
+      window.location.href="exportReport.html?"+getParams();
+   }
+</script>
+</html>

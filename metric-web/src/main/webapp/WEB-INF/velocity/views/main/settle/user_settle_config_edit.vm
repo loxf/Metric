@@ -1,0 +1,185 @@
+<link href="${rc.contextPath}/_resources/css/jquery/combo.select.css" rel="stylesheet">
+ <link href="${rc.contextPath}/_resources/css/jquery/select2.min.css" rel="stylesheet">
+<script src="${rc.contextPath}/_resources/js/jquery.combo.select.js"></script>
+<script src="${rc.contextPath}/_resources/js/bootstrap.autocomplete.js"></script>
+<script src="${rc.contextPath}/_resources/js/jquery.select2.full.js"></script>
+<div class="ibox-content">
+   <form class="form-horizontal" id="form1">
+     <div class="form-group">
+                <label class="col-sm-3 control-label">序号：</label>
+                <div class="col-sm-8">
+                    <input type="text" readonly class="form-control" id="userSettleCfgId" name="userSettleCfgId"  value="$!{userSettleConfigDto.userSettleCfgId}" style="width:400px">
+                </div>
+
+       </div>
+        <input type="hidden" id="settleType" name="settleType"  value="$!{userSettleConfigDto.settleType}">
+            #if($!userSettleConfigDto.settleType == 1)
+                      <div class="form-group">
+                            <label class="col-sm-3 control-label">结算单价：</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="settleTypeNum" name="settleTypeNum"  value="$!{userSettleConfigDto.settleTypeNum}"  class="form-control" placeholder="'结算单价">
+                            </div>
+
+                   </div>
+            #end
+            #if($!userSettleConfigDto.settleType == 2)
+             <div class="form-group">
+                            <label class="col-sm-3 control-label">结算比例：</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="settleTypeNum" name="settleTypeNum"  value="$!{userSettleConfigDto.settleTypeNum}"  class="form-control" placeholder="结算比例">
+                            </div>
+                   </div>
+            #end
+
+           <div class="form-group">
+                    <label class="col-sm-3 control-label">生效时间:</label>
+                    <input value="$!date.format('yyyy-MM-dd',$!{userSettleConfigDto.validTime})" class="form-control layer-date" id="validTime" placeholder="生效时间 " onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'})">
+           </div>
+        <div align="center">
+           <button class="btn btn-white" type="button" onclick="saveUserSettle()">保存</button>
+           <button class="btn btn-white" type="button" onclick="closeLayer('0')">返回</button>
+        </div>
+     </form>
+ </div>
+ <script>
+  function closeLayer(reload){
+     if("1" == reload){
+        parent.location.reload();
+     }
+     var index = parent.layer.getFrameIndex(window.name);
+     parent.layer.close(index);
+  }
+  function saveUserSettle(){
+
+       settleTypeNum=$("#settleTypeNum").val();
+
+       if($("#settleTypeNum").val()==""){
+           parent.layer.msg("请输入结算单价或比例！",failIcon);
+           return;
+       }
+     $.ajax({
+        type: "POST",
+        url:"updateUserSettleConfig.html",
+        data:{
+                   userSettleCfgId:$("#userSettleCfgId").val(),
+                   validTimeStr: $("#validTime").val(),
+                   settleTypeNum:settleTypeNum,
+                   settleType:$("#settleType").val()
+           },
+        success: function(data) {
+           data = eval('(' + data + ')');
+           if(data.code == 1){
+               closeLayer('1');
+            }else{
+             parent.layer.msg(data.msg,failIcon);
+            }
+        }
+    });
+  }
+
+    $("#advertName").select2({
+                 ajax: {
+                   url: "${rc.contextPath}/admin/ajaxGetData/getAdvertByName.html",
+                   dataType: 'json',
+                   delay: 250,
+                   data: function (params) {
+                     return {
+                       q: params.term, // search term
+                       page: params.page
+                     };
+                   },
+                   processResults: function (data, params) {
+                    params.page = params.page || 1;
+                   var itemList = [];
+                    for(item in data){
+                        itemList.push({id:data[item].advertId, text:data[item].advertName})
+                    }
+                    return {
+                        results: itemList,
+                        pagination: {
+                                  more: (params.page * 30) < data.total_count
+                          }
+                    };
+                   },
+                   cache: true
+                 },
+                 escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+                 minimumInputLength: 1,
+                 allowClear: true,
+                  placeholder:'请输入广告名称',//默认文字提示
+                 formatResult: function formatRepo(repo){return repo.text;}, // 函数用来渲染结果
+                 formatSelection: function formatRepoSelection(repo){return repo.text;} // 函数用于呈现当前的选择
+       });
+
+
+         $("#advertMaName").select2({
+                     ajax: {
+                       url: "${rc.contextPath}/admin/ajaxGetData/getAdvertMaByName.html",
+                       dataType: 'json',
+                       delay: 250,
+                       data: function (params) {
+                         return {
+                           q: params.term, // search term
+                           page: params.page
+                         };
+                       },
+                       processResults: function (data, params) {
+                        params.page = params.page || 1;
+                       var itemList = [];
+                        for(item in data){
+                            itemList.push({id:data[item].advertMaId, text:data[item].advMaDisplayName})
+                        }
+                        return {
+                            results: itemList,
+                            pagination: {
+                                      more: (params.page * 30) < data.total_count
+                              }
+                        };
+                       },
+                       cache: true
+                     },
+                     escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+                     minimumInputLength: 1,
+                     allowClear: true,
+                      placeholder:'请输入素材名称',//默认文字提示
+                     formatResult: function formatRepo(repo){return repo.text;}, // 函数用来渲染结果
+                     formatSelection: function formatRepoSelection(repo){return repo.text;} // 函数用于呈现当前的选择
+           });
+
+
+         $("#userName").select2({
+                     ajax: {
+                       url: "${rc.contextPath}/admin/ajaxGetData/getFrontUserByName.html",
+                       dataType: 'json',
+                       delay: 250,
+                       data: function (params) {
+                         return {
+                           q: params.term, // search term
+                           page: params.page
+                         };
+                       },
+                       processResults: function (data, params) {
+                        params.page = params.page || 1;
+                       var itemList = [];
+                        for(item in data){
+                            itemList.push({id:data[item].userId, text:data[item].userName})
+                        }
+                        return {
+                            results: itemList,
+                            pagination: {
+                                      more: (params.page * 30) < data.total_count
+                              }
+                        };
+                       },
+                       cache: true
+                     },
+                     escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+                     minimumInputLength: 1,
+                     allowClear: true,
+                      placeholder:'请输入用户名称',//默认文字提示
+                     formatResult: function formatRepo(repo){return repo.text;}, // 函数用来渲染结果
+                     formatSelection: function formatRepoSelection(repo){return repo.text;} // 函数用于呈现当前的选择
+           });
+
+</script>
+</html>

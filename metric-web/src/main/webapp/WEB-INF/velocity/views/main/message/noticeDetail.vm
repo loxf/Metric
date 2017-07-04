@@ -1,0 +1,205 @@
+<link href="${rc.contextPath}/_resources/css/bootstrap-select.css" rel="stylesheet">
+<script src="${rc.contextPath}/_resources/js/bootstrap-select.js"></script>
+<link href="${rc.contextPath}/_resources/css/plugins/iCheck/custom.css" rel="stylesheet">
+<script src="${rc.contextPath}/_resources/js/plugins/iCheck/icheck.min.js"></script>
+#parse("/layout/fragments/js_KindEditor.vm")
+<div class="ibox-content">
+    <form class="form-horizontal" id="form1">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">公告名称：</label>
+            <div class="col-sm-8">
+                <input type="hidden" name="noticeId" value="$!{entity.noticeId}">
+                <input type="text" class="form-control" id="title" name="title" value="$!{entity.title}" style="width:400px">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">公告摘要：</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="summary" name="summary" value="$!{entity.summary}" style="width:400px">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">公告类型：</label>
+            <div class="col-sm-8" style="width:430px">
+                <select name="type" id="type" class="selectpicker show-tick form-control" data-live-search="true">
+                    #foreach($item in ${types})
+                    <option value="$!{item.typeId}" #if($!{entity.type} == $!{item.name}) selected="selected" #end>$!{item.name}</option>
+                    #end
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">是否置顶</label>
+            <div class="col-sm-8">
+                <label class="checkbox-inline i-checks">
+                    <input type="radio" name="isTop" value="1" #if($!{entity.isTop} == 1) checked="" #end>是</label>
+                <label class="checkbox-inline i-checks">
+                    <input type="radio" name="isTop" value="0" #if($!{entity.isTop} == 0) checked="" #end>否</label>
+
+            </div>
+        </div>
+        <div class="hr-line-dashed"></div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">是否上线</label>
+            <div class="col-sm-8">
+                <label class="checkbox-inline i-checks">
+                    <input type="radio" name="status" value="1" #if($!{entity.status} == 1) checked="" #end>上线</label>
+                <label class="checkbox-inline i-checks">
+                    <input type="radio" name="status" value="0" #if($!{entity.status} == 0) checked="" #end>下线</label>
+
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">上线时间：</label>
+            <div class="col-sm-8">
+                <input class="form-control layer-date" id="publishTime" name="publishTime" value="$!date.format('yyyy-MM-dd',$!entity.publishTime)" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})">
+                <small class="text-navy">可为空</small>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">下线时间：</label>
+            <div class="col-sm-8">
+                <input class="form-control layer-date" id="offlineTime" name="offlineTime" value="$!date.format('yyyy-MM-dd',$!entity.offlineTime)" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})">
+                <small class="text-navy">可为空</small>
+            </div>
+        </div>
+        <div class="hr-line-dashed"></div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">可见渠道类型：</label>
+            <div class="radio i-checks">
+                <label>
+                    <input type="radio" value="0" #if($!{entity.receiverType} == 0) checked="" #end name="receiverType" > <i></i>全部渠道
+                    <small class="text-navy">所有用户可见</small>
+                </label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">&nbsp;</label>
+            <div class="radio i-checks">
+                <label>
+                    <input type="radio" value="1" #if($!{entity.receiverType} == 1) checked="" #end name="receiverType" > <i></i>指定渠道
+                    <small class="text-navy">请选择下列渠道类型</small>
+                </label>
+            </div>
+            <label class="col-sm-3 control-label">&nbsp;</label>
+            <div class="checkbox i-checks">
+                #foreach($item in ${channels})
+                <label class="checkbox-inline i-checks">
+                    <input type="checkbox" name="channelIds" value="$!{item.typeId}"
+                           #foreach($x in $!{entity.channelIds})
+                           #if($x == $!{item.typeId} && $!{entity.receiverType} == 1) checked=""
+                           #end
+                           #end
+                    >$!{item.name}</label>
+                #end
+            </div>
+        </div>
+        <div class="hr-line-dashed"></div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">公告内容</label>
+            <textarea id="content" name="content" placeholder="这里输入公告" style="width:800px;height:400px">$!{entity.content}</textarea>
+        </div>
+        <div align="center">
+            <button class="btn btn-success" type="button" onclick="saveNotice()"><i class="glyphicon glyphicon-ok"></i>保存</button>
+            <button class="btn btn-white" type="button" onclick="closeLayer('0')"><i class="glyphicon glyphicon-remove"></i>返回</button>
+        </div>
+    </form>
+</div>
+<script>
+  function closeLayer(reload){
+     if("1" == reload){
+        parent.location.reload();
+     }
+     var index = parent.layer.getFrameIndex(window.name);
+     parent.layer.close(index);
+  }
+  function saveNotice(){
+    var title = $('#title').val();
+    var type = $('#type').val();
+    var summary = $('#summary').val();
+    var content = $('#content').val();
+    var isTop = document.getElementsByName("isTop");
+    var isTopValue = null;
+    for(var i=0;i<isTop.length;i++){
+        if(isTop[i].checked==true) {
+            isTopValue=isTop[i].value;
+            break;
+        }
+    }
+    var status = document.getElementsByName("status");
+    var statusValue = null;
+    for(var i=0;i<status.length;i++){
+        if(status[i].checked==true) {
+            statusValue=status[i].value;
+            break;
+        }
+    }
+    var radio = document.getElementsByName("receiverType");
+    var selectValue = null;
+    for(var i=0;i<radio.length;i++){
+        if(radio[i].checked==true) {
+            selectValue=radio[i].value;
+            break;
+        }
+    }
+    var check=document.getElementsByName("channelIds");
+    var checkValue="";
+    for(var i=0;i<check.length;i++){
+        if(check[i].checked==true) {
+        checkValue=checkValue+check[i].value+",";
+        }
+    }
+    if (title == "") {
+        parent.layer.msg("请输入公告标题",failIcon);
+        return;
+    }
+    if (summary == "") {
+        parent.layer.msg("请输入公告摘要",failIcon);
+        return;
+    }
+    if (type == null) {
+        parent.layer.msg("请选择公告类型",failIcon);
+        return;
+    }
+    if (isTopValue == "" || isTopValue == null) {
+        parent.layer.msg("请选择是否置顶",failIcon);
+        return;
+    }
+    if (statusValue == "") {
+        parent.layer.msg("请选择是否上线",failIcon);
+        return;
+    }
+    if (selectValue == "") {
+        parent.layer.msg("请选择可见渠道对象",failIcon);
+        return;
+    } else if(selectValue == '1' && checkValue == '') {
+        parent.layer.msg("指定渠道时请选择特定渠道",failIcon);
+        return;
+    }
+    if (content == '') {
+        parent.layer.msg("请输入公告内容",failIcon);
+        return;
+    }
+     $.ajax({
+        type: "POST",
+        url:"updateNotice.html",
+        data:$('#form1').serialize(),
+        success: function(data) {
+           data = eval('(' + data + ')');
+           if(data.code == 1){
+               parent.searchList();
+               parent.closeLayer(data.msg);
+           }else{
+               parent.layer.msg(data.msg,failIcon);
+           }
+        }
+    });
+  }
+  $(document).ready(function() {
+     $('.i-checks').iCheck({
+         checkboxClass: 'icheckbox_square-green',
+         radioClass: 'iradio_square-green',
+     });
+   });
+</script>
+</html>

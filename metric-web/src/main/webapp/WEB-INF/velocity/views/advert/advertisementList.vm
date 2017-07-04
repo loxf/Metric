@@ -1,0 +1,318 @@
+<link href="${rc.contextPath}/_resources/css/bootstrap-select.css" rel="stylesheet">
+<link href="${rc.contextPath}/_resources/css/jquery/select2.min.css" rel="stylesheet">
+<script src="${rc.contextPath}/_resources/js/bootstrap-select.js"></script>
+<script src="${rc.contextPath}/_resources/js/jquery.select2.full.js"></script>
+<div class="ibox-content">
+    <form role="form" class="form-inline">
+        <div class="form-group">
+            <label>广告名称:</label>
+            <input type="text" id="advertName" class="form-control">
+            <label>广告主:</label><div style="width:200px" class="form-group">
+            <select  name="userId" id="userId" class="form-control selectpicker show-tick" data-live-search="true">
+                <option value="" >请选择</option>
+                #foreach($item in ${userDtos})
+                <option value="$!{item.userId}" >$!{item.userName}</option>
+                #end
+            </select>
+            </div>
+              <div class="form-group">
+                                <label class="col-sm-3 control-label">商务:</label>
+                                <div class="col-sm-8">
+                                      <select id="businessId" style="width:250px" name="businessId" class="form-control">
+
+                                       </select>
+                         </div>
+               </div>
+            &nbsp;&nbsp;&nbsp;
+            <label>广告类型:</label><div style="width:200px" class="form-group">
+            <select name="advertTypeId" id="advertTypeId" class="selectpicker show-tick form-control" data-live-search="true">
+                <option value="">请选择</option>
+                #foreach($item in ${advertTypes})
+                <option value="$!{item.typeId}" >$!{item.name}</option>
+                #end
+            </select>
+            </div>
+        </div>
+
+        <br><br>
+        <div class="form-group">
+            <label>状态:</label>
+            <select class="form-control" style="width:130px;height:33px" name="status" id="status">
+                <option value="">请选择</option>
+                <option value="1">启用</option>
+                <option value="0">禁用</option>
+            </select>
+
+            <label>上游结算类型:</label>
+            <select class="form-control" style="width:130px;height:33px" name="settleRuleId" id="settleRuleId">
+                <option value="">请选择</option>
+                #foreach($item in ${commonSettleRuleDtoList})
+                <option value="$!{item.comSetRuId}" >$!{item.name}</option>
+                #end
+            </select>
+            <label>下游结算类型:</label>
+            <select class="form-control" style="width:130px;height:33px" name="downSettleRuleId" id="downSettleRuleId">
+                <option value="">请选择</option>
+                #foreach($item in ${commonSettleRuleDtoList})
+                <option value="$!{item.comSetRuId}" >$!{item.name}</option>
+                #end
+            </select>
+        </div>
+        <br><br>
+        <div class="form-group">
+            <label>创建时间:</label>
+            <input class="form-control layer-date" id="startDate" placeholder="创建时间起始 " onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'})">
+            -<input class="form-control layer-date" id="endDate" placeholder="创建时间截止" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'})">
+          #* <label>渠道类型:</label>
+          <select class="form-control" style="width:130px;height:33px" name="channelTypeId" id="channelTypeId">
+                <option value="">请选择</option>
+                #foreach($item in ${channelLists})
+                <option value="$!{item.typeId}" >$!{item.name}</option>
+                #end
+            </select>*#
+            <button class="btn btn-white" type="button" onclick="searchList('1')"><i class="glyphicon glyphicon-search"></i>查询</button>
+            #if($permissionTool.hasPermission('advert.advert.add'))
+            <button class="btn btn-success" type="button" onclick="newAdvertisement()"><i class="glyphicon glyphicon-plus"></i>新建广告</button>
+            #end
+            <a  href="javascript:doExport()" class="btn btn-primary "><i class="glyphicon glyphicon-export"></i>导出</a>
+        </div>
+    </form>
+</div>
+<div class="jqGrid_wrapper ">
+    <table id="table_list_1"></table>
+    <div id="pager_list_1"></div>
+</div>
+<script>
+  function searchList(page){
+       $("#table_list_1").jqGrid('setGridParam',{
+            url:'list.html?'+getParams(),
+            page:page
+       }).trigger("reloadGrid");
+   }
+    function getParams(){
+      var advertName=$("#advertName").val();
+      var userId=$("#userId").val();
+      var advertTypeId=$("#advertTypeId").val();
+      var status=$("#status").val();
+      var businessId="";
+      if($("#businessId").val()){
+              businessId= $("#businessId").val();
+       }
+      var settleRuleId=$("#settleRuleId").val();
+      var downSettleRuleId=$("#downSettleRuleId").val();
+      var startDate=$("#startDate").val();
+      var endDate=$("#endDate").val();
+      var channelTypeId=$("#channelTypeId").val();
+      return "businessId="+businessId+"&advertName="+advertName+"&userId="+userId+"&advertTypeId="+advertTypeId+"&status="+status +"&settleRuleId="+settleRuleId+"&downSettleRuleId="+downSettleRuleId+"&startDate="+startDate+"&endDate="+endDate;
+   }
+
+   $(document).ready(function () {
+       $.jgrid.defaults.styleUI = 'Bootstrap';
+       $('#table_list_1').jqGrid({
+              url:'list.html',
+              datatype: "json",
+              autowidth: true,
+              height: jqGridHeight,
+              viewrecords:true,
+              shrinkToFit: true,
+              rowNum: 20,
+              rowList: [20, 30, 50],
+              colNames: ['广告ID','广告名称','广告主','商务','广告类型','上游结算类型','下游结算类型','渠道类型','创建时间','状态','排序号','是否置顶','广告标签','操作'],
+              colModel: [
+                 {
+                   name: 'advertId',
+                   width: 6
+                 },
+                 {
+                    name: 'advertName',
+                    width: 6
+                 },
+                 {
+                       name: 'userName',
+                       width: 6,
+                       editable:true
+                  },
+                   {
+                         name: 'bussinessName',
+                         width: 6,
+                         editable:true
+                    },
+                  {
+                      name: 'advertTypeName',
+                      width: 6
+                  },
+                  {
+                        name: 'settleRuleName',
+                        width: 6,
+                  },
+                  {
+                        name: 'downSettleRuleName',
+                        width: 8,
+                   },
+                   {
+                       name: 'channelTypeName',
+                       width: 8,
+                    },
+
+                    {
+                       name: 'createAtStr',
+                       width: 8,
+                     },
+                   {
+                            name: 'statusStr',
+                            width: 8,
+                    },
+                     {
+                            name: 'advertIndex',
+                            width: 8,
+                      },
+                      {
+                            name: 'isTop',
+                            width: 8,
+                            formatter : isTopFormatter
+                      },
+                      {
+                            name: 'advertTagName',
+                            width: 8
+                  },
+                  {
+                  name : "advertId",
+                  title : false,
+                  width:18,
+                  formatter : actFormatter
+                  }
+              ],
+              pager: "#pager_list_1"
+         });
+   });
+
+   var actFormatter = function(cellvalue, options, rawObject) {
+     var deleteHref = '';
+     if(rawObject.status == 1){
+         #if($permissionTool.hasPermission('advert.advert.status'))
+         deleteHref = '<a href="javascript:confirmDel(\''+rawObject.advertId+'\',\''+rawObject.status+'\')" class="btn btn-danger "><i class="glyphicon glyphicon-arrow-down"></i>下架</a>';
+         #end
+     }else{
+       #if($permissionTool.hasPermission('advert.advert.status'))
+        deleteHref = '<a href="javascript:confirmDel(\''+rawObject.advertId+'\',\''+rawObject.status+'\')" class="btn btn-danger "><i class="glyphicon glyphicon-arrow-up"></i>上架</a>';
+      #end
+     }
+     var detailHref = '';
+     #if($permissionTool.hasPermission('advert.advert.update'))
+     detailHref = '<a href="javascript:edit(\''+rawObject.advertId+'\')" class="btn btn-primary "><i class="glyphicon glyphicon-pencil"></i>编辑</a>';
+     #end
+     var newMaref = '';
+     #if($permissionTool.hasPermission('advert.advert.material'))
+     newMaref = '<a href="javascript:editMa(\''+rawObject.advertId+'\')" class="btn btn-info "><i class="glyphicon glyphicon-plus"></i>新建素材</a>';
+     #end
+     return  detailHref + "\t" + deleteHref+"\t"+newMaref;
+   };
+
+   function isTopFormatter(cellvalue, options, rawObject){
+      var str="";
+      if(cellvalue == 0){
+       str= "不置顶";
+      }else{
+              str= "置顶";
+      }
+      return str;
+   }
+
+   function confirmDel(advertisementId,status){
+   //询问框
+   var message="";
+   if(status==1){
+     message="您确认下架该广告吗？";
+     status=0;
+   }else{
+    message="您确认上架该广告吗？";
+    status=1;
+   }
+   layer.confirm( message, {
+     btn: ['确定','取消'] //按钮
+   }, function(){
+
+        $.ajax({url:"undercarriage.html?advertId="+advertisementId+"&status="+status,success:function(result){
+           data = eval('(' + result + ')');
+           if(data.code == 1){
+              searchList($('#table_list_1').getGridParam('page'))
+              closeLayer("操作成功！");
+          }
+
+       }});
+
+   }, function(){
+
+   });
+   }
+function edit(advertisementId){
+   layer.open({
+     type: 2,
+     area: ['900px', '600px'],
+     fixed: false,
+     title: '编辑广告',
+     maxmin: true,
+     content: 'editAdvertisement.html?advertId='+advertisementId
+    });
+  }
+  function editMa(advertisementId){
+     layer.open({
+       type: 2,
+       area: ['800px', '600px'],
+       fixed: false,
+       title: '新建素材',
+       maxmin: true,
+       content: 'editAdvertisementMa.html?advertId='+advertisementId
+      });
+    }
+
+
+function newAdvertisement(){
+   layer.open({
+     type: 2,
+     area: ['900px', '600px'],
+     title: '新建广告',
+     fixed: false,
+     maxmin: true,
+     content: 'newAdvertisement.html'
+    });
+  }
+  function doExport(){
+            url='doExport.html?'+getParams();
+            window.location.href=url;
+  }
+  $("#businessId").select2({
+                     ajax: {
+                       url: "${rc.contextPath}/admin/ajaxGetData/getUserByName.html",
+                       dataType: 'json',
+                       delay: 250,
+                       data: function (params) {
+                         return {
+                           q: params.term, // search term
+                           page: params.page
+                         };
+                       },
+                       processResults: function (data, params) {
+                        params.page = params.page || 1;
+                       var itemList = [];
+                        for(item in data){
+                            itemList.push({id:data[item].userId, text:data[item].userName})
+                        }
+                        return {
+                            results: itemList,
+                            pagination: {
+                                      more: (params.page * 30) < data.total_count
+                              }
+                        };
+                       },
+                       cache: true
+                     },
+                     escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+                     minimumInputLength: 1,
+                     allowClear: true,
+                      placeholder:'请输入用户名称',//默认文字提示
+                     formatResult: function formatRepo(repo){return repo.text;}, // 函数用来渲染结果
+                     formatSelection: function formatRepoSelection(repo){return repo.text;} // 函数用于呈现当前的选择
+           });
+
+</script>

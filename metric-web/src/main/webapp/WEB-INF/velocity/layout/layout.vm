@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <meta name="renderer" content="webkit">
+ <title>营销平台</title>
+ #parse("/layout/fragments/js_css.vm")
+<style>
+ #page-wrapper {
+   min-height: auto;
+   overflow:hidden;
+ }
+</style>
+</head>
+<body class="fixed-sidebar full-height-layout gray-bg">
+    <div id="wrapper">
+         #parse("/layout/fragments/left.vm")
+         #parse("/layout/fragments/header.vm")
+        <div class="row J_mainContent" id="content-main">
+           $screen_content
+        </div>
+        <script>
+           var jqGridHeight = 'auto';
+           var obj = $(".jqGrid_wrapper");
+           if(obj && obj.length>0){
+              var jqGridTop = obj.position().top;
+              var mainHeight = $("#content-main").height();
+              jqGridHeight = mainHeight - jqGridTop - 50;
+           }
+        </script>
+    </div>
+</body>
+</html>

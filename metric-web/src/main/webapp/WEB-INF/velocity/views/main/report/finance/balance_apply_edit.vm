@@ -1,0 +1,149 @@
+<script src="${rc.contextPath}/_resources/js/plugins/layer/extend/layer.ext.js"></script>
+<div class="ibox-content">
+    <form role="form" class="form-inline">
+        <div class="form-group">
+            <label>用户名:</label><input type="text" id="userName" class="form-control">
+            <button class="btn btn-white" type="button" onclick="searchList('1')"><i class="glyphicon glyphicon-search"></i>查询</button>
+            #if($permissionTool.hasPermission('user.BalanceApply.new'))
+             <button class="btn btn-success" type="button" onclick="saveApply()"><i class="glyphicon glyphicon-ok"></i>批量提交</button>
+             #end
+             <button class="btn btn-white" type="button" onclick="parent.closeLayer()"><i class="glyphicon glyphicon-remove"></i>返回</button>
+        </div>
+    </form>
+  </div>
+  <div class="jqGrid_wrapper">
+        <table id="table_list_1"></table>
+        <div id="pager_list_1"></div>
+   </div>
+ <script>
+ var selRowIds;
+  function searchList(page){
+       $("#table_list_1").jqGrid('setGridParam',{
+            url:'userList.html?'+getParams(),
+            page:page
+       }).trigger("reloadGrid");
+   }
+   function getParams(){
+      return "userName="+$("#userName").val();
+   }
+
+   $(document).ready(function () {
+       $.jgrid.defaults.styleUI = 'Bootstrap';
+       $('#table_list_1').jqGrid({
+              url:'userList.html?'+getParams(),
+              datatype: "json",
+              height: 'auto',
+              autowidth: true,
+              shrinkToFit: true,
+              viewrecords:true,
+              rowNum: 20,
+              rowList: [20, 30, 50],
+              viewrecords : true,
+              multiselect :true,
+              onSelectRow: function(id,selStatus){
+                 if(selStatus){
+                    $("#table_list_1").jqGrid('editRow',id,true);
+                 }else{
+                    jQuery('#table_list_1').restoreRow(id);
+                 }
+              },
+              colNames: ['用户id','用户名','真实姓名','账户金额(￥)','状态','操作原因','调整金额','备注'],
+              colModel: [
+                 {
+                     name: 'userId',
+                     width: 10,
+                     hidden:true
+                 },
+                 {
+                   name: 'userName',
+                   width: 10
+                 },
+                 {
+                    name: 'realName',
+                    width: 10
+                 },
+                 {
+                      name: 'userBalance',
+                      width: 10
+                  },
+                  {
+                      name: 'userStatus',
+                      width: 10
+                 },
+                 {
+                      name: 'orderItem',
+                      width: 10,
+                      editable:true,
+                      edittype:'select',
+                      editoptions:{value:"1_12:返点-预支;1_13:返点-奖励;1_14:返点-增拨;1_16:返点-申请;1_17:返点-补偿;1_18:返点-回档;2_2:扣点_扣点;2_11:扣点_提现;2_19:扣点_还款"}
+                  },
+                  {
+                      name: 'money',
+                      width: 10,
+                      editable:true,
+                      editrules:{custom:true, custom_func:verifyNum}
+                  },
+                  {
+                      name: 'remark',
+                      width: 10,
+                      editable:true
+                 }
+              ],
+              pager: "#pager_list_1"
+         });
+   });
+   var sucNum = 0;
+   function saveApply(){
+      var selIds = $("#table_list_1").jqGrid("getGridParam", "selarrrow");
+      sucNum = 0;var totalNum = selIds.length;
+      for(var i=0;i<selIds.length;i++){
+        doSaveApply(selIds[i],totalNum);
+     }
+   }
+   function doSaveApply(rowId,totalNum){
+        var orderItem=$("#"+rowId+"_orderItem").val();
+        $("#table_list_1").jqGrid('saveRow',rowId);
+        var myGrid = $("#table_list_1");
+        var money=myGrid.jqGrid('getCell',rowId,"money");
+        var userId=myGrid.jqGrid('getCell',rowId,"userId");
+        var remark=myGrid.jqGrid('getCell',rowId,"remark");
+        if(money == ''){
+            $("#table_list_1").jqGrid('editRow',rowId,true);
+            layer.msg("调整金额不能为空",failIcon);
+            return;
+        }
+        $.ajax({
+         type: "POST",
+         data:{
+           userId:userId,
+           orderItem:orderItem,
+           money:myGrid.jqGrid('getCell',rowId,"money"),
+           remark:remark
+         },
+         dataType:"json",
+         url:"${rc.contextPath}/admin/balance/updateAddApply.html",
+         success: function(data) {
+           if(data.code == 1){
+              sucNum++;
+              if(sucNum>=totalNum){
+                 parent.searchList("1");
+                 parent.closeLayer()
+              }else{
+                jQuery('#table_list_1').resetSelection(rowId);
+              }
+           }else{
+              layer.msg(data.msg,failIcon);
+            }
+         }
+      });
+   }
+
+  function verifyNum(value, colname) {
+     var reg = new RegExp("^[0-9]+(.[0-9]{2})?$");
+     if(!reg.test(value)){
+        return [false,"请输入两位小数以内的正整数!"];
+     }
+     return [true,""];
+   }
+</script>
+</html>

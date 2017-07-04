@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <link href="${rc.contextPath}/_resources/css/plugins/jqgrid/ui.jqgrid.css" rel="stylesheet">
+    <link href="${rc.contextPath}/_resources/css/jquery/select2.min.css" rel="stylesheet">
+    <script src="${rc.contextPath}/_resources/js/plugins/jqgrid/i18n/grid.locale-cn.js"></script>
+    <script src="${rc.contextPath}/_resources/js/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+    <script src="${rc.contextPath}/_resources//layui/layui.js"></script>
+    <script src="${rc.contextPath}/_resources/js/jquery.select2.full.js"></script>
+
+</head>
+<body class="gray-bg">
+  <div class="ibox-content">
+    <form role="form" class="form-inline" id="form1">
+        <div class="form-group">
+           <select id="userName" style="width:250px" name="userId" class="form-control">
+                           <option value="" selected="selected">用户名称</option>
+            </select>
+            <select id="advertName" style="width:250px" name="advertId" class="form-control">
+                          <option value="" selected="selected">广告名称</option>
+            </select>
+        </div>
+        <button class="btn btn-white" type="button" onclick="searchList('1')"><i class="glyphicon glyphicon-search"></i>查询</button>
+        #if($permissionTool.hasPermission('user.discount.add'))
+        <button class="btn btn-success" type="button" onclick="addUserAdvertAccount()"><i class="glyphicon glyphicon-plus"></i>新增</button>
+        #end
+        <button class="btn btn-info" onclick="exportList()" type="button"><i class="glyphicon glyphicon-export"></i>导出</button>
+    </form>
+  </div>
+
+  <div class="jqGrid_wrapper ">
+     <table id="table_list_1"></table>
+     <div id="pager_list_1"></div>
+  </div>
+<script>
+    function searchList(page){
+         $("#table_list_1").jqGrid('setGridParam',{
+              url:'userDiscountList.html',
+              postData:{
+                  advertId: function() {
+                         return   $("#advertName").val();
+                  },
+                  userId: function() {
+                      return   $("#userName").val();
+                   }
+             },
+             page:page
+         }).trigger("reloadGrid");
+    }
+
+        function addUserAdvertAccount(){
+          layer.open({
+             type: 2,
+             area: ['900px', '300px'],
+             fixed: false,
+             maxmin: true,
+             title: '新增用户折扣',
+             content: 'toNewUserAdvertAccount.html'
+            });
+        }
+
+   $(document).ready(function () {
+       $.jgrid.defaults.styleUI = 'Bootstrap';
+       $('#table_list_1').jqGrid({
+              url:'userDiscountList.html',
+              datatype: "json",
+              height: jqGridHeight,
+              autowidth: true,
+              shrinkToFit: true,
+              viewrecords:true,
+              rownumbers: true,
+              rowNum: 20,
+              rowList: [20, 30, 50],
+               multiselect: true,
+              colNames: ['用户名','真实姓名','广告名称','折扣','修改人员','修改时间','操作'],
+              colModel: [
+                 {
+                    name: 'userName',
+                    width: 10
+                  },
+                  {
+                      name: 'realName',
+                      width: 10
+                  },
+                  {
+                     name: 'advertName',
+                     width: 10
+                   },
+                   {
+                      name: 'discount',
+                      width: 10
+
+                  },
+                  {
+                      name: 'adminUserName',
+                      width: 10
+                  },
+                {
+                      name: 'updateDateStr',
+                      width: 10
+                  },
+                  {
+                      name : "userAdvDisId",
+                      width:10,
+                      formatter : function(value, options, rowObject) {
+                          var b = '';
+                          #if($permissionTool.hasPermission('user.discount.update'))
+                          b = '<a href="javascript:void(0)" onclick="showPopupBox(\'' + value + '\')" class="btn btn-primary"><i class="glyphicon glyphicon-pencil"></i>编辑</a>';
+                          #end
+                          return b;
+                      }
+                  }
+              ],
+              pager: "#pager_list_1"
+         });
+   });
+
+    function showPopupBox(userAdvDisId){
+        var url="";
+        url="toEditUserAdvertAccount.html?userAdvDisId="+userAdvDisId;
+        layer.open({
+            type: 2,
+            title: '修改用户折扣',
+             fixed: false,
+            maxmin: true, //开启最大化最小化按钮
+            area: ['900px', '300px'],
+            content: url
+        });
+    }
+    $("#advertName").select2({
+              ajax: {
+                url: "${rc.contextPath}/admin/ajaxGetData/getAdvertByName.html",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                  return {
+                    q: params.term, // search term
+                    page: params.page
+                  };
+                },
+                processResults: function (data, params) {
+                 params.page = params.page || 1;
+                var itemList = [];
+                 for(item in data){
+                     itemList.push({id:data[item].advertId, text:data[item].advertName})
+                 }
+                 return {
+                     results: itemList,
+                     pagination: {
+                               more: (params.page * 30) < data.total_count
+                       }
+                 };
+                },
+                cache: true
+              },
+              escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+              minimumInputLength: 1,
+              allowClear: true,
+               placeholder:'请输入广告名称',//默认文字提示
+              formatResult: function formatRepo(repo){return repo.text;}, // 函数用来渲染结果
+              formatSelection: function formatRepoSelection(repo){return repo.text;} // 函数用于呈现当前的选择
+    });
+      $("#userName").select2({
+                  ajax: {
+                    url: "${rc.contextPath}/admin/ajaxGetData/getFrontUserByName.html",
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                      return {
+                        q: params.term, // search term
+                        page: params.page
+                      };
+                    },
+                    processResults: function (data, params) {
+                     params.page = params.page || 1;
+                    var itemList = [];
+                     for(item in data){
+                         itemList.push({id:data[item].userId, text:data[item].userName})
+                     }
+                     return {
+                         results: itemList,
+                         pagination: {
+                                   more: (params.page * 30) < data.total_count
+                           }
+                     };
+                    },
+                    cache: true
+                  },
+                  escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+                  minimumInputLength: 1,
+                  allowClear: true,
+                   placeholder:'请输入用户名称',//默认文字提示
+                  formatResult: function formatRepo(repo){return repo.text;}, // 函数用来渲染结果
+                  formatSelection: function formatRepoSelection(repo){return repo.text;} // 函数用于呈现当前的选择
+        });
+     function exportList(){
+            window.open("exportList.html?" + $('#form1').serialize());
+        }
+
+</script>
+</body>
+</html>

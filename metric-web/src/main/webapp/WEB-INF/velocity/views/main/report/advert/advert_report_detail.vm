@@ -1,0 +1,150 @@
+<script src="${rc.contextPath}/_resources/js/plugins/layer/laydate/laydate.js"></script>
+<script src="https://cdn.hcharts.cn/highcharts/5.0.9/highcharts.js"></script>
+ <div class="ibox-content">
+    <form role="form" class="form-inline">
+        <div class="form-group">
+            <input type="hidden" id= "advertId" name="advertId" value="$!{entity.advertId}">
+             <label>渠道名称:</label><input type="text" id="channelName" class="form-control">
+            <input class="form-control layer-date" id="startDate" value="$!{entity.startDate}" placeholder="开始时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})">
+            <input class="form-control layer-date" id="endDate" value="$!{entity.endDate}" placeholder="结束时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})">
+        </div>
+        <button class="btn btn-success" type="button" onclick="searchList('1')"><i class="glyphicon glyphicon-search"></i>查询</button>
+        #if($permissionTool.hasPermission('data.advert.import'))
+            <button class="btn btn-warning" type="button" onclick="importPage()"><i class="glyphicon glyphicon-import"></i>导入数据</button>
+        #end
+        <button class="btn btn-info" type="button" onclick="exportData()"><i class="glyphicon glyphicon-export"></i>导出</button>
+        <button class="btn btn-white" type="button" onclick="parent.closeLayer()"><i class="glyphicon glyphicon-remove"></i>返回</button>
+    </form>
+  </div>
+  <div class="jqGrid_wrapper ">
+     <table id="table_list_1"></table>
+     <div id="pager_list_1"></div>
+  </div>
+  <div id="container"></div>
+<script>
+    function searchList(page){
+         $("#table_list_1").jqGrid('setGridParam',{
+              url:'advertChannelReportJson.html?'+getParams(),
+              page:page
+         }).trigger("reloadGrid");
+         loadPieData();
+    }
+    function getParams(){
+        var advertId=$("#advertId").val();
+        var channelName=$("#channelName").val();
+        var startDate=$("#startDate").val();
+        var endDate=$("#endDate").val();
+        if("" != endDate){
+           endDate = endDate + ' 23:59:59';
+        }
+        return "advertId="+advertId+"&channelName="+channelName+"&startDate="+startDate+"&endDate="+endDate;
+    }
+   $(document).ready(function () {
+       $.jgrid.defaults.styleUI = 'Bootstrap';
+       $('#table_list_1').jqGrid({
+              url:'advertChannelReportJson.html?'+getParams(),
+              datatype: "json",
+              height: 'auto',
+              autowidth: true,
+              shrinkToFit: true,
+              rowNum: 20,
+              rowList: [20, 30, 50],
+              viewrecords : true,
+              footerrow : true,
+              userDataOnFooter : true,
+              colNames: ['广告名称','渠道名称','渠道编号','结算方式','结算指标','流水类型','流水数值'],
+              colModel: [
+                 {
+                    name: 'advertName',
+                    width: 10
+                 },
+                 {
+                     name: 'channelName',
+                     width: 10
+                   },
+                   {
+                      name: 'channelCode',
+                      width: 10
+                  },
+                  {
+                    name: 'settleMethodName',
+                    width: 10
+                  },
+                  {
+                    name: 'settleTarget',
+                    width: 10
+                  },
+                  {
+                      name: 'flowTypeName',
+                      width: 10
+                  },
+                   {
+                    name: 'flowTypeNum',
+                    width: 10
+                  }
+              ],
+              pager: "#pager_list_1"
+         });
+          myChart = new Highcharts.Chart(oOptions);
+          loadPieData();
+   });
+</script>
+<script type="text/javascript">
+var myChart = null;
+var oOptions = {
+    chart: {
+       renderTo: 'container',
+       type: 'pie'
+    },
+    title: {
+        text: '$!{entity.advertName}-渠道占比'
+    },
+    tooltip: {
+        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+    },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+                enabled: true,
+                format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                connectorColor: 'silver'
+            }
+        }
+    },
+	credits: {//去掉默认的highcharts.com
+        enabled: false
+    },
+    series: []
+};
+
+function loadPieData(){
+  myChart.showLoading();
+  $.ajax({
+    type: "POST",
+    url:"channelDataSumByAdvert.html?"+getParams(),
+    dataType:"json",
+    success: function(data) {
+       oOptions.series[0]=data;
+       myChart = new Highcharts.Chart(oOptions);
+    }
+  });
+}
+ function exportData(){
+     window.location.href="exportAdvertChannelReport.html?"+getParams();
+  }
+
+function importPage(){
+    layer.open({
+        type: 2,
+        title: '数据导入',
+        shadeClose: true,
+        shade: false,
+        maxmin: false, //开启最大化最小化按钮
+        area: ['500px', '300px'],
+        content: 'importPage.html'
+    });
+}
+</script>
+</html>

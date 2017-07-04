@@ -1,0 +1,40 @@
+<link href="${rc.contextPath}/_resources/css/bootstrap-select.css" rel="stylesheet">
+<script src="${rc.contextPath}/_resources/js/bootstrap-select.js"></script>
+<script>
+    #if($!{data})
+        #if($!{data.code} == 1)
+          parent.searchList('1');
+          parent.closeLayer("$!{data.msg}");
+        #else
+          parent.layer.msg("$!{data.msg}",failIcon);
+        #end
+    #end
+</script>
+<div class="ibox-content">
+    <form class="form-horizontal" id="form1" action="doImport.html?jobCode=${jobCode}" method="POST" enctype="multipart/form-data">
+        <div class="form-group" style="text-align:center">
+            <span class="help-block m-b-none">注意事项：</span>
+            <span class="help-block m-b-none">1.只支持xls,xlsx文件上传</span>
+            <span class="help-block m-b-none">2.请严格按照模板填写相应数值</span>
+            <br>
+            <label title="上传图片" class="btn btn-warning" for="inputImage">
+                <input name="file" class="hide" id="inputImage" type="file" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"> 导入文件
+            </label>
+            <small class="text-navy"><a href="${rc.contextPath}/${excelPath}" class="btn btn-primary ">下载模板</a></small>
+
+        </div>
+        <div align="center">
+            <button class="btn btn-success" type="submit" ><i class="glyphicon glyphicon-ok"></i>上传</button>
+            <button class="btn btn-white" type="button" onclick="closeLayer('0')"><i class="glyphicon glyphicon-remove"></i>返回</button>
+        </div>
+    </form>
+</div>
+<script>
+  function closeLayer(reload){
+     if("1" == reload){
+        parent.location.reload();
+     }
+     var index = parent.layer.getFrameIndex(window.name);
+     parent.layer.close(index);
+  }
+</script>

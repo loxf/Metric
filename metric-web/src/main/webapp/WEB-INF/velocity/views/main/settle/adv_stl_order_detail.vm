@@ -1,0 +1,206 @@
+<script src="${rc.contextPath}/_resources/js/plugins/layer/extend/layer.ext.js"></script>
+<script src="${rc.contextPath}/_resources/js/jquery.md5.js"></script>
+<div class="jqGrid_wrapper ">
+    <button class="btn btn-info" type="button" onclick="doExport()"><i class="glyphicon glyphicon-export"></i>导出</button>
+    <table id="table_list_1"></table>
+</div>
+<br>
+<div align="center">
+    #if($permissionTool.hasPermission('settle.order.audit.salesperson')
+        &&$!{checkStatus} == '0')
+        <button class="btn-lg btn-danger" type="button" onclick="generateSettleOrder()"><i class="glyphicon glyphicon-remove"></i>重新生成结算单</button>
+        <button class="btn-lg btn-success" onclick="auditSettleOrder('1','1','')"><i class="glyphicon glyphicon-ok"></i>审核通过</button>
+    #end
+
+    #if($permissionTool.hasPermission('settle.order.audit.finance')
+        &&$!{checkStatus} == '1')
+        <button class="btn-lg btn-danger" onclick="auditSettleOrder('0','2','')"><i class="glyphicon glyphicon-remove"></i>驳回重审</button>
+        <button class="btn-lg btn-success" onclick="auditSettleOrder('2','1','')"><i class="glyphicon glyphicon-ok"></i>审核通过</button>
+    #end
+
+    #if($permissionTool.hasPermission('settle.order.audit.cashier')
+        &&$!{checkStatus} == '2')
+        <button class="btn-lg btn-danger" onclick="auditSettleOrder('1','2','')"><i class="glyphicon glyphicon-remove"></i>驳回重审</button>
+        <button class="btn-lg btn-success" onclick="auditSettleOrder('3','1',$!{typePsw})"><i class="glyphicon glyphicon-ok"></i>审核通过</button>
+    #end
+</div>
+<script>
+    $.jgrid.defaults.styleUI = 'Bootstrap';
+    var lastsel;
+    $('#table_list_1').jqGrid({
+        url:'listAdvStlOrdDetailGroup.html?advStlOrderId=$!{advStlOrderId}',
+        datatype: "json",
+        autowidth:true,
+        height: 'auto',
+        rownumbers: true,
+        colNames:['用户名','真实姓名','广告名称', '广告类型', '结算时间','结算周期','','','','','','','合计',''],
+        colModel:[
+            {name:'userName',width:160},
+            {name:'userRealName'},
+            {name:'advertName'},
+            {name:'advertTypeName'},
+            {name:'settleTimeStr'},
+            {name:'settleCycleName'},
+            {name:''},
+            {name:''},
+            {name:''},
+            {name:''},
+            {name:''},
+            {name:''},
+            {name:'totalFinalPrice',index:"totalFinalPrice"},
+            {    name:''
+            }
+        ],
+        viewrecords: true,
+        rownum:-1,
+        subGrid: true,
+        subGridRowExpanded:function(subgrid_id, row_id) {
+            var subgrid_table_id;
+            subgrid_table_id = subgrid_id+"_t";
+            $("#"+subgrid_id).html("<table id='"+subgrid_table_id+"' class='scroll'>");
+            var rowData = $(this).getRowData(row_id);
+            var userName = rowData['userName'];
+            $("#"+subgrid_table_id).jqGrid({
+                url:'listUserAdvStlOrdDetail.html?advStlOrderId=$!{advStlOrderId}&userName='+userName,
+                datatype: "json",
+                autowidth:true,
+                rownumbers: true,
+                colNames:['','','', '', '', '','素材名称','结算方式','数值','结算指标','单价/比例','核减比例（%）','结算金额','#if(($permissionTool.hasPermission('settle.order.audit.salesperson')&&$!{checkStatus} == '0')||($permissionTool.hasPermission('settle.order.audit.finance')&&$!{checkStatus} == '1')||($permissionTool.hasPermission('settle.order.audit.cashier')&&$!{checkStatus} == '2'))操作#end'],
+                colModel:[
+                    {name:'',width:150},
+                    {name:''},
+                    {name:''},
+                    {name:''},
+                    {name:''},
+                    {name:''},
+                    {name:'advertMaName'},
+                    {name:'settleMethodName'},
+                    {name:'settleNum'},
+                    {name:'settleTarget'},
+                    {name:'settleTypeNumStr'},
+                    {name:'auditRate'},
+                    {name:'finalPrice'},
+                    {
+                        name:'stlOrderDtId',
+                        formatter : function(value, options, rowObject) {
+                            return '#if(($permissionTool.hasPermission('settle.order.audit.salesperson')&&$!{checkStatus} == '0')||($permissionTool.hasPermission('settle.order.audit.finance')&&$!{checkStatus} == '1')||($permissionTool.hasPermission('settle.order.audit.cashier')&&$!{checkStatus} == '2'))<a href="javascript:void(0)" onclick="showAuditRateEditBox(\'' + value+ '\',\'' + subgrid_table_id+ '\',\'' + row_id+ '\')" class="btn btn-primary">修改核减</a>#end';
+                        }
+                    }
+                ],
+                sortorder: "asc",
+                height: '100%',
+                rowNum: 0,
+                loadComplete: function(data) {
+                    $(this).jqGrid('setGridParam', 'rowNum', data.records);
+                },
+            });
+        },
+        subGridRowColapsed: function(subgrid_id, row_id) {
+
+        },
+        rowNum: 0,
+        loadOnce: true,
+        loadComplete: function(data) {
+            $(this).jqGrid('setGridParam', 'rowNum', data.records);
+        },
+        footerrow: true,
+        userDataOnFooter: true
+    });
+    var currectTableId="";当前表
+    var currectRowId="";//当前行
+    function showAuditRateEditBox(stlOrderDtId,subgridTableId,rowId) {
+        currectTableId=subgridTableId;
+        currectRowId=rowId;
+        layer.open({
+            type: 2,
+            title: "修改核减比例",
+            shadeClose: true,
+            shade: false,
+            maxmin: false, //开启最大化最小化按钮
+            area: ['400px', '260px'],
+            content: "showAuditRateEditBox.html?stlOrderDtId="+stlOrderDtId
+        });
+    }
+
+    function writeObj(obj){
+        var description = "";
+        for(var i in obj){
+            var property=obj[i];
+            description+=i+" = "+property+"\n";
+        }
+        alert(description);
+    }
+
+    function generateSettleOrder() {
+        $.ajax({
+            type: "POST",
+            url:"genSettleOrder.html?advStlOrderId=$!{advStlOrderId}",
+            dataType:"json",
+            data:$('#form1').serialize(),
+            success: function(data) {
+                layer.alert('调用成功！');
+                $('#table_list_1').trigger("reloadGrid");
+            }
+        });
+    }
+
+    function auditSettleOrder(status,type,typePsw){
+        if("1" == type){
+            if(typePsw==1){
+                layer.prompt({title: '确认结算并返点吗？请输入系统支付密码', formType: 1}, function(password, index){
+                    layer.close(index);
+                    doAudit(status,'',$.md5(password));
+                });
+            }else{
+                //询问框
+                layer.confirm('确认审核通过吗？', {
+                    btn: ['确认','取消'] //按钮
+                }, function(){
+                    doAudit(status,'',"");
+                }, function(){
+
+                });
+            }
+        }else if("2" == type){
+            layer.prompt({
+                        formType: 2,
+                        title: '请填写驳回原因'
+                    },
+                    function(text, index){
+                        doAudit(status,text,'');
+                    });
+        }
+    }
+
+    function doAudit(status, remark,password){
+        $.ajax({
+            type: "POST",
+            url:"updateAdvertSettleOrderStatus.html?advStlOrderId=$!{advStlOrderId}&status="+status+"&remark="+remark+"&sysPsw="+password,
+            dataType:"json",
+            success: function(data) {
+                if(data.code == 1){
+                    layer.alert(data.msg, {
+                        skin: 'layui-layer-molv' //样式类名
+                        ,closeBtn: 0
+                    }, function(){
+                        parent.location.reload();
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(index);
+                    });
+                }else{
+                    layer.msg(data.msg,failIcon);
+                }
+            }
+        });
+    }
+
+    function  refreshSubgrid(data) {
+        $("#"+currectTableId).jqGrid().trigger("reloadGrid");
+        $("#table_list_1").jqGrid('setCell',currectRowId,"totalFinalPrice",data.userFinalPrice);
+        $("#table_list_1").footerData('set',{totalFinalPrice:data.totalFinalPrice});
+    }
+
+    function doExport(){
+        window.location.href='doExport.html?advStlOrderId=$!{advStlOrderId}&type=1';
+    }
+</script>

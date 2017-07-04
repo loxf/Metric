@@ -1,0 +1,83 @@
+<link href="${rc.contextPath}/_resources/css/jquery/combo.select.css" rel="stylesheet">
+<script src="${rc.contextPath}/_resources/js/jquery.combo.select.js"></script>
+<link href="${rc.contextPath}/_resources/css/bootstrap-select.css" rel="stylesheet">
+<link href="${rc.contextPath}/_resources/css/jquery/select2.min.css" rel="stylesheet">
+<script src="${rc.contextPath}/_resources/js/bootstrap-select.js"></script>
+<script src="${rc.contextPath}/_resources/js/jquery.select2.full.js"></script>
+#parse("/layout/fragments/js_KindEditor.vm")
+<div class="ibox-content">
+   <form class="form-horizontal" id="form1">
+        #if($helpCenter.faqId)
+             <div class="form-group">
+                        <label class="col-sm-3 control-label">问题ID：</label>
+                        <div class="col-sm-8">
+                            <input type="text" readonly class="form-control" name="faqId" value="$!{helpCenter.faqId}" style="width:400px">
+                        </div>
+                </div>
+          #end
+         <div class="form-group">
+             <label class="col-sm-3 control-label">问题名称：</label>
+             <div class="col-sm-8">
+                 <input type="text" class="form-control" name="question" value="$!{helpCenter.question}" style="width:400px">
+             </div>
+         </div>
+          <div class="form-group">
+                     <label class="col-sm-3 control-label">分类：</label>
+                     <div class="col-sm-8">
+                        <select  name="helpTypeId" id="helpTypeId" class="form-control selectpicker show-tick" data-live-search="true">
+                                     <option value="" >请选择</option>
+                                     #foreach($item in ${helpTypes})
+                                     <option value="$!{item.helpTypeId}" #if($!helpCenter.helpTypeId == $!item.helpTypeId) selected="selected" #end >$!{item.helpTypeName}</option>
+                                     #end
+                          </select>
+                     </div>
+               </div>
+
+           <div class="form-group">
+                  <label class="col-sm-3 control-label">排序值：</label>
+                  <div class="col-sm-8">
+                      <input type="text" value="$!{helpCenter.sortNum}" onchange="if(/\D/.test(this.value)){alert('只能输入数字');this.value='';}"  class="form-control" name="sortNum"  style="width:400px">
+                  </div>
+              </div>
+
+          <div class="form-group">
+                               <label class="col-sm-2 control-label">回答:</label>
+                               <div class="checkbox i-checks">
+                                  <textarea id="answer" name="content" placeholder="这里输入回答" style="width:600px;height:300px">$!{helpCenter.answer}</textarea>
+                               </div>
+                  </div>
+        <div align="center">
+           <button class="btn btn-success" type="button" onclick="saveHelpCenter()"><i class="glyphicon glyphicon-ok"></i>保存</button>
+           <button class="btn btn-white" type="button" onclick="closeLayer('0')"><i class="glyphicon glyphicon-remove"></i>返回</button>
+        </div>
+     </form>
+ </div>
+ <script>
+  function closeLayer(reload){
+     if("1" == reload){
+        parent.location.reload();
+     }
+     var index = parent.layer.getFrameIndex(window.name);
+     parent.layer.close(index);
+  }
+  function saveHelpCenter(){
+     $.ajax({
+        type: "POST",
+        url:"update.html",
+        data:$('#form1').serialize(),
+        success: function(data) {
+           data = eval('(' + data + ')');
+           if(data.code == 1){
+               parent.searchList("1");
+               parent.closeLayer(data.msg);
+            }else{
+              parent.layer.msg(data.msg,failIcon);
+            }
+        }
+    });
+  }
+  $(document).ready(function() {
+     $('select').comboSelect()
+   });
+</script>
+</html>

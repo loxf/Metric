@@ -1,0 +1,108 @@
+<div class="ibox-content">
+    <form role="form" class="form-inline">
+        <div class="form-group">
+            <label>看板名称:</label><input type="text" id="boardName" class="form-control">
+        </div>
+        <br><br>
+        <div class="form-group">
+           <button class="btn btn-white" type="button" onclick="searchList('1')"><i class="glyphicon glyphicon-search"></i>查询</button>
+            <button class="btn btn-success" type="button" onclick="edit()"><i class="glyphicon glyphicon-plus"></i>新建看板</button>
+        </div>
+    </form>
+  </div>
+  <div class="jqGrid_wrapper">
+        <table id="table_list_1"></table>
+        <div id="pager_list_1"></div>
+   </div>
+ <script>
+  function searchList(page){
+       $("#table_list_1").jqGrid('setGridParam',{
+            url:'listjson.html?'+getParams(),
+            page:page
+       }).trigger("reloadGrid");
+   }
+   function getParams(){
+      var boardName=$("#boardName").val();
+      return "boardName="+boardName;
+   }
+   $(document).ready(function () {
+       $.jgrid.defaults.styleUI = 'Bootstrap';
+       $('#table_list_1').jqGrid({
+              url:'listjson.html?'+getParams(),
+              datatype: "json",
+              height: jqGridHeight,
+              autowidth: true,
+              shrinkToFit: true,
+              viewrecords:true,
+              rowNum: 20,
+              rowList: [20, 30, 50],
+              viewrecords : true,
+              colNames: ['看板名称','修改人','修改时间','创建者','创建时间','操作'],
+              colModel: [
+                 {
+                   name: 'boardName',
+                   width: 10
+                 },
+
+                 {
+                       name: 'updateUserName',
+                       width: 10
+                  },
+                  {
+                      name: 'updateAtStr',
+                      width: 10
+                  },
+                  {
+                    name: 'createUserName',
+                    width: 10
+                  },
+                  {
+                    name: 'createAtStr',
+                    width: 12
+                  },
+                  {
+                   name:'boardId',
+                   width:10,
+                   formatter : function(value, options, rowObject) {
+                       var b = '';
+                        b = '<a href="javascript:void(0)" onclick="edit(\'' + value + '\')" class="btn btn-primary" ><i class="glyphicon glyphicon-pencil"></i>编辑</a>';
+                        b =b+ '&nbsp;&nbsp;<a onclick="delBoard(\'' + rowObject.boardId + '\')" class="btn btn-danger "><i class="glyphicon glyphicon-remove"></i>删除</a>';
+                        return b;
+                    }
+                  }
+              ],
+              pager: "#pager_list_1"
+         });
+   });
+ function edit(boardId){
+   var width = (document.body.clientWidth-220)+"px";
+   layer.open({
+     type: 2,
+     area: [width, '100%'],
+     offset: ['0px', '220px'],
+     fixed: false,
+     maxmin: true,
+     content: 'toEdit.html?boardId='+boardId
+    });
+  }
+
+   function delBoard(boardId){
+             layer.confirm('确认执行该操作？',{icon: 3, title:'删除指标预览'}, function(){
+             $.ajax({
+                   type: "POST",
+                   url:"deleteBoard.html?boardId="+boardId,
+                   dataType:"json",
+                   success: function(data) {
+                      if(data.code == 1){
+                         searchList();
+                         closeLayer(data.msg);
+                      }else{
+                         layer.msg(data.msg,failIcon);
+                     }
+                  }
+              });
+             }, function(){
+              layer.closeAll();
+            });
+          }
+</script>

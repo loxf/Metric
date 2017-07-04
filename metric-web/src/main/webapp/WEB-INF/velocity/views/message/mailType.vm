@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <link href="${rc.contextPath}/_resources/css/plugins/jqgrid/ui.jqgrid.css" rel="stylesheet">
+    <script src="${rc.contextPath}/_resources/js/plugins/jqgrid/i18n/grid.locale-cn.js"></script>
+    <script src="${rc.contextPath}/_resources/js/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+    <script src="${rc.contextPath}/_resources/js/plugins/layer/laydate/laydate.js"></script>
+    <script src="${rc.contextPath}/_resources/lhgdialog/lhgdialog.js"></script>
+    <script src="${rc.contextPath}/_resources/lhgdialog/lhgdialog.min.js"></script>
+</head>
+<body class="gray-bg">
+<div class="ibox-content">
+    <form role="form" class="form-inline">
+        <div class="form-group">
+            <label>站内信类型名称:</label><input type="text" id="name" class="form-control">
+        </div>
+        <button class="btn btn-white" type="button" onclick="searchList('1')"><i class="glyphicon glyphicon-search"></i>查询</button>
+        #if($permissionTool.hasPermission('message.mailtype.add'))
+        <button class="btn btn-success" type="button" onclick="edit('')"><i class="glyphicon glyphicon-plus"></i>新建类型</button>
+        #end
+    </form>
+</div>
+<div class="jqGrid_wrapper">
+    <table id="table_list_1"></table>
+    <div id="pager_list_1"></div>
+</div>
+<script>
+function searchList(page){
+    $("#table_list_1").jqGrid('setGridParam',{
+        url:'typejson.html?'+getParams(),
+        page:page
+    }).trigger("reloadGrid");
+}
+function getParams(){
+    var name = $("#name").val();
+
+    return "name="+name;
+}
+$(document).ready(function () {
+    $.jgrid.defaults.styleUI = 'Bootstrap';
+    $('#table_list_1').jqGrid({
+        url:'typejson.html?' + getParams(),
+        datatype: "json",
+        height: jqGridHeight,
+        autowidth: true,
+        shrinkToFit: true,
+        rownumbers: true,
+        viewrecords:true,
+        rowNum: 20,
+        rowList: [20, 30, 50],
+        colNames: ['消息类型名称','创建时间','状态','操作'],
+        colModel: [
+            {
+                name: 'name',
+            },
+            {
+                name: 'createdAtStr',
+                formatter:'date',
+                formatoptions:{srcformat: 'Y-m-d H:i:s', newformat: 'Y-m-d H:i:s'},
+            },
+            {
+                name: 'isDeleted',
+                formatter : function(value, row, index) {
+                         if("0" == value){
+                            return "启用";
+                         }else{
+                            return "禁用";
+                         }
+                      }
+            },
+            {
+                name: 'typeId',
+                formatter : function(value, row, index) {
+                    var b = '';
+                    #if($permissionTool.hasPermission('message.mailtype.update'))
+                     b = '<a href="javascript:void(0)" onclick="edit(\'' + value + '\')" class="btn btn-primary" ><i class="glyphicon glyphicon-pencil"></i>编辑</a>';
+                    #end
+                    return b;
+                }
+            },
+        ],
+        pager: "#pager_list_1"
+    });
+});
+ function edit(id){
+   layer.open({
+     type: 2,
+     area: ['800px', '320px'],
+     fixed: false,
+     maxmin: true,
+     title: '编辑类型',
+     content: 'detailType.html?typeId='+id,
+   });
+ }
+</script>
+</body>
+</html>

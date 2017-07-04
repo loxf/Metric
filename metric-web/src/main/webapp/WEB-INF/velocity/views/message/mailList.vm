@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <link href="${rc.contextPath}/_resources/css/plugins/jqgrid/ui.jqgrid.css" rel="stylesheet">
+    <script src="${rc.contextPath}/_resources/js/plugins/jqgrid/i18n/grid.locale-cn.js"></script>
+    <script src="${rc.contextPath}/_resources/js/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+    <script src="${rc.contextPath}/_resources/js/plugins/layer/laydate/laydate.js"></script>
+    <script src="${rc.contextPath}/_resources/lhgdialog/lhgdialog.js"></script>
+    <script src="${rc.contextPath}/_resources/lhgdialog/lhgdialog.min.js"></script>
+</head>
+<body class="gray-bg">
+<div class="ibox-content">
+    <form role="form" class="form-inline">
+        <div class="form-group">
+            <label>消息名称</label>
+            <input type="text" id="title" class="form-control">
+            <label>消息类型</label>
+            <select style="width:130px;height:33px" class="form-control" name="type" id="type">
+                <option value="">请选择</option>
+                #foreach(${type} in ${types})
+                <option value="$!{type.typeId}">$!{type.name}</option>
+                #end
+            </select>
+            <label>发送对象</label>
+            <select class="form-control" style="width:130px;height:33px" name="channelId" id="channelId">
+                <option value="">请选择</option>
+                #foreach(${channel} in ${channels})
+                <option value="$!{channel.typeId}">$!{channel.name}</option>
+                #end
+            </select>
+        </div>
+        <br><br>
+        <div class="form-group">
+            <label>发送时间</label>
+            <input class="form-control layer-date" id="startDate" placeholder="开始时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})">
+            -<input class="form-control layer-date" id="endDate" placeholder="结束时间" onclick="laydate({istime: true, format: 'YYYY-MM-DD'})">
+            <button class="btn btn-white" type="button" onclick="searchList('1')"><i class="glyphicon glyphicon-search"></i>查询</button>
+            #if($permissionTool.hasPermission('message.mail.add'))
+            <button class="btn btn-success" type="button" onclick="detail()"><i class="glyphicon glyphicon-plus"></i>发送消息</button>
+            #end
+        </div>
+    </form>
+</div>
+<div class="jqGrid_wrapper">
+    <table id="table_list_1"></table>
+    <div id="pager_list_1"></div>
+</div>
+<script>
+function searchList(page){
+    $("#table_list_1").jqGrid('setGridParam',{
+        url:'listjson.html?'+getParams(),
+        page:page
+    }).trigger("reloadGrid");
+}
+function getParams(){
+    var title = $("#title").val();
+    var type=$("#type").val();
+    var channelId=$("#channelId").val();
+    var startDate=$("#startDate").val();
+    var endDate=$("#endDate").val();
+    return "title="+title+"&type="+type+"&channelId="+channelId+"&startDate="+startDate+"&endDate="+endDate;
+}
+$(document).ready(function () {
+    $.jgrid.defaults.styleUI = 'Bootstrap';
+    $('#table_list_1').jqGrid({
+        url:'listjson.html?' + getParams(),
+        datatype: "json",
+        height: jqGridHeight,
+        autowidth: true,
+        shrinkToFit: true,
+        rowNum: 20,
+        rownumbers:true,
+        viewrecords:true,
+        rowList: [20, 30, 50],
+        colNames: ['消息名称','消息类型','发送对象','发送时间','发送人员','操作'],
+        colModel: [
+            {
+                name: 'title',
+            },
+            {
+                name: 'type',
+            },
+            {
+                name: 'receiverType',
+            },
+            {
+                name: 'createdAtStr',
+                formatter:'date',
+                formatoptions:{srcformat: 'Y-m-d H:i:s', newformat: 'Y-m-d H:i:s'},
+            },
+            {
+                name: 'senderId',
+            },
+            {
+                name: 'mailId',
+                formatter : function(value, row, index) {
+                    return '<a href="javascript:void(0)" onclick="detail(\'' + value + '\')" class="btn btn-primary" ><i class="glyphicon glyphicon-eye-open"></i>查看详情</a>';
+                }
+            },
+        ],
+        pager: "#pager_list_1"
+    });
+});
+ function detail(mailId){
+   layer.open({
+     type: 2,
+     area: ['800px', '600px'],
+     fixed: false,
+     maxmin: true,
+     title: '编辑消息',
+     content: 'detailMail.html?mailId='+mailId,
+   });
+ }
+</script>
+</body>
+</html>

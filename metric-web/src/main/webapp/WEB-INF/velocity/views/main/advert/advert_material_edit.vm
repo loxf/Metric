@@ -1,0 +1,137 @@
+<script src="/_resources/js/plugins/layer/laydate/laydate.js"></script>
+<link href="${rc.contextPath}/_resources/css/bootstrap-select.css" rel="stylesheet">
+<script src="${rc.contextPath}/_resources/js/bootstrap-select.js"></script>
+<link href="${rc.contextPath}/_resources/css/plugins/iCheck/custom.css" rel="stylesheet">
+<script src="${rc.contextPath}/_resources/js/plugins/iCheck/icheck.min.js"></script>
+<div class="ibox-content">
+   <form class="form-horizontal" id="form1">
+         <div class="form-group">
+             <label class="col-sm-3 control-label">对外素材名称：</label>
+             <div class="col-sm-8">
+                 <input type="hidden" name="advMaConId" value="$!{entity.advMaConId}">
+                 <input type="hidden" name="advertMaId" value="$!{entity.advertMaId}">
+                 <input type="text" class="form-control" name="advMaDisplayName" value="$!{entity.advMaDisplayName}" style="width:400px"/>
+             </div>
+         </div>
+         <div class="form-group">
+             <label class="col-sm-3 control-label">素材ICON：</label>
+             <div class="col-sm-8">
+                 <input type="hidden" id="advMaPic" name="advMaPic" value="$!{entity.advMaPic}">
+                 #if(!${entity.advMaPic} || $!{entity.advMaPic} == '')
+                     <img src="" id="imgDiv" width="90" height="90"  style="display:none" />
+                 #else
+                     <img src="$!{ossDomain}/$!{entity.advMaPic}" id="imgDiv"  width="90" height="90"  />
+                 #end
+                 <input id="file1" type="file" name="file" accept="image/*">
+             </div>
+         </div>
+         <div class="form-group">
+              <label class="col-sm-3 control-label">充值折扣：</label>
+              <div class="col-sm-8">
+                  <input type="text" class="form-control" name="discount"  value="$!{entity.discount}" style="width:400px"
+                         onkeyup="this.value=this.value.replace(/[^\d.]/g,'')"
+                         onafterpaste="this.value=this.value.replace(/[^\d.]/g,'')"
+                         maxlength="4"/>
+              </div>
+          </div>
+          #if($!{baiduDisplay} == '1')
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">酷币充值折扣：</label>
+                    <div class="col-sm-8">
+                        <input type="textarea" class="form-control" name="discountCoin"
+                               onkeyup="this.value=this.value.replace(/[^\d.]/g,'')"
+                               onafterpaste="this.value=this.value.replace(/[^\d.]/g,'')"
+                               maxlength="4"
+                               value="$!{entity.discountCoin}" style="width:400px" />
+                    </div>
+                </div>
+                <div class="form-group">
+                <label class="col-sm-3 control-label">是否支持酷币：</label>
+                <div class="radio i-checks">
+                    <label><input type="radio"  name="isSupport" value="0" #if($!{entity.isSupport} == '0') checked #end  />禁用</label>
+                    <label><input type="radio"  name="isSupport" value="1" #if($!{entity.isSupport} == '1') checked #end/>启用</label>
+                </div>
+                </div>
+          #end
+          #if($!{yaodianDisplay} == '1')
+               <div class="form-group">
+                   <label class="col-sm-3 control-label">充值返点比例(%)：</label>
+                   <div class="col-sm-8">
+                       <input type="textarea" class="form-control" name="rebate"
+                              onkeyup="this.value=this.value.replace(/[^\d.]/g,'')"
+                              onafterpaste="this.value=this.value.replace(/[^\d.]/g,'')"
+                              maxlength="4"
+                              value="$!{entity.rebate}" style="width:400px" />
+                   </div>
+               </div>
+           #end
+
+         <div class="form-group">
+             <label class="col-sm-3 control-label">排序号：</label>
+             <div class="col-sm-8">
+                 <input type="textarea" class="form-control" name="orderNo" value="$!{entity.orderNo}" style="width:400px" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^0-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^0-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"/>
+             </div>
+         </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">状态：</label>
+                <div class="radio i-checks">
+                    <label><input type="radio"  name="status" value="0" #if($!{entity.status} == '0') checked #end  />禁用</label>
+                    <label><input type="radio"  name="status" value="1" #if($!{entity.status} == '1') checked #end/>启用</label>
+                </div>
+            </div>
+            <div align="center">
+               <button class="btn btn-success" type="button" onclick="saveAdvertMaterial()"><i class="glyphicon glyphicon-ok"></i>保存</button>
+               <button class="btn btn-white" type="button" onclick="closeLayer('0')"><i class="glyphicon glyphicon-remove"></i>返回</button>
+            </div>
+    </form>
+ </div>
+ <script>
+ $(document).ready(function() {
+     $('.i-checks').iCheck({
+         checkboxClass: 'icheckbox_square-green',
+         radioClass: 'iradio_square-green',
+     });
+   });
+  function closeLayer(reload){
+     if("1" == reload){
+        parent.location.reload();
+     }
+     var index = parent.layer.getFrameIndex(window.name);
+     parent.layer.close(index);
+  }
+
+  function saveAdvertMaterial(){
+     $.ajax({
+        type: "POST",
+        url:"updateAvertMaterial.html",
+        data:$('#form1').serialize(),
+        success: function(data) {
+           data = eval('(' + data + ')');
+           alert(data.msg);
+           if(data.code == 1){
+               closeLayer('1');
+            }
+        }
+    });
+  }
+
+  layui.use('upload', function(){
+      layui.upload({
+          url: '${rc.contextPath}/upload/uploadFile.html?uploadPath=advertMa/img',
+          elem: '#file1',
+          method: 'post',
+          unwrap:true,
+          success: function(res){
+              if(res.code == 1){
+                  $("#advMaPic").val(res.data.id);
+                  $("#imgDiv").attr('src',res.data.value);
+                  $("#imgDiv").show();
+              }else{
+                  parent.layer.msg(data.msg,failIcon);
+              }
+          }
+      });
+      $("#layui-upload-iframe").hide();
+  });
+</script>
+</html>

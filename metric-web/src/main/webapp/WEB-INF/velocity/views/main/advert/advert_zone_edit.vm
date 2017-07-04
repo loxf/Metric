@@ -1,0 +1,212 @@
+<link href="${rc.contextPath}/_resources/css/bootstrap-select.css" rel="stylesheet">
+<script src="${rc.contextPath}/_resources/js/bootstrap-select.js"></script>
+<div class="ibox-content">
+   <form class="form-horizontal" id="form1">
+         <div class="form-group">
+             <label class="col-sm-3 control-label">广告位名称：</label>
+             <div class="col-sm-8">
+                <input type="hidden" name="advertZoneId" value="$!{entity.advertZoneId}">
+                 <input type="text" class="form-control" name="name" value="$!{entity.name}"  style="width:400px">
+             </div>
+         </div>
+         <div class="form-group">
+              <label class="col-sm-3 control-label">渠道主:</label>
+              <div class="col-sm-8" style="width:430px">
+                  <select id="userId" name="userId" onchange="changeUser(this)"  class="selectpicker show-tick form-control" data-live-search="true">
+                    #foreach($item in ${users})
+                       <option value="$!{item.userId}"  #if($!{entity.userId} == $!{item.userId}) selected="selected" #end>$!{item.userName}</option>
+                    #end
+                  </select>
+              </div>
+         </div>
+        <div class="form-group">
+             <label class="col-sm-3 control-label">渠道名称:</label>
+             <div class="col-sm-8" style="width:430px">
+                 <select id="channelSel" name="channelId" class="selectpicker show-tick form-control" data-live-search="true">
+                      #foreach($item in $!{channels})
+                        <option value="$!{item.channelId}"  #if($!{entity.channelId} == $!{item.channelId}) selected="selected" #end>$!{item.channelName}</option>
+                      #end
+                 </select>
+             </div>
+         </div>
+         <div class="form-group">
+           <label class="col-sm-3 control-label">广告类型：</label>
+           <div class="col-sm-8" style="width:430px">
+              <select id="subTypeSel" name="subTypeId" onchange="reloadAdvSize()" class="selectpicker show-tick form-control" data-live-search="true">
+                  #foreach($item in $!{advSubTypes})
+                   <option value="$!{item.subTypeId}"  #if($!{entity.subTypeId} == $!{item.subTypeId}) selected="selected" #end>$!{item.subTypeName}</option>
+                  #end
+             </select>
+           </div>
+        </div>
+         <div class="form-group">
+              <label class="col-sm-3 control-label">图片尺寸：</label>
+              <div class="col-sm-8" style="width:430px">
+                 <select id="advSizeSel" name="advertSizeId" onchange="reloadWapZoneAdvert()" class="selectpicker show-tick form-control" data-live-search="true">
+                     #foreach($item in $!{advSizes})
+                      <option value="$!{item.advertSizeId}"  #if($!{entity.advertSizeId} == $!{item.advertSizeId}) selected="selected" #end>$!{item.width}*$!{item.height}</option>
+                     #end
+                </select>
+              </div>
+          </div>
+           <div class="form-group">
+                <label class="col-sm-3 control-label">结算方式：</label>
+                <div class="col-sm-8" style="width:430px">
+                   <select id="settleMethodSel" name="settleMethod" onchange="reloadWapZoneAdvert()" class="selectpicker show-tick form-control">
+                        #foreach($item in $!{settleMethods.entrySet()})
+                         <option value="$!{item.key}"  #if($!{entity.settleMethod} == $!{item.key}) selected="selected" #end>$!{item.value}</option>
+                        #end
+                  </select>
+                </div>
+            </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">广告模式：</label>
+            <div class="col-sm-8" style="width:430px">
+               <select id="advertFilter"  name="advertFilter" onchange="switchAdvertMode(),reloadWapZoneAdvert()" class="selectpicker show-tick form-control">
+                   #foreach($item in $!{advFilters.entrySet()})
+                    <option value="$!{item.key}"  #if($!{entity.advertFilter} == $!{item.key}) selected="selected" #end>$!{item.value}</option>
+                   #end
+              </select>
+            </div>
+          </div>
+          <div id="advCustom" style=#if($!entity.advertFilter == '2') "display: block" #else "display: none" #end>
+               <div class="form-group">
+                   <label class="col-sm-3 control-label"><input type="checkbox" id="viewadsid_all" onclick="checkAll()"/>全选</label>
+                   <div class="col-sm-8" style="width:430px">
+                       <p>我们为你匹配到以下的广告</p>
+                   </div>
+               </div>
+               <div class="form-group" id="advertsDiv">
+                   #foreach($item in $!{adverts})
+                       <label class="col-sm-3 control-label">$!{item.adname}<input type="checkbox" name="adsid"  value="$!{item.adsid}" $!{item.checked}/></label>
+                       <div class="col-sm-8"><img src="$!{item.imageurl}" width="$!{item.width}" height="$!{item.height}"/></div>
+                   #end
+               </div>
+            </div>
+            <div align="center">
+               <button class="btn btn-success" type="button" onclick="saveAdvZone()"><i class="glyphicon glyphicon-ok"></i>保存</button>
+               <button class="btn btn-white" type="button" onclick="parent.closeLayer()"><i class="glyphicon glyphicon-remove"></i>返回</button>
+            </div>
+           <div class="form-group">
+              <label class="col-sm-3 control-label">JS代码：</label>
+              <div class="col-sm-8">
+                <input type="text" class="form-control"  value='$!{entity.jsCode}'  style="width:400px">
+              </div>
+            </div>
+     </form>
+ </div>
+ <script>
+  $(document).ready(function() {
+      disableAdvZoneSel(true);
+   });
+
+   function disableAdvZoneSel(flag){
+     var advZoneId = "$!{entity.advertZoneId}";
+     if(flag && advZoneId!=''){
+        $("#userId").attr("disabled","disabled");
+        $("#channelSel").attr("disabled","disabled");
+        $("#subTypeSel").attr("disabled","disabled");
+        $("#advSizeSel").attr("disabled","disabled");
+        $("#settleMethodSel").attr("disabled","disabled");
+     }else{
+        $("#userId").removeAttr("disabled");
+        $("#channelSel").removeAttr("disabled");
+        $("#subTypeSel").removeAttr("disabled");
+        $("#advSizeSel").removeAttr("disabled");
+        $("#settleMethodSel").removeAttr("disabled");
+     }
+   }
+
+  function switchAdvertMode() {
+      var type = $("#advertFilter").val();
+      if(type=='1'){
+          $("#advCustom").hide();
+      }else{
+          $("#advCustom").show();
+      }
+  }
+
+  function checkAll(){
+      var b = $("input[id='viewadsid_all']").prop('checked');
+      $("input[name='adsid']").prop('checked',b);
+  }
+
+ function reloadAdvSize(){
+   $.ajax({
+     type: "POST",
+     url:"${rc.contextPath}/admin/advSize/listBySubType.html?subTypeId="+$("#subTypeSel").val(),
+     dataType:"json",
+     success: function(data) {
+       var optionString = "";
+       for(var i=0;i<data.length;i++){
+         optionString+="<option value = '"+data[i].advertSizeId+"'>"+data[i].width+"*"+data[i].height+"</option>";
+       }
+       $("#advSizeSel").html(optionString);
+       $("#advSizeSel").selectpicker('refresh');
+       reloadWapZoneAdvert();
+    }
+  });
+ }
+
+ function changeUser(obj){
+    $.ajax({
+         type: "POST",
+         url:"${rc.contextPath}/admin/channel/listChannel.html?userId="+$(obj).val(),
+         dataType:"json",
+         success: function(data) {
+           var htmlStr = "";
+           for (i = 0; i < data.length; i++) {
+             htmlStr += "<option value=\'"+ data[i].channelId +"\'>" + data[i].channelName + "</option>";
+           }
+           $("#channelSel").html(htmlStr);
+           $("#channelSel").selectpicker('refresh');
+           reloadWapZoneAdvert();
+         }
+     });
+  }
+  //自定义模式广告列表重新加载
+  function reloadWapZoneAdvert(){
+    if("2"!= $("#advertFilter").val()){
+      return;
+    }
+    switchAdvertMode();//切换广告模式
+    disableAdvZoneSel(false);
+    $.ajax({
+         type: "POST",
+         url:"queryWapZoneAdvert.html",
+         dataType:"json",
+         data:$('#form1').serialize(),
+         success: function(data) {
+          disableAdvZoneSel(true);
+          if(data.code == 1){
+              var htmlStr = "";
+              data = data.data;
+              for (i = 0; i < data.length; i++) {
+                htmlStr += "<label class='col-sm-3 control-label'>"+data[i].adname+"<input type='checkbox' name='adsid' value=\'"+ data[i].adsid +"\'" + data[i].checked+"/></label>";
+                htmlStr+="<div class='col-sm-8'><img src=\'"+data[i].imageurl+"\' width=\'"+data[i].width +"\' height=\'"+data[i].height+"\'/></div>";
+              }
+              $("#advertsDiv").html(htmlStr);
+            }else{
+               parent.layer.msg(data.msg,failIcon);
+            }
+         }
+    });
+  }
+   function saveAdvZone(){
+      $.ajax({
+         type: "POST",
+         url:"updateAdvZone.html",
+         dataType:"json",
+         data:$('#form1').serialize(),
+         success: function(data) {
+          if(data.code == 1){
+               parent.searchList();
+               parent.closeLayer(data.msg);
+             }else{
+               parent.layer.msg(data.msg,failIcon);
+            }
+         }
+     });
+   }
+</script>
+</html>

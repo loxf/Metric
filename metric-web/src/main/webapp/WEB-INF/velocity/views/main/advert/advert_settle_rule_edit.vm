@@ -1,0 +1,109 @@
+<link href="${rc.contextPath}/_resources/css/bootstrap-select.css" rel="stylesheet">
+<script src="${rc.contextPath}/_resources/js/bootstrap-select.js"></script>
+<div class="ibox-content">
+   <form class="form-horizontal" id="form1">
+         <div class="form-group">
+             <label class="col-sm-3 control-label">规则名称：</label>
+             <div class="col-sm-8">
+                 <input type="hidden" name="comSetRuId" value="$!{entity.comSetRuId}">
+                 <input type="text" class="form-control" name="name" value="$!{entity.name}" style="width:400px">
+             </div>
+         </div>
+         <div class="form-group">
+              <label class="col-sm-3 control-label">结算方式：</label>
+              <div class="col-sm-8" style="width:430px">
+                 <select name="settleMethod" class="selectpicker show-tick form-control" data-live-search="true">
+                    #foreach($item in $!{methods.entrySet()})
+                      #if($!{entity.settleMethod} == $!{item.key})
+                        <option value="$!{item.key}" selected="selected">$!{item.value}</option>
+                      #else
+                        <option value="$!{item.key}">$!{item.value}</option>
+                      #end
+                    #end
+                </select>
+              </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">结算指标：</label>
+            <div class="col-sm-8">
+              <input type="text"  maxlength="10" class="form-control" id="settleTarget" name="settleTarget" value="$!{entity.settleTarget}" style="width:400px">
+            </div>
+         </div>
+         <div class="form-group">
+               <label class="col-sm-3 control-label">结算类型：</label>
+               <div class="col-sm-8" style="width:430px">
+                  <select name="settleType" class="selectpicker show-tick form-control" data-live-search="true">
+                     #foreach($item in $!{types.entrySet()})
+                       #if($!{entity.settleType} == $!{item.key})
+                         <option value="$!{item.key}" selected="selected">$!{item.value}</option>
+                       #else
+                         <option value="$!{item.key}">$!{item.value}</option>
+                       #end
+                     #end
+                 </select>
+               </div>
+           </div>
+          <div class="form-group">
+              <label class="col-sm-3 control-label">结算值：</label>
+              <div class="col-sm-8">
+                  <input type="text" class="form-control" id="settleTypeNum" name="settleTypeNum" value="$!{entity.settleTypeNum}" style="width:400px">
+              </div>
+          </div>
+         <div class="form-group">
+             <label class="col-sm-3 control-label">结算周期：</label>
+             <div class="col-sm-8" style="width:430px">
+                <select name="settleCycle" class="selectpicker show-tick form-control" data-live-search="true">
+                   #foreach($item in $!{cycles.entrySet()})
+                     #if($!{entity.settleCycle} == $!{item.key})
+                       <option value="$!{item.key}" selected="selected">$!{item.value}</option>
+                     #else
+                       <option value="$!{item.key}">$!{item.value}</option>
+                     #end
+                   #end
+               </select>
+             </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">状态：</label>
+            <div class="col-sm-8" style="width:430px">
+                <select name="status" class="selectpicker show-tick form-control">
+                     <option value="1" #if($!entity.status == 1) selected="selected" #end>启用</option>
+                     <option value="0" #if($!entity.status == 0) selected="selected" #end>禁用</option>
+                </select>
+            </div>
+        </div>
+        <div align="center">
+           <button class="btn btn-success" type="button" onclick="saveType()"><i class="glyphicon glyphicon-ok"></i>保存</button>
+           <button class="btn btn-white" type="button" onclick="parent.closeLayer()"><i class="glyphicon glyphicon-remove"></i>返回</button>
+        </div>
+     </form>
+ </div>
+ <script>
+  function saveType(){
+     if($("#settleTarget").val().length>10){
+       parent.layer.msg("结算指标最大长度10字符！",failIcon);
+     }
+     $.ajax({
+        type: "POST",
+        url:"updateSettleRule.html",
+        dataType:"json",
+        data:$('#form1').serialize(),
+        success: function(data) {
+         if(data.code == 1){
+              parent.searchList();
+              parent.closeLayer(data.msg);
+            }else{
+              parent.layer.msg(data.msg,failIcon);
+           }
+        }
+    });
+  }
+
+  $("#settleTypeNum").change(function(){
+         if(!/^\d+(\.\d+)?$/.test(this.value)){
+             parent.layer.msg("只能输入数字!(如8或者8.8)！",failIcon);
+             this.value='';
+         }
+     });
+</script>
+</html>

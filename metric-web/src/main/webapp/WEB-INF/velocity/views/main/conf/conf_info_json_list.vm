@@ -1,0 +1,88 @@
+<div class="ibox-content">
+    <form class="form-horizontal" id="form1">
+       <input type="hidden" name="confInfoId" value="$!{entity.confInfoId}">
+       <input type="hidden" name="name" value="$!{entity.name}">
+       <input type="hidden" name="orderNo" value="$!{entity.orderNo}">
+       <input type="hidden" id="paramValueId" name="paramValue" value="$!{entity.paramValue}">
+    </form>
+    <button class="btn btn-white" type="button" onclick="addConf()">新建</button>
+    <button class="btn btn-white" type="button" onclick="delConf()">删除</button>
+    <button class="btn btn-white" type="button" onclick="saveConf()">保存</button>
+    <button class="btn btn-white" type="button" onclick="parent.closeLayer()">返回</button>
+  </div>
+  <div class="jqGrid_wrapper">
+        <table id="table_list_1"></table>
+   </div>
+ <script>
+   var lastsel = -1;
+   $(document).ready(function () {
+       $.jgrid.defaults.styleUI = 'Bootstrap';
+       $('#table_list_1').jqGrid({
+              data:$!{entity.paramValue},
+              datatype: "local",
+              height: 'auto',
+              autowidth: true,
+              shrinkToFit: true,
+              rowNum: 200,
+              ondblClickRow: function(id){
+                if(lastsel == id){
+                   return;
+                }
+                $("#table_list_1").jqGrid('saveRow',lastsel);
+                $("#table_list_1").jqGrid('editRow',id,true);
+                lastsel = id;
+             },
+              colNames: ['参数id','参数值','排序号'],
+              colModel: [
+                 {
+                   name: 'paramId',
+                   width: 10,
+                   editable:true
+                 },
+                 {
+                    name: 'paramValue',
+                    width: 10,
+                    editable:true
+                 },
+                   {
+                     name: 'orderNo',
+                     width: 10,
+                     editable:true
+                }
+              ]
+        });
+   });
+   function saveConf(){
+    $("#table_list_1").jqGrid('saveRow',lastsel);
+    var rowData = $("#table_list_1").jqGrid("getRowData");
+    $("#paramValueId").val(JSON.stringify(rowData));
+    $.ajax({
+       type: "POST",
+       url:"updateConf.html",
+       dataType:"json",
+       data:$('#form1').serialize(),
+       success: function(data) {
+          if(data.code == 1){
+             parent.searchList("$!{entity.categoryId}");
+             parent.closeLayer(data.msg);
+          }else{
+            lastsel = -1;
+            parent.layer.msg(data.msg,failIcon);
+          }
+       }
+    });
+   }
+   function addConf(){
+     var rowData = $("#table_list_1").jqGrid("getRowData");
+     $("#table_list_1").jqGrid("addRowData", rowData.length+1, {}, "first");
+   }
+   function delConf(){
+      var selId = $("#table_list_1").jqGrid("getGridParam","selrow");
+      if(!selId){
+         parent.layer.msg("请要删除的行",failIcon);
+         return;
+      }
+      $("#table_list_1").jqGrid("delRowData", selId);
+    }
+</script>
+</html>
