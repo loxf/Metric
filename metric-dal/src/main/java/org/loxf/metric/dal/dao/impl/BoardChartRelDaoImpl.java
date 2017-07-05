@@ -13,7 +13,7 @@ import java.util.Map;
  */
 @Component("boardChartRelDaoImpl")
 public class BoardChartRelDaoImpl extends MongoDaoBase<BoardChartRel> implements BoardChartRelDao {
-    private final String collectionName = "BoardChartRel";
+    private final String collectionName = "board_chart_rel";
 
     @Override
     public void insert(BoardChartRel object) {
