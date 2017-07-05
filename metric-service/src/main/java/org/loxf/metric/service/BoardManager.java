@@ -1,14 +1,12 @@
 package org.loxf.metric.service;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.map.HashedMap;
 import org.loxf.metric.base.utils.IdGenerator;
 import org.loxf.metric.common.dto.BaseResult;
 import org.loxf.metric.common.dto.BoardDto;
 import org.loxf.metric.common.dto.ChartDto;
 import org.loxf.metric.dal.dao.BoardChartRelMapper;
 import org.loxf.metric.dal.dao.BoardMapper;
-import org.loxf.metric.dal.dao.interfaces.BoardChartRelDao;
 import org.loxf.metric.dal.po.Board;
 import org.loxf.metric.dal.po.BoardChartRel;
 import org.loxf.metric.dal.po.Chart;
@@ -20,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by caiyang on 2017/5/4.
@@ -31,7 +28,7 @@ public class BoardManager {
     @Autowired
     private BoardMapper boardMapper;
     @Autowired
-    private BoardChartRelDao boardChartRelMapper;
+    private BoardChartRelMapper boardChartRelMapper;
 
     @Transactional
     public String insert(BoardDto boardDto) {
@@ -61,9 +58,6 @@ public class BoardManager {
         // 根据看板去查询图信息
         if (board != null) {
             BeanUtils.copyProperties(board, boardDto);
-            Map qryParams=new HashedMap();
-            qryParams.put("boardId",boardId);
-
             List<Chart> chartList = boardChartRelMapper.getChartsByBoardId(boardId);
             if (CollectionUtils.isNotEmpty(chartList)) {
                 List<ChartDto> chartDtoList = new ArrayList<ChartDto>();
@@ -99,12 +93,12 @@ public class BoardManager {
     }
     @Transactional
     public BaseResult<String> delBoard(String boardId) {
-         int i=  boardMapper.deleteByBoardId(boardId);
-         if(i>0){
+        int i=  boardMapper.deleteByBoardId(boardId);
+        if(i>0){
             int j= boardChartRelMapper.delete(boardId);
             return new BaseResult<>(i+"");
-         }
-         return new BaseResult<>(0,0+"");
+        }
+        return new BaseResult<>(0,0+"");
 
     }
 }

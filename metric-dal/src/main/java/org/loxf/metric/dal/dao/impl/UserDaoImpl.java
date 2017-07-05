@@ -1,38 +1,37 @@
 package org.loxf.metric.dal.dao.impl;
 
 import org.loxf.metric.core.mongo.MongoDaoBase;
-import org.loxf.metric.dal.dao.interfaces.UserQuotaScanRelDao;
-import org.loxf.metric.dal.po.UserQuotaScanRel;
-import org.loxf.metric.dal.po.UserQuotaScanRel;
+import org.loxf.metric.dal.dao.interfaces.UserDao;
+import org.loxf.metric.dal.po.User;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
 
 /**
- * Created by hutingting on 2017/7/4.
+ * Created by hutingting on 2017/7/5.
  */
-@Component("userQuotaScanRelDaoImpl")
-public class UserQuotaScanRelDaoImpl extends MongoDaoBase<UserQuotaScanRel> implements UserQuotaScanRelDao {
-    private final String collectionName = "user_quota_scan_rel";
+@Component("userImpl")
+public class UserDaoImpl extends MongoDaoBase<User> implements UserDao {
+    private final String collectionName = "user";
 
     @Override
-    public void insert(UserQuotaScanRel object) {
+    public void insert(User object) {
         super.insert(object, collectionName);
     }
 
     @Override
-    public UserQuotaScanRel findOne(Map<String, Object> params) {
+    public User findOne(Map<String, Object> params) {
         return super.findOne(params, collectionName);
     }
 
     @Override
-    public List<UserQuotaScanRel> findAll(Map<String, Object> params) {
+    public List<User> findAll(Map<String, Object> params) {
         return super.findAll(params, collectionName);
     }
 
     @Override
-    public List<UserQuotaScanRel> findByPager(Map<String, Object> params, int start, int end) {
+    public List<User> findByPager(Map<String, Object> params, int start, int end) {
         return super.findByPager(params, start, end, collectionName);
     }
 
