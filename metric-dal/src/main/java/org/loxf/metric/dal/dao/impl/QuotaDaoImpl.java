@@ -1,6 +1,7 @@
 package org.loxf.metric.dal.dao.impl;
 
 import org.apache.commons.lang.StringUtils;
+
 import org.loxf.metric.core.mongo.MongoDaoBase;
 import org.loxf.metric.dal.dao.interfaces.QuotaDao;
 import org.loxf.metric.dal.po.Quota;
@@ -17,50 +18,10 @@ import java.util.Map;
  * Created by luohj on 2017/6/26.
  */
 @Component("quotaDaoImpl")
-public class QuotaDaoImpl extends MongoDaoBase<Quota> implements QuotaDao {
+public class QuotaDaoImpl extends MongoDaoBase<Quota> implements QuotaDao{
     private static Logger logger = LoggerFactory.getLogger(QuotaDaoImpl.class);
 
-    private static final String DefaultCollectionName = "Quota";
-
-    @Override
-    public List<Map> queryBySql(String sql) {
-        return null;
-    }
-
-    @Override
-    public List<Quota> queryQuotaNameAndId(Quota quota) {
-        return null;
-    }
-
-    @Override
-    public List<QuotaDimension> queryDimenListByChartId(String chartId) {
-        return null;
-    }
-
-    @Override
-    public List<QuotaDimension> queryDimenListByBoardId(String boardId) {
-        return null;
-    }
-
-    @Override
-    public List<QuotaDimension> queryDimenListByQuotaId(String quotaId) {
-        return null;
-    }
-
-    @Override
-    public List<Map> queryDimenListByQuotaCodes(String[] quotaCodes) {
-        return null;
-    }
-
-    @Override
-    public int deleteByQuotaId(String quotaId) {
-        return 0;
-    }
-
-    @Override
-    public List<Quota> queryQuotaDependency(String quotaStr) {
-        return null;
-    }
+    private final String DefaultCollectionName = "Quota";
 
     public Quota selectQuota(Quota quota){
         Query query = getWhere(quota);
@@ -70,10 +31,6 @@ public class QuotaDaoImpl extends MongoDaoBase<Quota> implements QuotaDao {
     public List<Quota> selectList(Quota quota){
         Query query = getWhere(quota);
         return mongoTemplate.find(query, Quota.class, DefaultCollectionName);
-    }
-
-    public int count(Quota quota){
-        return 0;
     }
 
     private Query getWhere(Quota quota){
@@ -108,11 +65,6 @@ public class QuotaDaoImpl extends MongoDaoBase<Quota> implements QuotaDao {
         }
         query.addCriteria(criteria);
         return query;
-    }
-
-    @Override
-    public int update(Quota record) {
-        return 0;
     }
 
 

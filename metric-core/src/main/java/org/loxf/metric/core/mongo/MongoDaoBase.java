@@ -24,7 +24,7 @@ public class MongoDaoBase<T> implements MongoBase<T> {
     protected MongoTemplate mongoTemplate;
 
     @Override
-    public void insert(Object object, String collectionName) {
+    public void insert(T object, String collectionName) {
         mongoTemplate.insert(object, collectionName);
     }
 
