@@ -13,45 +13,45 @@ import java.util.Map;
  */
 @Component("boardChartRelDaoImpl")
 public class BoardChartRelDaoImpl extends MongoDaoBase<BoardChartRel> implements BoardChartRelDao {
-    private final String DefaultCollectionName = "BoardChartRel";
+    private final String collectionName = "BoardChartRel";
 
     @Override
     public void insert(BoardChartRel object) {
-        super.insert(object, DefaultCollectionName);
+        super.insert(object, collectionName);
     }
 
     @Override
     public BoardChartRel findOne(Map<String, Object> params) {
-        return super.findOne(params, DefaultCollectionName);
+        return super.findOne(params, collectionName);
     }
 
     @Override
     public List<BoardChartRel> findAll(Map<String, Object> params) {
-        return super.findAll(params, DefaultCollectionName);
+        return super.findAll(params, collectionName);
     }
 
     @Override
     public List<BoardChartRel> findByPager(Map<String, Object> params, int start, int end) {
-        return super.findByPager(params, start, end, DefaultCollectionName);
+        return super.findByPager(params, start, end, collectionName);
     }
 
     @Override
     public void update(Map<String, Object> queryParams, Map<String, Object> setParams) {
-        super.update(queryParams, setParams, DefaultCollectionName);
+        super.update(queryParams, setParams, collectionName);
     }
 
     @Override
     public void updateOne(Map<String, Object> queryParams, Map<String, Object> setParams) {
-        super.updateOne(queryParams, setParams, DefaultCollectionName);
+        super.updateOne(queryParams, setParams, collectionName);
     }
 
     @Override
     public void createCollection() {
-        super.createCollection(DefaultCollectionName);
+        super.createCollection(collectionName);
     }
 
     @Override
     public void remove(Map<String, Object> params) {
-        super.remove(params, DefaultCollectionName);
+        super.remove(params, collectionName);
     }
 }
