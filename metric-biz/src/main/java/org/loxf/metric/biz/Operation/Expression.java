@@ -53,7 +53,7 @@ public class Expression {
         this.expression = expression;
         this.forQuotaScan = forQuotaScan;
         this.summaryOperation = summaryOperation;
-        quotaOperation = (QuotaOperation)SpringApplicationContextUtil.getBean(QuotaOperation.class);
+        quotaOperation = (QuotaOperation)SpringApplicationContextUtil.getBean("quotaOperation");
     }
 
     public void init(ConditionVo condition){

@@ -7,7 +7,7 @@
         http://www.springframework.org/schema/beans/spring-beans.xsd http://code.alibabatech.com/schema/dubbo
         http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
-    <dubbo:application name="ywwl-oper"/>
+    <dubbo:application name="${app.name}"/>
     <dubbo:registry id="dubbo" protocol="zookeeper" address="${dubbo.zookeeper.address}"  file="${app.tmpDir}/output/${app.name}.cache"/>
     <dubbo:protocol name="dubbo" port="-1"/>
     <dubbo:consumer check="false"/>

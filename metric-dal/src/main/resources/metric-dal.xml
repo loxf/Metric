@@ -1,26 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:mongo="http://www.springframework.org/schema/data/mongo"
-       xmlns="http://www.springframework.org/schema/beans" xmlns:task="http://www.springframework.org/schema/task"
+       xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
 	   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
-       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
-       http://www.springframework.org/schema/aop  http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
-       http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
        http://www.springframework.org/schema/data/mongo
        http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd">
     <!-- MONGODB数据库配置 -->
     <mongo:mongo id="mongo" host="${mongodb.host}" port="${mongodb.port}"/>
 
-    <bean id="userCredentials" class="org.springframework.data.authentication.UserCredentials">  
-        <constructor-arg name="username" value="${mongodb.user}"/>  
-        <constructor-arg name="password" value="${mongodb.password}"/>  
+    <bean id="userCredentials" class="org.springframework.data.authentication.UserCredentials">
+        <constructor-arg name="username" value="${mongodb.user}"/>
+        <constructor-arg name="password" value="${mongodb.password}"/>
     </bean>
     <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
-        <constructor-arg ref="mongo" />
+        <constructor-arg ref="mongo"/>
         <constructor-arg value="${mongodb.db}"/>
         <constructor-arg ref="userCredentials"/>
     </bean>

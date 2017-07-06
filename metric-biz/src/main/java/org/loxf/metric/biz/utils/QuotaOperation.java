@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  * 指标的运算
  * Created by luohj on 2017/5/9.
  */
-@Component
+@Component("quotaOperation")
 public class QuotaOperation {
     @Autowired
     private QuotaManager mgr;

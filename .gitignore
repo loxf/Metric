@@ -5,7 +5,6 @@ logs
 tmp
 generator.properties
 generatorConfig.xml
-ywwl-oper-web/disconf/
 .project
 .settings
 .classpath
