@@ -7,6 +7,8 @@ import org.loxf.metric.base.utils.IdGenerator;
 import org.loxf.metric.common.constants.QuotaType;
 import org.loxf.metric.common.constants.State;
 import org.loxf.metric.common.dto.*;
+import org.loxf.metric.dal.dao.interfaces.QuotaDao;
+import org.loxf.metric.dal.dao.interfaces.QuotaDimensionDao;
 import org.loxf.metric.dal.po.Quota;
 import org.loxf.metric.dal.po.QuotaDimension;
 import org.springframework.beans.BeanUtils;
@@ -22,95 +24,44 @@ import java.util.*;
  */
 @Component
 public class QuotaManager {
-    private static String quota_prefix = "Q_";
+    private static String quota_prefix = "QUOTA";
     @Autowired
-    private QuotaMapper quotaMapper;
+    private QuotaDao quotaDao;
     @Autowired
-    private QuotaDimensionMapper quotaDimensionMapper;
+    private QuotaDimensionDao quotaDimensionDao;
 
     /**
      * @param quotaDto
-     * @param quotas 复合指标对应的计算指标
      * @return
      */
     @Transactional
-    public String createQuota(QuotaDto quotaDto, List<String> quotas){
+    public String createQuota(QuotaDto quotaDto){
         Quota quota = new Quota();
         BeanUtils.copyProperties(quotaDto,quota);
         String sid = IdGenerator.generate(quota_prefix);
         quota.setQuotaId(sid);
-        int succ = quotaMapper.insert(quota);
-        if(succ>0) {
-            // 插入维度
-            // 基础指标
-            if (quotaDto.getType().equals(QuotaType.BASIC.getValue()) && quotaDto.getDimensionList() != null) {
-                for (QuotaDimensionDto tmp : quotaDto.getDimensionList()) {
-                    QuotaDimension po = new QuotaDimension();
-                    BeanUtils.copyProperties(tmp, po);
-                    po.setQuotaId(sid);
-                    quotaDimensionMapper.insert(po);
-                }
-            } else if (quotaDto.getType().equals(QuotaType.COMPOSITE.getValue())){
-                // 复合指标 来源于表达式内其他指标的维度的交集
-                List<Map> dimList = queryDimenListByQuotaCode(quotas.toArray(new String [quotas.size()]));
-                if(CollectionUtils.isNotEmpty(dimList)) {
-                    for (Map dim:dimList) {
-                        QuotaDimension po = new QuotaDimension();
-                        po.setColumnCode((String) dim.get("columnCode"));
-                        po.setColumnName((String) dim.get("columnName"));
-                        po.setQuotaId(sid);
-                        quotaDimensionMapper.insert(po);
-                    }
-                }
-            }
-        }
+        quotaDao.insert(quota);
         return sid;
     }
     @Transactional
-    public String updateQuota(QuotaDto quotaDto, List<String> quotas){
+    public String updateQuota(QuotaDto quotaDto, String quotaId){
         Quota quota = new Quota();
         BeanUtils.copyProperties(quotaDto,quota);
-        if(quotaDto.getType().equals(QuotaType.COMPOSITE.getValue()) && CollectionUtils.isNotEmpty(quotas)){
-            // 更新维度 先删除 后增加
-            quotaDimensionMapper.deleteByQuotaId(quotaDto.getQuotaId());
-
-            List<Map> dimList = queryDimenListByQuotaCode(quotas.toArray(new String [quotas.size()]));
-            if(CollectionUtils.isNotEmpty(dimList)) {
-                for (Map dim:dimList) {
-                    QuotaDimension po = new QuotaDimension();
-                    po.setColumnCode((String) dim.get("columnCode"));
-                    po.setColumnName((String) dim.get("columnName"));
-                    po.setQuotaId(quotaDto.getQuotaId());
-                    quotaDimensionMapper.insert(po);
-                }
-            }
-        }
-        int sid=  quotaMapper.update(quota);
-        if(sid>0){
-            return quotaDto.getQuotaId();
-        }else{
-            return  null;
-        }
-
+        Map queryMap = new HashMap();
+        queryMap.put("quotaId", quotaId);
+        quotaDao.update(queryMap, null);
+        return quotaId;
     }
     public Quota getQuotaByCode(String code){
         Quota quota = new Quota();
         quota.setQuotaCode(code);
-        Quota result = quotaMapper.selectQuota(quota);
-        if(result!=null){
-            List<QuotaDimension> dimensions = quotaDimensionMapper.selectByQuotaId(result.getQuotaId());
-            result.setQuotaDimensionList(dimensions);
-        }
+        Quota result = quotaDao.selectQuota(quota);
         return result;
     }
     public Quota getQuotaById(String id){
         Quota quota = new Quota();
         quota.setQuotaId(id);
-        Quota result = quotaMapper.selectQuota(quota);
-        if(result!=null){
-            List<QuotaDimension> dimensions = quotaDimensionMapper.selectByQuotaId(result.getQuotaId());
-            result.setQuotaDimensionList(dimensions);
-        }
+        Quota result = quotaDao.selectQuota(quota);
         return result;
     }
 
@@ -118,11 +69,11 @@ public class QuotaManager {
         Quota quota = new Quota();
         quota.setState(State.EFF.getValue());
         quota.setType(QuotaType.BASIC.getValue());
-        return quotaMapper.selectList(quota);
+        return quotaDao.selectList(quota);
     }
 
     public QuotaDataList queryBySql(String sql){
-        List<Map> list = quotaMapper.queryBySql(sql);
+        /*List<Map> list = quotaDao.queryBySql(sql);
         QuotaDataList quotaDataList = new QuotaDataList();
         if(CollectionUtils.isNotEmpty(list)){
             for (Map map : list){
@@ -139,11 +90,12 @@ public class QuotaManager {
                 quotaDataList.add(quotaData);
             }
         }
-        return quotaDataList;
+        return quotaDataList;*/
+        return null;
     }
 
     public BaseResult<List<QuotaDto>> queryQuotaNameAndId(QuotaDto quotaDto) {
-        Quota quota = new Quota();
+        /*Quota quota = new Quota();
         BeanUtils.copyProperties(quotaDto,quota);
         List<Quota>quotaList=   quotaMapper.queryQuotaNameAndId(quota);
         List<QuotaDto> resultList=new ArrayList<>();
@@ -154,11 +106,12 @@ public class QuotaManager {
                 resultList.add(dto);
             }
         }
-        return  new BaseResult<>(resultList);
+        return  new BaseResult<>(resultList);*/
+        return null;
     }
 
     public List<QuotaDimensionDto> queryDimenListByChartId(String chartId){
-        List<QuotaDimension> list = quotaMapper.queryDimenListByChartId(chartId);
+        /*List<QuotaDimension> list = quotaMapper.queryDimenListByChartId(chartId);
         List<QuotaDimensionDto> result = new ArrayList<>();
         if(!CollectionUtils.isEmpty(list)){
             for(QuotaDimension qd:list){
@@ -167,11 +120,12 @@ public class QuotaManager {
                 result.add(dto);
             }
         }
-        return result;
+        return result;*/
+        return null;
     }
 
     public List<QuotaDimensionDto> queryDimenListByBoardId(String boardId){
-        List<QuotaDimension> list = quotaMapper.queryDimenListByBoardId(boardId);
+        /*List<QuotaDimension> list = quotaMapper.queryDimenListByBoardId(boardId);
         List<QuotaDimensionDto> result = new ArrayList<>();
         if(!CollectionUtils.isEmpty(list)){
             for(QuotaDimension qd:list){
@@ -180,10 +134,11 @@ public class QuotaManager {
                 result.add(dto);
             }
         }
-        return result;
+        return result;*/
+        return null;
     }
     public List<QuotaDimensionDto> queryDimenListByQuotaId(String quotaId){
-        List<QuotaDimension> list = quotaMapper.queryDimenListByQuotaId(quotaId);
+        /*List<QuotaDimension> list = quotaMapper.queryDimenListByQuotaId(quotaId);
         List<QuotaDimensionDto> result = new ArrayList<>();
         if(!CollectionUtils.isEmpty(list)){
             for(QuotaDimension qd:list){
@@ -192,11 +147,12 @@ public class QuotaManager {
                 result.add(dto);
             }
         }
-        return result;
+        return result;*/
+        return null;
     }
 
     public List<Map> queryDimenListByQuotaCode(String[] quotaCodes){
-        if(quotaCodes!=null && quotaCodes.length>0) {
+        /*if(quotaCodes!=null && quotaCodes.length>0) {
             // 去重
             Set set = new  HashSet();
             for(String quotaStr : quotaCodes){
@@ -229,15 +185,17 @@ public class QuotaManager {
             return result;
         } else {
             throw new MetricException("查询条件不能为空");
-        }
+        }*/
+        return null;
     }
 
     public String selectDimByDimCode(String quotaId, String dimCode){
-        return quotaDimensionMapper.selectByDimCode(quotaId, dimCode);
+        /*return quotaDimensionMapper.selectByDimCode(quotaId, dimCode);*/
+        return null;
     }
 
     public PageData<QuotaDto> listQuotaPage(QuotaDto quotaDto) {
-        Quota newQuota = new Quota();
+        /*Quota newQuota = new Quota();
         BeanUtils.copyProperties(quotaDto, newQuota);
         int count = quotaMapper.count(newQuota);
         int totalPage = count/newQuota.getRow() + (count%newQuota.getRow()==0?0:1);
@@ -248,12 +206,13 @@ public class QuotaManager {
             BeanUtils.copyProperties(tmp, dto);
             ret.add(dto);
         }
-        return new PageData<QuotaDto>(totalPage, count, ret);
+        return new PageData<QuotaDto>(totalPage, count, ret);*/
+        return null;
 
     }
     @Transactional
     public BaseResult<String> delQuota(QuotaDto quotaDto) {
-        // 查询是否当前指标被依赖，如果是，不能被删除
+        /*// 查询是否当前指标被依赖，如果是，不能被删除
         Quota quota = new Quota();
         quota.setQuotaId(quotaDto.getQuotaId());
         Quota quotaAga = quotaMapper.selectQuota(quota);
@@ -284,6 +243,7 @@ public class QuotaManager {
             }
         } else {
             return new BaseResult<>(0, "删除失败，当前指标被以下指标依赖：" + dependencyQuotaName);
-        }
+        }*/
+        return null;
     }
 }

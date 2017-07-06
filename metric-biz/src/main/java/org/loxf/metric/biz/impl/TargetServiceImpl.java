@@ -4,7 +4,6 @@ package org.loxf.metric.biz.impl;
 import com.alibaba.dubbo.common.utils.CollectionUtils;
 import org.loxf.metric.base.exception.MetricException;
 import org.loxf.metric.biz.base.BaseService;
-import org.loxf.metric.client.TargetItemService;
 import org.loxf.metric.client.TargetService;
 import org.loxf.metric.common.dto.BaseResult;
 import org.loxf.metric.common.dto.PageData;
@@ -29,14 +28,12 @@ public class TargetServiceImpl extends BaseService implements TargetService {
 
     @Autowired
     private TargetManager targetManager;
-    @Autowired
-    private TargetItemService targetItemService;
 
     @Override
     public PageData listTargetPage(TargetDto targetDto) {
         Target target = new Target();
         BeanUtils.copyProperties(targetDto, target);
-        PageData pageUtilsUI = super.pageList(target, TargetMapper.class, "Target");
+        PageData pageUtilsUI = null; //super.pageList(target, TargetMapper.class, "Target");
         List<Target> targetList = pageUtilsUI.getRows();
         List<TargetDto> targetDtoList = new ArrayList<>();
         if (!CollectionUtils.isEmpty(targetList)) {

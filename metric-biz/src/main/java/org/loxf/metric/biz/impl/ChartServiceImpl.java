@@ -23,7 +23,7 @@ import java.util.List;
  * Created by caiyang on 2017/5/4.
  */
 @Service("chartService")
-public class ChartServiceImpl extends BaseService implements ChartService{
+public class ChartServiceImpl extends BaseService implements ChartService {
     Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
@@ -32,44 +32,44 @@ public class ChartServiceImpl extends BaseService implements ChartService{
 
     @Override
     public PageData listChartPage(ChartDto chartDto) {
-        Chart chart=new Chart();
-        BeanUtils.copyProperties(chartDto,chart);
-        PageData pageUtilsUI=super.pageList(chart,ChartMapper.class,"Chart");
-        List<Chart> chartList=    pageUtilsUI.getRows();
-        List<ChartDto> chartDtoList=new ArrayList<>();
-        if(!CollectionUtils.isEmpty(chartList)){
-            for(Chart c:chartList){
-                ChartDto dto=new ChartDto();
+        Chart chart = new Chart();
+        BeanUtils.copyProperties(chartDto, chart);
+        PageData pageUtilsUI = null;//super.pageList(chart,ChartMapper.class,"Chart");
+        List<Chart> chartList = pageUtilsUI.getRows();
+        List<ChartDto> chartDtoList = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(chartList)) {
+            for (Chart c : chartList) {
+                ChartDto dto = new ChartDto();
                 BeanUtils.copyProperties(c, dto);
                 chartDtoList.add(dto);
             }
         }
         pageUtilsUI.setRows(chartDtoList);
-        return  pageUtilsUI;
+        return pageUtilsUI;
     }
 
     @Override
     public BaseResult<String> createChart(ChartDto chartDto) {
         try {
             return new BaseResult<String>(chartManager.insert(chartDto));
-        } catch (Exception e){
+        } catch (Exception e) {
             logger.error("创建图失败", e);
             throw new MetricException("创建图失败", e);
         }
     }
 
-    public BaseResult<ChartDto> queryChart(String chartId){
-        try{
+    public BaseResult<ChartDto> queryChart(String chartId) {
+        try {
             return new BaseResult<>(chartManager.getChart(chartId));
-        } catch (Exception e){
-            logger.error("获取图失败:"+chartId, e);
-            throw new MetricException("获取图失败:"+chartId, e);
+        } catch (Exception e) {
+            logger.error("获取图失败:" + chartId, e);
+            throw new MetricException("获取图失败:" + chartId, e);
         }
     }
 
     @Override
     public BaseResult<String> updateChart(ChartDto chartDto) {
-         return chartManager.updateChart(chartDto);
+        return chartManager.updateChart(chartDto);
     }
 
     @Override

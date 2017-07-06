@@ -15,14 +15,12 @@ import org.loxf.metric.service.ChartManager;
 import org.loxf.metric.service.QuotaManager;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.loxf.metric.service.QuotaScanManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.util.*;
 
 
@@ -31,8 +29,6 @@ public class QuotaServiceImpl implements QuotaService {
     private static Logger logger = LoggerFactory.getLogger(QuotaServiceImpl.class);
     @Autowired
     private QuotaManager quotaManager;
-    @Autowired
-    private QuotaScanManager quotaScanManager;
     @Autowired
     private ValidConditionUtil valid;
     @Autowired
@@ -62,8 +58,7 @@ public class QuotaServiceImpl implements QuotaService {
                 }
                 quotaDto.setExpression(expression);
             }
-
-            return new BaseResult(quotaManager.createQuota(quotaDto, quotaCodeList));
+            return new BaseResult(quotaManager.createQuota(quotaDto));
         } catch (Exception e) {
             logger.error("创建指标失败", e);
             throw new MetricException("创建指标失败", e);
@@ -99,7 +94,7 @@ public class QuotaServiceImpl implements QuotaService {
                     quotaDto.setExpression(expression);
                 }
             }
-            return new BaseResult(quotaManager.updateQuota(quotaDto, quotaList));
+            return new BaseResult(quotaManager.updateQuota(quotaDto, quotaDto.getQuotaId()));
         } catch (Exception e) {
             logger.error("更新指标失败", e);
             throw new MetricException("更新指标失败", e);
@@ -121,7 +116,7 @@ public class QuotaServiceImpl implements QuotaService {
 
     @Override
     public BaseResult getQuotaData(String scanId, ConditionVo condition){
-        QuotaScan quotaScan = quotaScanManager.getQuotaScanById(scanId);
+        /*QuotaScan quotaScan = quotaScanManager.getQuotaScanById(scanId);
         if(quotaScan==null){
             return new BaseResult<>(BaseResult.FAILED, "无此指标概览");
         }
@@ -166,12 +161,12 @@ public class QuotaServiceImpl implements QuotaService {
                 }
             }
             return new BaseResult(tmp.toString());
-        }
+        }*/
         return new BaseResult("0");
     }
 
     @Override
-    public ChartData getChartData(String chartId, ConditionVo condition){
+    public ChartData getChartData(String chartId, String summaryOperation, ConditionVo condition){
         ChartDto chart = chartManager.getChart(chartId);
         String startDateStr = condition.getStartCircleTime();
         String endDateStr = condition.getEndCircleTime();
@@ -221,7 +216,7 @@ public class QuotaServiceImpl implements QuotaService {
                         }
                     }
                     // 获取数据
-                    Expression expression = new Expression(quotaDto.getExpression());
+                    Expression expression = new Expression(quotaDto.getExpression(), false, summaryOperation);
                     expression.init(condition);
                     List<QuotaData> mapList = expression.execute();
                     // 运算
@@ -296,7 +291,7 @@ public class QuotaServiceImpl implements QuotaService {
                             return result;
                         }
                     }
-                    Expression expression = new Expression(quotaDto.getExpression());
+                    Expression expression = new Expression(quotaDto.getExpression(), false, null);
                     expression.init(condition);
                     List<QuotaData> mapList = expression.execute();
                     if (org.apache.commons.collections.CollectionUtils.isNotEmpty(mapList)) {

@@ -23,7 +23,7 @@ public interface QuotaService {
      */
     public BaseResult getQuotaData(String scanId, ConditionVo condition);
 
-    public ChartData getChartData(String chartId, ConditionVo condition);
+    public ChartData getChartData(String chartId, String summaryOperation, ConditionVo condition);
 
     public BaseResult<List<QuotaDto>> queryQuotaNameAndId(QuotaDto quotaDto);
 

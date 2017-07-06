@@ -20,19 +20,24 @@ public class QuotaOperation {
     /**
      * 获取基础指标的sql
      * @param code
+     * @param forQuotaScan
      * @param vo
      * @return
      */
-    public String getSql(String code, ConditionVo vo) {
+    public String getSql(String code, boolean forQuotaScan, ConditionVo vo) {
         Quota quota = mgr.getQuotaByCode(code);
         if (QuotaType.BASIC.getValue().equals(quota.getType())) {
-            return QuotaSqlBuilder.getSql(quota.getQuotaCode(), quota.getQuotaSource(), quota.getExpression(), quota.getShowOperation(), vo);
+            return QuotaSqlBuilder.getSql(quota.getQuotaCode(), quota.getQuotaSource(), forQuotaScan, quota.getShowOperation(), vo);
         }
         return null;
     }
 
     public QuotaDataList query(String sql){
         return mgr.queryBySql(sql);
+    }
+
+    public Quota getQuota(String code){
+        return mgr.getQuotaByCode(code);
     }
 
 }

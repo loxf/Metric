@@ -37,7 +37,7 @@ public class BoardServiceImpl extends BaseService implements BoardService{
     public PageData listBoradPage(BoardDto boardDto){
         Board board=new Board();
         BeanUtils.copyProperties(boardDto, board);
-        PageData pageUtilsUI=super.pageList(board, BoardMapper.class,"Board");
+        PageData pageUtilsUI= null;// super.pageList(board, BoardMapper.class,"Board");
         List<Board> boardList=    pageUtilsUI.getRows();
         List<BoardDto> boardDtoList=new ArrayList<>();
         if(!CollectionUtils.isEmpty(boardList)){
