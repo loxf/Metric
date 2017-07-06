@@ -6,7 +6,6 @@ import org.loxf.metric.client.QuotaScanService;
 import org.loxf.metric.common.dto.BaseResult;
 import org.loxf.metric.common.dto.PageData;
 import org.loxf.metric.common.dto.QuotaScanDto;
-import org.loxf.metric.dal.dao.QuotaScanMapper;
 import org.loxf.metric.dal.po.QuotaScan;
 import org.loxf.metric.service.QuotaScanManager;
 import org.slf4j.Logger;

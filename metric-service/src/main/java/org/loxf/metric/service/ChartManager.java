@@ -5,8 +5,6 @@ import org.loxf.metric.common.dto.BaseResult;
 import org.loxf.metric.common.dto.ChartDto;
 import org.loxf.metric.common.dto.ChartQuotaRelDto;
 import org.loxf.metric.common.dto.QuotaDto;
-import org.loxf.metric.dal.dao.ChartMapper;
-import org.loxf.metric.dal.dao.ChartQuotaRelMapper;
 import org.loxf.metric.dal.po.Chart;
 import org.loxf.metric.dal.po.ChartQuotaRel;
 import org.loxf.metric.dal.po.QuotaWithDim;

@@ -19,8 +19,6 @@ public interface IBaseDao<T> {
 
     public void updateOne(Map<String, Object> queryParams, Map<String, Object> setParams) ;
 
-    public void createCollection() ;
-
     public void remove(Map<String, Object> params) ;
 
 }

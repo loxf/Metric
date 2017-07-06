@@ -7,7 +7,6 @@ import org.loxf.metric.client.ChartService;
 import org.loxf.metric.common.dto.BaseResult;
 import org.loxf.metric.common.dto.ChartDto;
 import org.loxf.metric.common.dto.PageData;
-import org.loxf.metric.dal.dao.ChartMapper;
 import org.loxf.metric.dal.po.Chart;
 import org.loxf.metric.service.ChartManager;
 import org.apache.log4j.Logger;

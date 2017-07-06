@@ -1,6 +1,5 @@
 package org.loxf.metric.service;
 
-import org.loxf.metric.dal.dao.QuotaDimensionValueMapper;
 import org.loxf.metric.dal.po.QuotaDimensionValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

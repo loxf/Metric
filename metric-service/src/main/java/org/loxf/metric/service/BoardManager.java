@@ -5,8 +5,6 @@ import org.loxf.metric.base.utils.IdGenerator;
 import org.loxf.metric.common.dto.BaseResult;
 import org.loxf.metric.common.dto.BoardDto;
 import org.loxf.metric.common.dto.ChartDto;
-import org.loxf.metric.dal.dao.BoardChartRelMapper;
-import org.loxf.metric.dal.dao.BoardMapper;
 import org.loxf.metric.dal.po.Board;
 import org.loxf.metric.dal.po.BoardChartRel;
 import org.loxf.metric.dal.po.Chart;

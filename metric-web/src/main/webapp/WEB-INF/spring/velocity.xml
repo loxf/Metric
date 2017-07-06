@@ -17,7 +17,7 @@
     </bean>
 
     <!--配置试图解析器-->
-    <bean id="viewResolver" class="com.ywwl.oper.velocity.VelocityMultipleLayoutViewResolver">
+    <bean id="viewResolver" class="org.loxf.metric.velocity.VelocityMultipleLayoutViewResolver">
         <property name="cache" value="false" />
         <property name="prefix" value="/views/"/>
         <property name="suffix" value=".vm"/>

@@ -12,12 +12,5 @@
     <dubbo:protocol name="dubbo" port="-1"/>
     <dubbo:consumer check="false"/>
 
-    <import resource="dubbo-uac-consumer.xml"/>
-    <import resource="dubbo-conf-consumer.xml"/>
-    <import resource="dubbo-pay-consumer.xml"/>
-    <import resource="dubbo-tools-consumer.xml"/>
-    <import resource="dubbo-message-consumer.xml"/>
-    <import resource="dubbo-collector-consumer.xml"/>
-    <import resource="dubbo-trade-consumer.xml"/>
-    <import resource="dubbo-okr-consumer.xml"/>
+    <import resource="dubbo-metric-consumer.xml" />
 </beans>

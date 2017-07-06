@@ -8,7 +8,6 @@ import org.loxf.metric.client.BoardService;
 import org.loxf.metric.common.dto.BaseResult;
 import org.loxf.metric.common.dto.BoardDto;
 import org.loxf.metric.common.dto.PageData;
-import org.loxf.metric.dal.dao.BoardMapper;
 import org.loxf.metric.dal.po.Board;
 import org.loxf.metric.service.BoardManager;
 import org.apache.log4j.Logger;

@@ -9,7 +9,6 @@ import org.loxf.metric.client.TargetService;
 import org.loxf.metric.common.dto.BaseResult;
 import org.loxf.metric.common.dto.PageData;
 import org.loxf.metric.common.dto.TargetDto;
-import org.loxf.metric.dal.dao.TargetMapper;
 import org.loxf.metric.dal.po.Target;
 import org.loxf.metric.service.TargetManager;
 import org.apache.log4j.Logger;

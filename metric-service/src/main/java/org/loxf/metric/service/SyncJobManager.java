@@ -3,7 +3,6 @@ package org.loxf.metric.service;
 import org.loxf.metric.base.exception.MetricException;
 import org.loxf.metric.common.dto.PageData;
 import org.loxf.metric.common.dto.SyncJobDto;
-import org.loxf.metric.dal.dao.SyncJobMapper;
 import org.loxf.metric.dal.po.SyncJob;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

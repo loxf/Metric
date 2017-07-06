@@ -4,7 +4,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.loxf.metric.base.utils.IdGenerator;
 import org.loxf.metric.common.dto.BaseResult;
 import org.loxf.metric.common.dto.QuotaScanDto;
-import org.loxf.metric.dal.dao.QuotaScanMapper;
 import org.loxf.metric.dal.po.QuotaScan;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

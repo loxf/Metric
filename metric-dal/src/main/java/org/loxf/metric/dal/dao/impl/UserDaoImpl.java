@@ -46,11 +46,6 @@ public class UserDaoImpl extends MongoDaoBase<User> implements UserDao {
     }
 
     @Override
-    public void createCollection() {
-        super.createCollection(collectionName);
-    }
-
-    @Override
     public void remove(Map<String, Object> params) {
         super.remove(params, collectionName);
     }

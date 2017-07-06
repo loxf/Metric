@@ -5,80 +5,13 @@
        xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
 	   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
-
        http://www.springframework.org/schema/aop  http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">
 
-    <context:component-scan base-package="org.loxf.metric.biz.*"/>
+    <context:component-scan base-package="org.loxf.metric.biz"/>
 
     <bean class="org.loxf.metric.biz.base.SpringApplicationContextUtil"/>
 
     <import resource="dubbo/dubbo-provider.xml"/>
-    <!--<import resource="quartz/quartz.xml"/>-->
-
-    <bean id="jedisUtil" class="org.loxf.common.util.JedisUtil">
-        <constructor-arg index="0" ref="jedisPool"></constructor-arg>
-        <constructor-arg index="1" value="${env}"></constructor-arg>
-    </bean>
-    <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
-        <property name="maxIdle" value="${redis.maxIdle}"/>
-        <property name="maxTotal" value="${redis.maxTotal}"/>
-        <property name="testOnBorrow" value="true"/>
-    </bean>
-    <bean id="jedisPool" class="redis.clients.jedis.JedisPool">
-        <constructor-arg index="0" ref="jedisPoolConfig"/>
-        <constructor-arg index="1" value="${redis.host}"/>
-        <constructor-arg index="2" value="${redis.port}" type="int"/>
-        <constructor-arg index="3" value="${redis.timeout}" type="int"/>
-        <constructor-arg index="4" value="${redis.passwd}"/>
-    </bean>
     <!-- 启动对@AspectJ注解的支持 -->
     <aop:aspectj-autoproxy/>
-
-    <bean id="configUtil" class="org.loxf.metric.biz.utils.ConfigUtil" >
-        <property name="properties">
-            <map>
-                <!--右文接口参数-->
-                <entry key="youwen.chargemoney.url" value="${youwen.chargemoney.url}" />
-                <entry key="youwen.newusercount.url" value="${youwen.newusercount.url}" />
-                <entry key="youwen.liveusercount.url" value="${youwen.liveusercount.url}" />
-                <entry key="youwen.chargeusercount.url" value="${youwen.chargeusercount.url}"/>
-                <entry key="youwen.ordercount.url" value="${youwen.ordercount.url}"/>
-                <entry key="youwen.dayupicount.url" value="${youwen.dayupicount.url}"/>
-                <entry key="youwen.channelcount.url" value="${youwen.channelcount.url}"/>
-                <entry key="youwen.consumermoney.url" value="${youwen.consumermoney.url}"/>
-                <entry key="youwen.totaluser.url" value="${youwen.totaluser.url}"/>
-                <!--新媒体接口参数-->
-                <entry key="newmedia.totalfansnbr.url" value="${newmedia.totalfansnbr.url}" />
-                <entry key="newmedia.newfansnbr.url" value="${newmedia.newfansnbr.url}" />
-                <entry key="newmedia.lossfansnbr.url" value="${newmedia.lossfansnbr.url}" />
-                <entry key="newmedia.netgrowthfansnbr.url" value="${newmedia.netgrowthfansnbr.url}"/>
-                <entry key="newmedia.fanspercent.url" value="${newmedia.fanspercent.url}"/>
-                <!--静雅书院接口参数-->
-                <entry key="jy.daylivechannelnbr.url" value="${jy.daylivechannelnbr.url}" />
-                <entry key="jy.monthlivechannelnbr.url" value="${jy.monthlivechannelnbr.url}" />
-                <entry key="jy.ordernbr.url" value="${jy.ordernbr.url}" />
-                <entry key="jy.succordernbr.url" value="${jy.succordernbr.url}"/>
-                <entry key="jy.studentnbr.url" value="${jy.studentnbr.url}"/>
-                <entry key="jy.newuser.url" value="${jy.newuser.url}"/>
-                <entry key="jy.pv.url" value="${jy.pv.url}"/>
-                <entry key="jy.uv.url" value="${jy.uv.url}"/>
-                <entry key="jy.usertotal.url" value="${jy.usertotal.url}"/>
-                <entry key="jy.consumermoney.url" value="${jy.consumermoney.url}"/>
-                <!--找乐接口参数-->
-                <entry key="zl.dayconsumemoney.url" value="${zl.dayconsumemoney.url}" />
-                <entry key="zl.daynewuser.url" value="${zl.daynewuser.url}" />
-                <entry key="zl.dayliveuser.url" value="${zl.dayliveuser.url}" />
-                <entry key="zl.dayordernbr.url" value="${zl.dayordernbr.url}"/>
-                <entry key="zl.daychargenbr.url" value="${zl.daychargenbr.url}"/>
-                <!--648接口参数-->
-                <entry key="g648.consumemoney.url" value="${g648.consumemoney.url}" />
-                <entry key="g648.newuser.url" value="${g648.newuser.url}" />
-                <entry key="g648.liveuser.url" value="${g648.liveuser.url}" />
-                <entry key="g648.ordernbr.url" value="${g648.ordernbr.url}"/>
-                <entry key="g648.payusernbr.url" value="${g648.payusernbr.url}"/>
-                <!-- job总开关-->
-                <entry key="job.enable" value="${job.enable}"/>
-            </map>
-        </property>
-    </bean>
 </beans>

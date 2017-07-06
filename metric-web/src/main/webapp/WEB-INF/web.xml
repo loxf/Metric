@@ -9,7 +9,7 @@
     </context-param>
     <context-param>
         <param-name>webAppRootKey</param-name>
-        <param-value>oper.root</param-value>
+        <param-value>metric.root</param-value>
     </context-param>
 
     <filter>
@@ -30,7 +30,7 @@
     </filter-mapping>
     <filter>
         <filter-name>LoginFilter</filter-name>
-        <filter-class>com.ywwl.oper.filter.LoginFilter</filter-class>
+        <filter-class>org.loxf.metric.filter.LoginFilter</filter-class>
         <init-param>
             <param-name>SECURITY_URI</param-name>
             <param-value>/admin/*,/security/*</param-value>
@@ -77,7 +77,7 @@
 
     <!-- Disables Servlet Container welcome file handling. Needed for compatibility with Servlet 3.0 and Tomcat 7.0 -->
     <welcome-file-list>
-        <welcome-file>/tologin.html</welcome-file>
+        <welcome-file>/index.html</welcome-file>
     </welcome-file-list>
 
 </web-app>

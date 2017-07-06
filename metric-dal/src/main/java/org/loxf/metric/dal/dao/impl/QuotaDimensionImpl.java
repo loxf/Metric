@@ -47,11 +47,6 @@ public class QuotaDimensionImpl extends MongoDaoBase<QuotaDimension> implements 
     }
 
     @Override
-    public void createCollection() {
-        super.createCollection(collectionName);
-    }
-
-    @Override
     public void remove(Map<String, Object> params) {
         super.remove(params, collectionName);
     }

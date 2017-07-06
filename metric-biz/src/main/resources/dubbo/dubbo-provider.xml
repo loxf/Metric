@@ -7,8 +7,6 @@
         http://www.springframework.org/schema/beans/spring-beans.xsd http://code.alibabatech.com/schema/dubbo
         http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
-    <!--<dubbo:service timeout="${dubbo.service.timeout}" interface="com.ywwl.trade.client.TransOrderService" ref="transOrderService"
-                   version="${dubbo.service.version}"/>-->
     <dubbo:service timeout="${dubbo.service.timeout}" interface="com.ywwl.metric.client.BoardService" ref="boardService"
                    version="${dubbo.service.version}"/>
     <dubbo:service timeout="${dubbo.service.timeout}" interface="com.ywwl.metric.client.ChartService" ref="chartService"

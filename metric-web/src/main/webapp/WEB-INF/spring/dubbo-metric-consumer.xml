@@ -6,7 +6,5 @@
         http://www.springframework.org/schema/beans/spring-beans.xsd http://code.alibabatech.com/schema/dubbo
         http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
-    <dubbo:reference id="confCategoryService" timeout="${dubbo.service.timeout}" version="${dubbo.service.version}" interface="com.ywwl.conf.client.ConfCategoryService"></dubbo:reference>
-    <dubbo:reference id="confInfoService" timeout="${dubbo.service.timeout}" version="${dubbo.service.version}" interface="com.ywwl.conf.client.ConfInfoService"></dubbo:reference>
-
+    <!--<dubbo:reference id="wapAdvertClientService" timeout="${dubbo.service.timeout}" version="${dubbo.service.version}" interface="com.ywwl.collector.client.WapAdvertClientService"></dubbo:reference>-->
 </beans>

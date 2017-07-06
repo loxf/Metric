@@ -3,7 +3,6 @@ package org.loxf.metric.service;
 import org.loxf.metric.base.exception.MetricException;
 import org.loxf.metric.common.dto.BaseResult;
 import org.loxf.metric.common.dto.UserQuotaScanRelDto;
-import org.loxf.metric.dal.dao.UserQuotaScanRelMapper;
 import org.loxf.metric.dal.po.UserQuotaScanRel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

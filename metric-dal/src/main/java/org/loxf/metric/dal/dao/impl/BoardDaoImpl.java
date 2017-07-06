@@ -46,11 +46,6 @@ public class BoardDaoImpl extends MongoDaoBase<Board> implements BoardDao {
     }
 
     @Override
-    public void createCollection() {
-        super.createCollection(collectionName);
-    }
-
-    @Override
     public void remove(Map<String, Object> params) {
         super.remove(params, collectionName);
     }

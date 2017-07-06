@@ -7,8 +7,6 @@ import org.loxf.metric.base.utils.IdGenerator;
 import org.loxf.metric.common.constants.QuotaType;
 import org.loxf.metric.common.constants.State;
 import org.loxf.metric.common.dto.*;
-import org.loxf.metric.dal.dao.QuotaDimensionMapper;
-import org.loxf.metric.dal.dao.QuotaMapper;
 import org.loxf.metric.dal.po.Quota;
 import org.loxf.metric.dal.po.QuotaDimension;
 import org.springframework.beans.BeanUtils;

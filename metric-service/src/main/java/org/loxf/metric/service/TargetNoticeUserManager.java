@@ -2,7 +2,6 @@ package org.loxf.metric.service;
 
 import org.loxf.metric.common.dto.BaseResult;
 import org.loxf.metric.common.dto.TargetNoticeUserDto;
-import org.loxf.metric.dal.dao.TargetNoticeUserMapper;
 import org.loxf.metric.dal.po.TargetNoticeUser;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -54,16 +54,11 @@
 	<tool>
 	  <key>permissionTool</key>
 	  <scope>application</scope>
-	  <class>com.ywwl.oper.velocity.VelocityPermissionTool</class>
+	  <class>org.loxf.metric.velocity.VelocityPermissionTool</class>
 	</tool>
 	<tool>
 		<key>commonTool</key>
 		<scope>application</scope>
-		<class>com.ywwl.oper.velocity.VelocityCommonTool</class>
-	</tool>
-	<tool>
-		<key>BizTool</key>
-		<scope>application</scope>
-		<class>com.ywwl.oper.velocity.VelocityBizTool</class>
+		<class>org.loxf.metric.velocity.VelocityCommonTool</class>
 	</tool>
 </toolbox>
