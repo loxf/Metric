@@ -25,7 +25,7 @@
         </dependency>
         <dependency>
             <groupId>org.loxf</groupId>
-            <artifactId>metric-client</artifactId>
+            <artifactId>metric-api</artifactId>
         </dependency>
         <!--Spring Framework-->
         <dependency>

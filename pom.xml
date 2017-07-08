@@ -10,8 +10,7 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>metric-core</module>
-        <module>metric-client</module>
-        <module>metric-biz</module>
+        <module>metric-api</module>
         <module>metric-service</module>
         <module>metric-dal</module>
         <module>metric-web</module>
@@ -36,7 +35,7 @@
             </dependency>
             <dependency>
                 <groupId>org.loxf</groupId>
-                <artifactId>metric-client</artifactId>
+                <artifactId>metric-api</artifactId>
                 <version>${metric.version}</version>
             </dependency>
             <dependency>
