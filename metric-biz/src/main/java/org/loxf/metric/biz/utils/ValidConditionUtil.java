@@ -1,5 +1,7 @@
 package org.loxf.metric.biz.utils;
 
+import org.apache.commons.collections.map.HashedMap;
+import org.loxf.metric.base.ItermList.QuotaDimItem;
 import org.loxf.metric.base.exception.MetricException;
 import org.loxf.metric.common.dto.Condition;
 import org.loxf.metric.common.dto.ConditionVo;
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by luohj on 2017/5/9.
@@ -27,19 +30,21 @@ public class ValidConditionUtil {
         if(StringUtils.isEmpty(vo.getBusiDomain())){
             throw new MetricException("指标业务域为空");
         }
-        Quota quota = quotaManager.getQuotaByCode(quotaCode);
+        Map<String,Object> qryParams=new HashedMap();
+        qryParams.put("quotaCode",quotaCode);
+        Quota quota = quotaManager.getQuotaByParams(qryParams);
         if(quota==null) {
             throw new MetricException("指标CODE不正确");
         }
         if(vo.getCondition()!=null){
-            List<QuotaDimension> dimensions = quota.getQuotaDimensionList();
+            List<QuotaDimItem> dimensions = quota.getQuotaDim();
             if(dimensions==null){
                 // throw new MetricException("指标未配置过滤条件");
             } else {
                 for(Condition con : vo.getCondition()) {
                     boolean isFound = false;
-                    for(QuotaDimension quotaDimension : dimensions){
-                        if(quotaDimension.getColumnCode().equals(con.getCode())){
+                    for(QuotaDimItem quotaDimension : dimensions){
+                        if(quotaDimension.getDimCode().equals(con.getCode())){
                             isFound = true;
                             break;
                         }

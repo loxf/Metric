@@ -1,3 +1,4 @@
+
 <link href="${rc.contextPath}/_resources/css/bootstrap-select.css" rel="stylesheet">
 <script src="${rc.contextPath}/_resources/js/bootstrap-select.js"></script>
 <div class="wrapper wrapper-content animated fadeInRight">

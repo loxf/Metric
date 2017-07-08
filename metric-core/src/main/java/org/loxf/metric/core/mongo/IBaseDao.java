@@ -7,13 +7,15 @@ import java.util.Map;
  * Created by hutingting on 2017/7/5.
  */
 public interface IBaseDao<T> {
-    public void insert(T object) ;
+    public String insert(T object) ;
 
     public T findOne(Map<String, Object> params) ;
 
     public List<T> findAll(Map<String, Object> params) ;
 
-    public List<T> findByPager(Map<String, Object> params, int start, int end) ;
+    public List<T> findByPager(Map<String, Object> params, int start, int pageSize) ;
+
+    public long countByParams(Map<String, Object> params);
 
     public void update(Map<String, Object> queryParams, Map<String, Object> setParams) ;
 

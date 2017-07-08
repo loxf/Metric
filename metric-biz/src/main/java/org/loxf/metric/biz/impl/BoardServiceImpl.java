@@ -2,28 +2,32 @@ package org.loxf.metric.biz.impl;
 
 
 import com.alibaba.dubbo.common.utils.CollectionUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.loxf.metric.base.exception.MetricException;
 import org.loxf.metric.biz.base.BaseService;
 import org.loxf.metric.client.BoardService;
+import org.loxf.metric.client.IBoardService;
 import org.loxf.metric.common.dto.BaseResult;
 import org.loxf.metric.common.dto.BoardDto;
 import org.loxf.metric.common.dto.PageData;
 import org.loxf.metric.dal.po.Board;
 import org.loxf.metric.service.BoardManager;
 import org.apache.log4j.Logger;
+import org.omg.CORBA.OBJ_ADAPTER;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 看板配置业务类
  * Created by caiyang on 2017/5/4.
  */
 @Service("boardService")
-public class BoardServiceImpl extends BaseService implements BoardService{
+public class BoardServiceImpl extends BaseService implements IBoardService{
     Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
@@ -34,7 +38,7 @@ public class BoardServiceImpl extends BaseService implements BoardService{
      * @param boardDto
      * @return
      */
-    public PageData listBoradPage(BoardDto boardDto){
+    public PageData getPageList(BoardDto boardDto){
         Board board=new Board();
         BeanUtils.copyProperties(boardDto, board);
         PageData pageUtilsUI= null;// super.pageList(board, BoardMapper.class,"Board");
@@ -52,7 +56,7 @@ public class BoardServiceImpl extends BaseService implements BoardService{
     }
 
     @Override
-    public BaseResult<String> createBoard(BoardDto boardDto) {
+    public BaseResult<String> insertIterm(BoardDto boardDto) {
         try {
             return new BaseResult<String>(boardManager.insert(boardDto));
         } catch (Exception e){
@@ -62,23 +66,32 @@ public class BoardServiceImpl extends BaseService implements BoardService{
     }
 
     @Override
-    public BaseResult<BoardDto> getBoardByBoardId(String boardId) {
+    public BaseResult<BoardDto> queryItemByCode(String boardCode) {
+        Map<String,Object> qryParams=new HashedMap();
+        qryParams.put("boardCode",boardCode);
+        return new BaseResult(boardManager.getBoardDtoByParams(qryParams));
+    }
+
+    @Override
+    public BaseResult<String> updateItem(String boardCode,Map<String, Object> setParam) {
         try {
-            return new BaseResult(boardManager.getBoardByBoardId(boardId));
+            boardManager.updateBoard(boardCode,setParam);
         } catch (Exception e){
-            logger.error("获取看板失败" + boardId, e);
-            throw new MetricException("获取看板失败" + boardId, e);
+            logger.error("更新看板失败!boardCode={}" + boardCode, e);
+            throw new MetricException("更新看板失败!boardCode={}" + boardCode, e);
         }
+        return new BaseResult(boardCode);
     }
 
     @Override
-    public BaseResult<String> updateBoard(BoardDto boardDto) {
-        return boardManager.updateBoard(boardDto);
-    }
-
-    @Override
-    public BaseResult<String> delBoard(String boardId) {
-        return boardManager.delBoard(boardId);
+    public BaseResult<String> delItemByCode(String boardCode) {
+        try {
+            boardManager.delBoardByCode(boardCode);
+        } catch (Exception e){
+            logger.error("更新看板失败!boardCode={}" + boardCode, e);
+            throw new MetricException("更新看板失败!boardCode={}" + boardCode, e);
+        }
+        return new BaseResult(boardCode);
     }
 
 

@@ -2,8 +2,9 @@ package org.loxf.metric.dal.po;
 
 import java.util.Date;
 
-public class Operation {
-    private Long id;
+public class Operation extends BasePO {
+
+    private String operationCode;
 
     private String operation;
 
@@ -11,14 +12,12 @@ public class Operation {
 
     private Byte isDeleted;
 
-    private Date createdAt;
-
-    public Long getId() {
-        return id;
+    public String getOperationCode() {
+        return operationCode;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setOperationCode(String operationCode) {
+        this.operationCode = operationCode;
     }
 
     public String getOperation() {
@@ -45,11 +44,4 @@ public class Operation {
         this.isDeleted = isDeleted;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
 }

@@ -1,6 +1,7 @@
 package org.loxf.metric.service;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.loxf.metric.base.utils.IdGenerator;
 import org.loxf.metric.common.dto.BaseResult;
 import org.loxf.metric.common.dto.BoardDto;
@@ -21,40 +22,38 @@ import java.util.*;
  */
 @Component
 public class BoardManager {
-    private static String board_prefix = "BD_";
     @Autowired
     private BoardDao boardDao;
 
-    @Transactional
     public String insert(BoardDto boardDto) {
         Board board = new Board();
         BeanUtils.copyProperties(boardDto, board);
-        String sid = IdGenerator.generate(board_prefix);
-        board.setBoardId(sid);
         board.setCreatedAt(new Date());
         board.setUpdatedAt(new Date());
-        boardDao.insert(board);
-        return sid;
+        return boardDao.insert(board);
     }
 
-    public BoardDto getBoardByBoardId(String boardId) {
-        BoardDto boardDto = new BoardDto();
-        // Board board = boardDao.selectByBoardId(boardId);
+    public BoardDto getBoardDtoByParams(Map<String, Object> params) {
+        BoardDto boardDto=new BoardDto();
+        Board board = getBoardByParams(params);
+        BeanUtils.copyProperties(getBoardByParams(params), boardDto);
         return boardDto;
     }
-    @Transactional
-    public BaseResult<String> updateBoard(BoardDto boardDto) {
-        Board board=new Board();
-        BeanUtils.copyProperties(boardDto, board);
-        // boardDao.update(board);
-        return new BaseResult<>();
-    }
-    @Transactional
-    public BaseResult<String> delBoard(String boardId) {
-        Map map = new HashMap<>();
-        map.put("boardId", boardId);
-        boardDao.remove(map);
-        return new BaseResult<>();
 
+    public Board getBoardByParams(Map<String, Object> params) {
+        return boardDao.findOne(params);
+    }
+
+    public void updateBoard(String boardCode,Map<String, Object> setParams) {
+        Map<String, Object> qryParams=new HashedMap();
+        qryParams.put("boardCode",boardCode);
+        setParams.put("updatedAt",new Date());
+        boardDao.update(qryParams,setParams);
+    }
+
+    public void delBoardByCode(String boardCode) {
+        Map<String, Object> delParams=new HashedMap();
+        delParams.put("boardCode",boardCode);
+        boardDao.remove(delParams);
     }
 }

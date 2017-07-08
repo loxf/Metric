@@ -1,9 +1,10 @@
 package org.loxf.metric.biz.impl;
 
 
+import org.apache.commons.collections.map.HashedMap;
 import org.loxf.metric.base.exception.MetricException;
 import org.loxf.metric.biz.base.BaseService;
-import org.loxf.metric.client.ChartService;
+import org.loxf.metric.client.IChartService;
 import org.loxf.metric.common.dto.BaseResult;
 import org.loxf.metric.common.dto.ChartDto;
 import org.loxf.metric.common.dto.PageData;
@@ -17,13 +18,14 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 图配置业务类
  * Created by caiyang on 2017/5/4.
  */
 @Service("chartService")
-public class ChartServiceImpl extends BaseService implements ChartService {
+public class ChartServiceImpl extends BaseService implements IChartService {
     Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
@@ -31,7 +33,7 @@ public class ChartServiceImpl extends BaseService implements ChartService {
 
 
     @Override
-    public PageData listChartPage(ChartDto chartDto) {
+    public PageData getPageList(ChartDto chartDto) {
         Chart chart = new Chart();
         BeanUtils.copyProperties(chartDto, chart);
         PageData pageUtilsUI = null;//super.pageList(chart,ChartMapper.class,"Chart");
@@ -49,7 +51,7 @@ public class ChartServiceImpl extends BaseService implements ChartService {
     }
 
     @Override
-    public BaseResult<String> createChart(ChartDto chartDto) {
+    public BaseResult<String> insertIterm(ChartDto chartDto) {
         try {
             return new BaseResult<String>(chartManager.insert(chartDto));
         } catch (Exception e) {
@@ -58,22 +60,33 @@ public class ChartServiceImpl extends BaseService implements ChartService {
         }
     }
 
-    public BaseResult<ChartDto> queryChart(String chartId) {
+    public BaseResult<ChartDto> queryItemByCode(String chartCode) {
+        Map qryParams=new HashedMap();
+        qryParams.put("chartCode",chartCode);
+        return new BaseResult<>(chartManager.getChartDtoByParams(qryParams));
+    }
+
+    @Override
+    public BaseResult<String> updateItem(String chartCode,Map<String, Object> setParams) {
         try {
-            return new BaseResult<>(chartManager.getChart(chartId));
+            chartManager.updateChartByCode(chartCode,setParams);
+
         } catch (Exception e) {
-            logger.error("获取图失败:" + chartId, e);
-            throw new MetricException("获取图失败:" + chartId, e);
+            logger.error("创建图失败", e);
+            throw new MetricException("创建图失败", e);
         }
+        return new BaseResult<String>(chartCode);
     }
 
     @Override
-    public BaseResult<String> updateChart(ChartDto chartDto) {
-        return chartManager.updateChart(chartDto);
-    }
+    public BaseResult<String> delItemByCode(String chartCode) {
+        try {
+            chartManager.delChartByCode(chartCode);
 
-    @Override
-    public BaseResult<String> delChart(String chartId) {
-        return chartManager.delChart(chartId);
+        } catch (Exception e) {
+            logger.error("创建图失败", e);
+            throw new MetricException("创建图失败", e);
+        }
+        return new BaseResult<String>(chartCode);
     }
 }

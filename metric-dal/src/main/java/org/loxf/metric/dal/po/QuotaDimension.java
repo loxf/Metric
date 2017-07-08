@@ -2,54 +2,44 @@ package org.loxf.metric.dal.po;
 
 import java.util.Date;
 
-public class QuotaDimension {
-    private Long id;
+public class QuotaDimension extends BasePO{
+    private String dimCode;
 
-    private String quotaId;
+    private String dimName;
 
-    private String columnName;
+    private String createdUser;
 
-    private String columnCode;
+    private String uniqueCode;
 
-    private Date createdAt;
-
-    public Long getId() {
-        return id;
+    public String getDimCode() {
+        return dimCode;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setDimCode(String dimCode) {
+        this.dimCode = dimCode;
     }
 
-    public String getQuotaId() {
-        return quotaId;
+    public String getDimName() {
+        return dimName;
     }
 
-    public void setQuotaId(String quotaId) {
-        this.quotaId = quotaId == null ? null : quotaId.trim();
+    public void setDimName(String dimName) {
+        this.dimName = dimName;
     }
 
-    public String getColumnName() {
-        return columnName;
+    public String getCreatedUser() {
+        return createdUser;
     }
 
-    public void setColumnName(String columnName) {
-        this.columnName = columnName == null ? null : columnName.trim();
+    public void setCreatedUser(String createdUser) {
+        this.createdUser = createdUser;
     }
 
-    public String getColumnCode() {
-        return columnCode;
+    public String getUniqueCode() {
+        return uniqueCode;
     }
 
-    public void setColumnCode(String columnCode) {
-        this.columnCode = columnCode == null ? null : columnCode.trim();
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
+    public void setUniqueCode(String uniqueCode) {
+        this.uniqueCode = uniqueCode;
     }
 }

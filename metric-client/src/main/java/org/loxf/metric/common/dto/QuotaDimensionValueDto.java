@@ -6,54 +6,65 @@ import java.util.Date;
 /**
  * Created by luohj on 2017/5/15.
  */
-public class QuotaDimensionValueDto implements Serializable {
-    private Long id;
+public class QuotaDimensionValueDto extends BaseDto{
 
-    private String columnCode;
+    private String dimValueCode;
 
-    private String columnValueName;
+    private String dimCode;
 
-    private String columnValue;
+    private String dimName;
 
-    private Date createdAt;
+    private String dimValueDesc;
 
-    public Long getId() {
-        return id;
+    private String dimValue;
+
+    private String uniqueCode;
+
+    public String getDimValueCode() {
+        return dimValueCode;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setDimValueCode(String dimValueCode) {
+        this.dimValueCode = dimValueCode;
     }
 
-    public String getColumnCode() {
-        return columnCode;
+    public String getDimCode() {
+        return dimCode;
     }
 
-    public void setColumnCode(String columnCode) {
-        this.columnCode = columnCode;
+    public void setDimCode(String dimCode) {
+        this.dimCode = dimCode;
     }
 
-    public String getColumnValueName() {
-        return columnValueName;
+    public String getDimName() {
+        return dimName;
     }
 
-    public void setColumnValueName(String columnValueName) {
-        this.columnValueName = columnValueName;
+    public void setDimName(String dimName) {
+        this.dimName = dimName;
     }
 
-    public String getColumnValue() {
-        return columnValue;
+    public String getDimValueDesc() {
+        return dimValueDesc;
     }
 
-    public void setColumnValue(String columnValue) {
-        this.columnValue = columnValue;
+    public void setDimValueDesc(String dimValueDesc) {
+        this.dimValueDesc = dimValueDesc;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
+    public String getDimValue() {
+        return dimValue;
     }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
+    public void setDimValue(String dimValue) {
+        this.dimValue = dimValue;
+    }
+
+    public String getUniqueCode() {
+        return uniqueCode;
+    }
+
+    public void setUniqueCode(String uniqueCode) {
+        this.uniqueCode = uniqueCode;
     }
 }

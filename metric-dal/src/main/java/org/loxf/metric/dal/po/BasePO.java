@@ -1,38 +1,58 @@
 package org.loxf.metric.dal.po;
 
+import com.sun.xml.internal.rngom.parse.host.Base;
 import org.bson.types.ObjectId;
+import org.loxf.metric.base.utils.DateUtil;
 
 import java.sql.Timestamp;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by hutingting on 2017/7/5.
  */
 public class BasePO {
-    private ObjectId id;
-    private Timestamp createdAt;
-    private Timestamp updateAt;
+    private ObjectId _id;
+    private Date createdAt;
+    private Date updatedAt;
 
-    public ObjectId getId() {
-        return id;
+    public ObjectId get_id() {
+        return _id;
     }
 
-    public void setId(ObjectId id) {
-        this.id = id;
+    public void set_id(ObjectId _id) {
+        this._id = _id;
     }
 
-    public Timestamp getCreatedAt() {
+    public Date getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Timestamp createdAt) {
+    public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Timestamp getUpdateAt() {
-        return updateAt;
+    public Date getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setUpdateAt(Timestamp updateAt) {
-        this.updateAt = updateAt;
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
+
+    public void handleDateToMongo(){
+        this.createdAt=DateUtil.turnToMongoDate(this.createdAt);
+        this.updatedAt=DateUtil.turnToMongoDate(this.updatedAt);
+    }
+
+    public void handleMongoDateToJava(){
+        this.createdAt=DateUtil.mongoDateTurnToJavaDate(this.createdAt);
+        this.updatedAt=DateUtil.mongoDateTurnToJavaDate(this.updatedAt);
+    }
+
+//    public void handleMongoDateForList(List<BasePO> list){
+//        for(BasePO po:list){
+//            po.handleMongoDateToJava();
+//        }
+//    }
 }

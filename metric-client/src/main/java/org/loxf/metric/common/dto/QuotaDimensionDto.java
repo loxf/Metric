@@ -5,55 +5,45 @@ import java.util.Date;
 /**
  * Created by luohj on 2017/5/4.
  */
-public class QuotaDimensionDto extends Common {
-    private Long id;
+public class QuotaDimensionDto extends BaseDto{
 
-    private String quotaId;
+    private String dimCode;
 
-    private String columnName;
+    private String dimName;
 
-    private String columnCode;
+    private String createdUser;
 
-    private Date createdAt;
+    private String uniqueCode;
 
-    public Long getId() {
-        return id;
+    public String getDimCode() {
+        return dimCode;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setDimCode(String dimCode) {
+        this.dimCode = dimCode;
     }
 
-    public String getQuotaId() {
-        return quotaId;
+    public String getDimName() {
+        return dimName;
     }
 
-    public void setQuotaId(String quotaId) {
-        this.quotaId = quotaId;
+    public void setDimName(String dimName) {
+        this.dimName = dimName;
     }
 
-    public String getColumnName() {
-        return columnName;
+    public String getCreatedUser() {
+        return createdUser;
     }
 
-    public void setColumnName(String columnName) {
-        this.columnName = columnName;
+    public void setCreatedUser(String createdUser) {
+        this.createdUser = createdUser;
     }
 
-    public String getColumnCode() {
-        return columnCode;
+    public String getUniqueCode() {
+        return uniqueCode;
     }
 
-    public void setColumnCode(String columnCode) {
-        this.columnCode = columnCode;
+    public void setUniqueCode(String uniqueCode) {
+        this.uniqueCode = uniqueCode;
     }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
 }

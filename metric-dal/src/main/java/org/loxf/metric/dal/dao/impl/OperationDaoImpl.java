@@ -1,10 +1,13 @@
 package org.loxf.metric.dal.dao.impl;
 
+import org.loxf.metric.base.constants.CollectionConstants;
+import org.loxf.metric.base.utils.IdGenerator;
 import org.loxf.metric.core.mongo.MongoDaoBase;
 import org.loxf.metric.dal.dao.interfaces.OperationDao;
 import org.loxf.metric.dal.po.Operation;
 import org.loxf.metric.dal.po.Operation;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
@@ -12,28 +15,44 @@ import java.util.Map;
 /**
  * Created by hutingting on 2017/7/4.
  */
-@Component("operationDaoImpl")
+@Service("operationDao")
 public class OperationDaoImpl extends MongoDaoBase<Operation> implements OperationDao{
-    private final String collectionName = "operation";
+    private final String collectionName = CollectionConstants.OPERATION.name();
+    private static String oper_prefix = "OPERRATION_";
 
     @Override
-    public void insert(Operation object) {
+    public String insert(Operation object) {
+        String sid = IdGenerator.generate(oper_prefix);
+        object.setOperationCode(sid);
+        object.handleDateToMongo();
         super.insert(object, collectionName);
+        return  sid;
     }
 
     @Override
     public Operation findOne(Map<String, Object> params) {
-        return super.findOne(params, collectionName);
+        Operation operation= super.findOne(params, collectionName);
+        operation.handleMongoDateToJava();
+        return operation;
     }
 
+    private void handleDateForList(List<Operation> list){
+        for(Operation operation:list){
+            operation.handleMongoDateToJava();
+        }
+    }
     @Override
     public List<Operation> findAll(Map<String, Object> params) {
-        return super.findAll(params, collectionName);
+        List<Operation> operationList=super.findAll(params, collectionName);
+        handleDateForList(operationList);
+        return operationList;
     }
 
     @Override
-    public List<Operation> findByPager(Map<String, Object> params, int start, int end) {
-        return super.findByPager(params, start, end, collectionName);
+    public List<Operation> findByPager(Map<String, Object> params, int start, int pageSize) {
+        List<Operation> operationList=super.findByPager(params, start, pageSize, collectionName);
+        handleDateForList(operationList);
+        return operationList;
     }
 
     @Override
@@ -50,4 +69,10 @@ public class OperationDaoImpl extends MongoDaoBase<Operation> implements Operati
     public void remove(Map<String, Object> params) {
         super.remove(params, collectionName);
     }
+
+    @Override
+    public long countByParams(Map<String, Object> params) {
+        return super.countByParams(params,collectionName);
+    }
+
 }

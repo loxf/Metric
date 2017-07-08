@@ -1,15 +1,12 @@
 package org.loxf.metric.service;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.loxf.metric.base.utils.IdGenerator;
 import org.loxf.metric.common.dto.BaseResult;
 import org.loxf.metric.common.dto.ChartDto;
-import org.loxf.metric.common.dto.ChartQuotaRelDto;
-import org.loxf.metric.common.dto.QuotaDto;
+import org.loxf.metric.common.dto.PageData;
 import org.loxf.metric.dal.dao.interfaces.ChartDao;
 import org.loxf.metric.dal.po.Chart;
-import org.loxf.metric.dal.po.ChartQuotaRel;
-import org.loxf.metric.dal.po.QuotaWithDim;
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,39 +20,42 @@ import java.util.*;
 @Component
 public class ChartManager {
     private static String chart_prefix = "CHT_";
+
     @Autowired
     private ChartDao chartDao;
 
-    @Transactional(rollbackFor = Exception.class)
     public String insert(ChartDto chartDto){
         Chart chart=new Chart();
         BeanUtils.copyProperties(chartDto,chart);
-        String sid = IdGenerator.generate(chart_prefix);
-        chart.setChartId(sid);
         chart.setCreatedAt(new Date());
         chart.setUpdatedAt(new Date());
-        chartDao.insert(chart);
-        return sid;
+        return chartDao.insert(chart);
     }
 
-    public ChartDto getChart(String chartId){
-        ChartDto chartDto = new ChartDto();
-        /*Chart chart = chartDao.selectByChartId(chartId);
-        BeanUtils.copyProperties(chart, chartDto);*/
+    public ChartDto getChartDtoByParams(Map<String, Object> params){
+        Chart chart=getChartByParams(params);
+        ChartDto chartDto=new ChartDto();
+        BeanUtils.copyProperties(chart, chartDto);
         return chartDto;
     }
-    @Transactional
-    public BaseResult<String> updateChart(ChartDto chartDto) {
-        Chart chart=new Chart();
-        BeanUtils.copyProperties(chartDto, chart);
-        // chartDao.update(chart);
-        return new BaseResult<>();
+
+    public Chart getChartByParams(Map<String, Object> params){
+        return chartDao.findOne(params);
     }
-    @Transactional
-    public BaseResult<String> delChart(String chartId) {
-        Map map = new HashMap<>();
-        map.put("chartId", chartId);
-        chartDao.remove(map);
-        return new BaseResult<>();
+    public void updateChartByCode(String chartCode,Map<String, Object> setParams) {
+        Map<String, Object> qryParams=new HashedMap();
+        qryParams.put("chartCode",chartCode);
+        setParams.put("updatedAt",new Date());
+        chartDao.update(qryParams,setParams);
+    }
+    public void delChartByCode(String chartCode) {
+        Map<String, Object> qryParams=new HashedMap();
+        qryParams.put("chartCode",chartCode);
+        chartDao.remove(qryParams);
+    }
+
+    public List<Chart> getPageList(Map<String, Object> qryParams,int pageNum,int pageSize){
+        int start=(pageNum-1)*pageSize;
+        return chartDao.findByPager(qryParams,  start,  pageSize) ;
     }
 }

@@ -1,31 +1,65 @@
 package org.loxf.metric.common.dto;
 
+
+import org.loxf.metric.base.ItermList.ChartItem;
+
 import java.util.List;
 
-public class BoardDto extends Common{
-    private Long id;
+public class BoardDto extends BaseDto{
 
-    private String boardId;
-
-    private String createUserId;
-
-    private String updateUserId;
+    private String boardCode;
 
     private String boardName;
 
-    private String boardDesc;
-
     private Integer state;
+
+    private List<ChartItem> chartList;
+
+    private String uniqueCode;
 
     private String createUserName;
 
     private  String updateUserName;
 
-    private String updateAtStr;
+    public String getBoardCode() {
+        return boardCode;
+    }
 
-    private String createAtStr;
+    public void setBoardCode(String boardCode) {
+        this.boardCode = boardCode;
+    }
 
-    private List<ChartDto> chartList;
+    public String getBoardName() {
+        return boardName;
+    }
+
+    public void setBoardName(String boardName) {
+        this.boardName = boardName;
+    }
+
+    public Integer getState() {
+        return state;
+    }
+
+    public void setState(Integer state) {
+        this.state = state;
+    }
+
+    public List<ChartItem> getChartList() {
+        return chartList;
+    }
+
+    public void setChartList(List<ChartItem> chartList) {
+        this.chartList = chartList;
+    }
+
+    public String getUniqueCode() {
+        return uniqueCode;
+    }
+
+    public void setUniqueCode(String uniqueCode) {
+        this.uniqueCode = uniqueCode;
+    }
 
     public String getCreateUserName() {
         return createUserName;
@@ -43,84 +77,4 @@ public class BoardDto extends Common{
         this.updateUserName = updateUserName;
     }
 
-    public String getUpdateAtStr() {
-        return updateAtStr;
-    }
-
-    public void setUpdateAtStr(String updateAtStr) {
-        this.updateAtStr = updateAtStr;
-    }
-
-    public String getCreateAtStr() {
-        return createAtStr;
-    }
-
-    public void setCreateAtStr(String createAtStr) {
-        this.createAtStr = createAtStr;
-    }
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getBoardId() {
-        return boardId;
-    }
-
-    public void setBoardId(String boardId) {
-        this.boardId = boardId == null ? null : boardId.trim();
-    }
-
-    public String getBoardName() {
-        return boardName;
-    }
-
-    public void setBoardName(String boardName) {
-        this.boardName = boardName == null ? null : boardName.trim();
-    }
-
-    public String getBoardDesc() {
-        return boardDesc;
-    }
-
-    public void setBoardDesc(String boardDesc) {
-        this.boardDesc = boardDesc == null ? null : boardDesc.trim();
-    }
-
-    public Integer getState() {
-        return state;
-    }
-
-    public void setState(Integer state) {
-        this.state = state;
-    }
-
-    public String getCreateUserId() {
-        return createUserId;
-    }
-
-    public void setCreateUserId(String createUserId) {
-        this.createUserId = createUserId;
-    }
-
-    public String getUpdateUserId() {
-        return updateUserId;
-    }
-
-    public void setUpdateUserId(String updateUserId) {
-        this.updateUserId = updateUserId;
-    }
-
-    public List<ChartDto> getChartList() {
-        return chartList;
-    }
-
-    public void setChartList(List<ChartDto> chartList) {
-        this.chartList = chartList;
-    }
 }

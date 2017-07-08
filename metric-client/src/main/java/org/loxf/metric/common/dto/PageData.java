@@ -9,7 +9,7 @@ public class PageData<T> {
     /** 数据 */
     private List<T> rows;
     /** 总记录数 */
-    private int records;
+    private int totalRecords;
     /** 总页数 */
     private int totalPage;
     /** 当前页数 */
@@ -21,7 +21,7 @@ public class PageData<T> {
 
     public PageData(int totalPage, int records, List<T> rows){
         this.totalPage = totalPage;
-        this.records = records;
+        this.totalRecords = records;
         this.rows = rows;
     }
 
@@ -33,12 +33,12 @@ public class PageData<T> {
         this.rows = rows;
     }
 
-    public int getRecords() {
-        return records;
+    public int getTotalRecords() {
+        return totalRecords;
     }
 
-    public void setRecords(int records) {
-        this.records = records;
+    public void setTotalRecords(int totalRecords) {
+        this.totalRecords = totalRecords;
     }
 
     public int getTotalPage() {

@@ -6,6 +6,8 @@ import org.bson.Document;
 import org.junit.Test;
 import org.loxf.metric.base.utils.DateUtil;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 
 import java.sql.*;
 import java.text.SimpleDateFormat;
@@ -37,11 +39,15 @@ public class TestMongo {
         for(Document document:list){
             try{
                 Date date= document.getDate("createdAt");
-                System.out.println(DateUtil.mongoDateTurnToJavaDate(date));
+                System.out.println("mongoDate:"+date);
+                System.out.println("java Date:"+DateUtil.mongoDateTurnToJavaDate(date));
+                System.out.println("----------------------");
             }catch (Exception e){
                 System.out.println("ex");
             }
         }
+
+       // Query query=new Query(Criteria.where("onumber").is("002").and("cname").);
 
 //        Document document=new Document();
 //        document.put("name","htt6");

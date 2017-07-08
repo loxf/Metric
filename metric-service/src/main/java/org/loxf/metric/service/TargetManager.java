@@ -1,13 +1,11 @@
 package org.loxf.metric.service;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.loxf.metric.base.utils.IdGenerator;
 import org.loxf.metric.common.dto.BaseResult;
 import org.loxf.metric.common.dto.TargetDto;
-import org.loxf.metric.common.dto.TargetItemDto;
 import org.loxf.metric.dal.dao.interfaces.TargetDao;
 import org.loxf.metric.dal.po.Target;
-import org.loxf.metric.dal.po.TargetItem;
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,29 +18,34 @@ import java.util.*;
  */
 @Component
 public class TargetManager {
-    private static String target_prefix = "TG_";
+
     @Autowired
     private TargetDao targetDao;
 
-    @Transactional
     public String insert(TargetDto targetDto){
-        Target target=new Target();
+        Target target = new Target();
         BeanUtils.copyProperties(targetDto, target);
-        String sid = IdGenerator.generate(target_prefix);
-        target.setTargetId(sid);
         target.setCreatedAt(new Date());
         target.setUpdatedAt(new Date());
-        targetDao.insert(target);
-        return sid;
+        return targetDao.insert(target);
     }
 
-    @Transactional
-    public String update(TargetDto targetDto){
-        Target target=new Target();
-        BeanUtils.copyProperties(targetDto, target);
-        target.setUpdatedAt(new Date());
-        // targetDto.update(target);
-        return null;
+    public TargetDto getTagetDtoByParams(Map<String, Object> params){
+        TargetDto targetDto=new TargetDto();
+        Target target = targetDao.findOne(params);
+        BeanUtils.copyProperties(target, targetDto);
+        return targetDto;
+    }
+
+    public Target getTargetByParams(Map<String, Object> params){
+        return targetDao.findOne(params);
+    }
+
+    public void updateByCode(String targetCode,Map<String, Object> setParams){
+        Map<String, Object> qryParams=new HashedMap();
+        qryParams.put("targetCode",targetCode);
+        setParams.put("updatedAt",new Date());
+        targetDao.update(qryParams,setParams);
     }
 
     public List<TargetDto> listTargetByUser(String busiDomain, String objType, String objId, String startCircleTime, String endCircleTime){
@@ -50,9 +53,9 @@ public class TargetManager {
         return null;
     }
     @Transactional
-    public BaseResult<String> delTarget(String targetId) {
+    public BaseResult<String> delTargetByCode(String targetCode) {
         Map map = new HashMap<>();
-        map.put("targetId", targetId);
+        map.put("targetCode", targetCode);
         targetDao.remove(map);
         return new BaseResult<>();
     }

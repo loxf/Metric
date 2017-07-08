@@ -1,63 +1,63 @@
 package org.loxf.metric.dal.po;
 
-import java.util.Date;
+public class QuotaDimensionValue extends BasePO{
+    private String dimValueCode;
 
-public class QuotaDimensionValue {
-    private Long id;
+    private String dimCode;
 
-    private String columnCode;
+    private String dimName;
 
-    private String columnValueName;
+    private String dimValueDesc;
 
-    private String columnValue;
+    private String dimValue;
 
-    private Date createdAt;
+    private String uniqueCode;
 
-    public QuotaDimensionValue(){}
-
-    public QuotaDimensionValue(String columnCode, String columnValue, String columnValueName){
-        this.columnCode = columnCode;
-        this.columnValue = columnValue;
-        this.columnValueName = columnValueName;
+    public String getDimValueCode() {
+        return dimValueCode;
     }
 
-    public Long getId() {
-        return id;
+    public void setDimValueCode(String dimValueCode) {
+        this.dimValueCode = dimValueCode;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public String getDimCode() {
+        return dimCode;
     }
 
-    public String getColumnCode() {
-        return columnCode;
+    public void setDimCode(String dimCode) {
+        this.dimCode = dimCode;
     }
 
-    public void setColumnCode(String columnCode) {
-        this.columnCode = columnCode == null ? null : columnCode.trim();
+    public String getDimName() {
+        return dimName;
     }
 
-    public String getColumnValueName() {
-        return columnValueName;
+    public void setDimName(String dimName) {
+        this.dimName = dimName;
     }
 
-    public void setColumnValueName(String columnValueName) {
-        this.columnValueName = columnValueName == null ? null : columnValueName.trim();
+    public String getDimValueDesc() {
+        return dimValueDesc;
     }
 
-    public String getColumnValue() {
-        return columnValue;
+    public void setDimValueDesc(String dimValueDesc) {
+        this.dimValueDesc = dimValueDesc;
     }
 
-    public void setColumnValue(String columnValue) {
-        this.columnValue = columnValue == null ? null : columnValue.trim();
+    public String getDimValue() {
+        return dimValue;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
+    public void setDimValue(String dimValue) {
+        this.dimValue = dimValue;
     }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
+    public String getUniqueCode() {
+        return uniqueCode;
+    }
+
+    public void setUniqueCode(String uniqueCode) {
+        this.uniqueCode = uniqueCode;
     }
 }

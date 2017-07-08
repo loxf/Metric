@@ -5,6 +5,8 @@ import org.loxf.metric.common.dto.BaseResult;
 import org.loxf.metric.common.dto.BoardDto;
 import org.loxf.metric.common.dto.PageData;
 
+import java.util.Map;
+
 /**
  * Created by caiyang on 2017/5/4.
  */
@@ -26,19 +28,19 @@ public interface BoardService {
 
 
     /**
-     * 根据看板Id获取看板实体信息
-     * @param boardId
+     * 根据看板Code获取看板实体信息
+     * @param boardCode
      * @return
      */
-    public BaseResult<BoardDto> getBoardByBoardId(String boardId);
+    public BaseResult<BoardDto> getBoardByBoardCode(String boardCode);
 
 
-    public BaseResult<String>  updateBoard(BoardDto boardDto);
+    public BaseResult<String>  updateBoardByCode(String boardCode, Map<String, Object> setParam);
 
     /**
      * 删除看板
-     * @param boardId
+     * @param boardCode
      * @return
      */
-    public  BaseResult<String>  delBoard(String boardId);
+    public  BaseResult<String>  delBoardByCode(String boardCode);
 }

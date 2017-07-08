@@ -1,11 +1,10 @@
 package org.loxf.metric.dal.po;
 
 import java.util.Date;
+import java.util.List;
 
-public class Target extends Common{
-    private Long id;
-
-    private String targetId;
+public class Target extends BasePO{
+    private String targetCode;
 
     private String targetName;
 
@@ -13,34 +12,24 @@ public class Target extends Common{
 
     private Integer state;
 
-    private String busiDomain;
-
     private Date targetStartTime;
 
     private Date targetEndTime;
 
-    private String boardId;
+    private String uniqueCode;
 
-    private String createUserId;
+    private String createUserName;
 
-    private Date createdAt;
+    private String updatedUserName;
 
-    private Date updatedAt;
+    private List<org.loxf.metric.base.ItermList.TargetItem> itemList;
 
-    public Long getId() {
-        return id;
+    public String getTargetCode() {
+        return targetCode;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTargetId() {
-        return targetId;
-    }
-
-    public void setTargetId(String targetId) {
-        this.targetId = targetId == null ? null : targetId.trim();
+    public void setTargetCode(String targetCode) {
+        this.targetCode = targetCode;
     }
 
     public String getTargetName() {
@@ -67,14 +56,6 @@ public class Target extends Common{
         this.state = state;
     }
 
-    public String getBusiDomain() {
-        return busiDomain;
-    }
-
-    public void setBusiDomain(String busiDomain) {
-        this.busiDomain = busiDomain == null ? null : busiDomain.trim();
-    }
-
     public Date getTargetStartTime() {
         return targetStartTime;
     }
@@ -91,35 +72,35 @@ public class Target extends Common{
         this.targetEndTime = targetEndTime;
     }
 
-    public String getBoardId() {
-        return boardId;
+    public String getCreateUserName() {
+        return createUserName;
     }
 
-    public void setBoardId(String boardId) {
-        this.boardId = boardId == null ? null : boardId.trim();
+    public void setCreateUserName(String createUserName) {
+        this.createUserName = createUserName;
     }
 
-    public String getCreateUserId() {
-        return createUserId;
+    public String getUniqueCode() {
+        return uniqueCode;
     }
 
-    public void setCreateUserId(String createUserId) {
-        this.createUserId = createUserId;
+    public void setUniqueCode(String uniqueCode) {
+        this.uniqueCode = uniqueCode;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
+    public String getUpdatedUserName() {
+        return updatedUserName;
     }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
+    public void setUpdatedUserName(String updatedUserName) {
+        this.updatedUserName = updatedUserName;
     }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
+    public List<org.loxf.metric.base.ItermList.TargetItem> getItemList() {
+        return itemList;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setItemList(List<org.loxf.metric.base.ItermList.TargetItem> itemList) {
+        this.itemList = itemList;
     }
 }

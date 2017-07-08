@@ -1,40 +1,31 @@
 package org.loxf.metric.dal.po;
 
+import org.loxf.metric.base.ItermList.ChartItem;
+
 import java.util.Date;
+import java.util.List;
 
-public class Board extends Common{
-    private Long id;
-
-    private String boardId;
-
-    private String createUserId;
-
-    private String updateUserId;
+public class Board extends BasePO{
+    private String boardCode;
 
     private String boardName;
 
-    private String boardDesc;
-
     private Integer state;
 
-    private Date createdAt;
+    private List<ChartItem> chartList;
 
-    private Date updatedAt;
+    private String uniqueCode;
 
-    public Long getId() {
-        return id;
+    private String createUserName;
+
+    private  String updateUserName;
+
+    public String getBoardCode() {
+        return boardCode;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getBoardId() {
-        return boardId;
-    }
-
-    public void setBoardId(String boardId) {
-        this.boardId = boardId == null ? null : boardId.trim();
+    public void setBoardCode(String boardCode) {
+        this.boardCode = boardCode;
     }
 
     public String getBoardName() {
@@ -42,15 +33,7 @@ public class Board extends Common{
     }
 
     public void setBoardName(String boardName) {
-        this.boardName = boardName == null ? null : boardName.trim();
-    }
-
-    public String getBoardDesc() {
-        return boardDesc;
-    }
-
-    public void setBoardDesc(String boardDesc) {
-        this.boardDesc = boardDesc == null ? null : boardDesc.trim();
+        this.boardName = boardName;
     }
 
     public Integer getState() {
@@ -61,35 +44,36 @@ public class Board extends Common{
         this.state = state;
     }
 
-    public String getCreateUserId() {
-        return createUserId;
+    public List<ChartItem> getChartList() {
+        return chartList;
     }
 
-    public void setCreateUserId(String createUserId) {
-        this.createUserId = createUserId;
+    public void setChartList(List<ChartItem> chartList) {
+        this.chartList = chartList;
     }
 
-    public String getUpdateUserId() {
-        return updateUserId;
+    public String getUniqueCode() {
+        return uniqueCode;
     }
 
-    public void setUpdateUserId(String updateUserId) {
-        this.updateUserId = updateUserId;
+    public void setUniqueCode(String uniqueCode) {
+        this.uniqueCode = uniqueCode;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
+    public String getCreateUserName() {
+        return createUserName;
     }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
+    public void setCreateUserName(String createUserName) {
+        this.createUserName = createUserName;
     }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
+    public String getUpdateUserName() {
+        return updateUserName;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setUpdateUserName(String updateUserName) {
+        this.updateUserName = updateUserName;
     }
+
 }

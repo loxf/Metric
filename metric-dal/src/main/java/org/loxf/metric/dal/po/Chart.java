@@ -1,42 +1,34 @@
 package org.loxf.metric.dal.po;
 
+import org.loxf.metric.base.ItermList.QuotaItem;
+
 import java.util.Date;
+import java.util.List;
 
-public class Chart extends Common{
-    private Long id;
+public class Chart extends BasePO{
 
-    private String chartId;
-
-    private String createUserId;
-
-    private String updateUserId;
+    private String chartCode;
 
     private String chartName;
 
-    private String chartDesc;
+    private List<QuotaItem> quotaList;
 
     private String type;
 
+    private String chartDim;
+
     private Integer state;
 
-    private Date createdAt;
+    private String createUserName;
 
-    private Date updatedAt;
+    private String uniqueCode;
 
-    public Long getId() {
-        return id;
+    public String getChartCode() {
+        return chartCode;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getChartId() {
-        return chartId;
-    }
-
-    public void setChartId(String chartId) {
-        this.chartId = chartId == null ? null : chartId.trim();
+    public void setChartCode(String chartCode) {
+        this.chartCode = chartCode;
     }
 
     public String getChartName() {
@@ -44,15 +36,15 @@ public class Chart extends Common{
     }
 
     public void setChartName(String chartName) {
-        this.chartName = chartName == null ? null : chartName.trim();
+        this.chartName = chartName;
     }
 
-    public String getChartDesc() {
-        return chartDesc;
+    public List<QuotaItem> getQuotaList() {
+        return quotaList;
     }
 
-    public void setChartDesc(String chartDesc) {
-        this.chartDesc = chartDesc == null ? null : chartDesc.trim();
+    public void setQuotaList(List<QuotaItem> quotaList) {
+        this.quotaList = quotaList;
     }
 
     public String getType() {
@@ -60,7 +52,15 @@ public class Chart extends Common{
     }
 
     public void setType(String type) {
-        this.type = type == null ? null : type.trim();
+        this.type = type;
+    }
+
+    public String getChartDim() {
+        return chartDim;
+    }
+
+    public void setChartDim(String chartDim) {
+        this.chartDim = chartDim;
     }
 
     public Integer getState() {
@@ -71,35 +71,20 @@ public class Chart extends Common{
         this.state = state;
     }
 
-    public String getCreateUserId() {
-        return createUserId;
+    public String getCreateUserName() {
+        return createUserName;
     }
 
-    public void setCreateUserId(String createUserId) {
-        this.createUserId = createUserId;
+    public void setCreateUserName(String createUserName) {
+        this.createUserName = createUserName;
     }
 
-    public String getUpdateUserId() {
-        return updateUserId;
+    public String getUniqueCode() {
+        return uniqueCode;
     }
 
-    public void setUpdateUserId(String updateUserId) {
-        this.updateUserId = updateUserId;
+    public void setUniqueCode(String uniqueCode) {
+        this.uniqueCode = uniqueCode;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
 }
