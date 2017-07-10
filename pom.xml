@@ -45,11 +45,6 @@
             </dependency>
             <dependency>
                 <groupId>org.loxf</groupId>
-                <artifactId>metric-biz</artifactId>
-                <version>${metric.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.loxf</groupId>
                 <artifactId>metric-service</artifactId>
                 <version>${metric.version}</version>
             </dependency>

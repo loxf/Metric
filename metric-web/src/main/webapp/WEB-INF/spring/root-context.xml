@@ -33,7 +33,6 @@
     <import resource="classpath:metric-core.xml"/>
     <import resource="classpath:metric-dal.xml"/>
     <import resource="classpath:metric-service.xml"/>
-    <import resource="classpath:metric-biz.xml"/>
 
     <aop:aspectj-autoproxy proxy-target-class="true" />
 
