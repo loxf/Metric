@@ -1,6 +1,8 @@
 package org.loxf.metric.common.dto;
 
 
+import org.loxf.metric.common.constants.ResultCodeEnum;
+
 import java.io.Serializable;
 
 
@@ -8,38 +10,31 @@ import java.io.Serializable;
  * Created by wugang on 2017/2/23.
  */
 public class BaseResult<T> implements Serializable {
-    /**
-     * 状态标示
-     */
-    public static final int FAILED = 0;
-    public static final int SUCCESS = 1;
 
     /**
      * 信息反馈
      */
-    public static final String SUCCESS_MSG = "操作成功!";
-    public static final String FAILED_MSG = "操作失败!";
-    protected int code;
+    protected String code;
     protected String msg;
     protected T data;
 
     public BaseResult() {
-        this.code = SUCCESS;
-        this.msg = SUCCESS_MSG;
+        this.code = ResultCodeEnum.SUCCESS.getCode();
+        this.msg = ResultCodeEnum.SUCCESS.getCodeMsg();
     }
 
     public BaseResult(T data) {
-        this.code = SUCCESS;
-        this.msg = SUCCESS_MSG;
+        this.code = ResultCodeEnum.SUCCESS.getCode();
+        this.msg = ResultCodeEnum.SUCCESS.getCodeMsg();
         this.data = data;
     }
 
-    public BaseResult(int code, String msg) {
+    public BaseResult(String code, String msg) {
         this.code = code;
         this.msg = msg;
     }
 
-    public BaseResult(int code, String msg, T data) {
+    public BaseResult(String code, String msg, T data) {
         this.code = code;
         this.msg = msg;
         this.data = data;
@@ -61,11 +56,11 @@ public class BaseResult<T> implements Serializable {
         this.data = data;
     }
 
-    public int getCode() {
+    public String getCode() {
         return code;
     }
 
-    public void setCode(int code) {
+    public void setCode(String code) {
         this.code = code;
     }
 }
