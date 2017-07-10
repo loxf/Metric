@@ -21,6 +21,6 @@ public interface IBaseDao<T> {
 
     public void updateOne(String itemCode, Map<String, Object> setParams) ;
 
-    public void remove(String itemCode) ;
+    public void remove(String itemCode);
 
 }

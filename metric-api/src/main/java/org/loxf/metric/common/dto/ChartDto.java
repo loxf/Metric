@@ -12,6 +12,10 @@ public class ChartDto extends BaseDto{
 
     private String type;
 
+    private String visibleType;
+
+    private List<String> userNameList;
+
     private String chartDim;
 
     private Integer state;
@@ -82,5 +86,21 @@ public class ChartDto extends BaseDto{
 
     public void setUniqueCode(String uniqueCode) {
         this.uniqueCode = uniqueCode;
+    }
+
+    public String getVisibleType() {
+        return visibleType;
+    }
+
+    public void setVisibleType(String visibleType) {
+        this.visibleType = visibleType;
+    }
+
+    public List<String> getUserNameList() {
+        return userNameList;
+    }
+
+    public void setUserNameList(List<String> userNameList) {
+        this.userNameList = userNameList;
     }
 }

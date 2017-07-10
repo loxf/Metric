@@ -1,22 +1,18 @@
 package org.loxf.metric.service.impl;
 
-
-import com.alibaba.dubbo.common.utils.CollectionUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.loxf.metric.api.IBoardService;
-import org.loxf.metric.base.exception.MetricException;
-import org.loxf.metric.service.base.BaseService;
-import org.loxf.metric.common.dto.BaseResult;
-import org.loxf.metric.common.dto.BoardDto;
-import org.loxf.metric.common.dto.PageData;
+import org.loxf.metric.common.dto.*;
+import org.loxf.metric.common.utils.MapAndBeanTransUtils;
+import org.loxf.metric.dal.dao.interfaces.BoardDao;
 import org.loxf.metric.dal.po.Board;
-import org.loxf.metric.service.BoardManager;
+import org.loxf.metric.service.base.BaseService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
+import org.springframework.util.StringUtils;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -29,67 +25,60 @@ public class BoardServiceImpl extends BaseService implements IBoardService {
     Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
-    private BoardManager boardManager;
+    private BoardDao boardDao;
 
-    /**
-     * 获取看板列表支持分页
-     * @param boardDto
-     * @return
-     */
-    public PageData getPageList(BoardDto boardDto){
-        Board board=new Board();
-        BeanUtils.copyProperties(boardDto, board);
-        PageData pageUtilsUI= null;// super.pageList(board, BoardMapper.class,"Board");
-        List<Board> boardList=    pageUtilsUI.getRows();
-        List<BoardDto> boardDtoList=new ArrayList<>();
-        if(!CollectionUtils.isEmpty(boardList)){
-            for(Board b:boardList){
-                BoardDto dto=new BoardDto();
-                BeanUtils.copyProperties(b, dto);
-                boardDtoList.add(dto);
-            }
-        }
-        pageUtilsUI.setRows(boardDtoList);
-        return  pageUtilsUI;
+    @Override
+    public BaseResult<String> insertItem(BoardDto obj) {
+        Board board = new Board();
+        BeanUtils.copyProperties(obj, board);
+        board.setCreatedAt(new Date());
+        board.setUpdatedAt(new Date());
+        return new BaseResult<>(boardDao.insert(board));
     }
 
     @Override
-    public BaseResult<String> insertIterm(BoardDto boardDto) {
-        try {
-            return new BaseResult<String>(boardManager.insert(boardDto));
-        } catch (Exception e){
-            logger.error("创建看板失败", e);
-            throw new MetricException("创建看板失败", e);
+    public PageData getPageList(BoardDto obj) {
+        Pager pager = obj.getPager();
+        if (pager == null) {
+            logger.info("分页信息为空，无法查询!");
+            return null;
         }
+        Map<String, Object> params = MapAndBeanTransUtils.transBean2Map(obj);
+
+        List<Board> boardList = boardDao.findByPager(params, pager.getStart(), pager.getRownum());
+        PageData pageData = new PageData();
+        pageData.setTotalRecords(boardList.size());
+        pageData.setRownum(pager.getRownum());
+        pageData.setCurrentPage(pager.getCurrentPage());
+        pageData.setRows(boardList);
+        return pageData;
     }
 
     @Override
-    public BaseResult<BoardDto> queryItemByCode(String boardCode) {
-        Map<String,Object> qryParams=new HashedMap();
-        qryParams.put("boardCode",boardCode);
-        return new BaseResult(boardManager.getBoardDtoByParams(qryParams));
+    public BaseResult<BoardDto> queryItemByCode(String itemCode) {
+        Map<String, Object> qryParams = new HashedMap();
+        qryParams.put("boardCode", itemCode);
+        Board board = boardDao.findOne(qryParams);
+        BoardDto boardDto = new BoardDto();
+        BeanUtils.copyProperties(board, boardDto);//前者赋值给后者
+        return new BaseResult<>(boardDto);
     }
 
     @Override
-    public BaseResult<String> updateItem(String boardCode,Map<String, Object> setParam) {
-        try {
-            boardManager.updateBoard(boardCode,setParam);
-        } catch (Exception e){
-            logger.error("更新看板失败!boardCode={}" + boardCode, e);
-            throw new MetricException("更新看板失败!boardCode={}" + boardCode, e);
+    public BaseResult<String> updateItem(BoardDto obj) {
+        String itemCode = obj.getBoardCode();
+        if (StringUtils.isEmpty(itemCode)) {
+            return new BaseResult<>("boardCode不能为空！");
         }
-        return new BaseResult(boardCode);
+        Map boardMap = MapAndBeanTransUtils.transBean2Map(obj);
+        boardDao.updateOne(itemCode, boardMap);
+        return new BaseResult<>();
     }
 
     @Override
-    public BaseResult<String> delItemByCode(String boardCode) {
-        try {
-            boardManager.delBoardByCode(boardCode);
-        } catch (Exception e){
-            logger.error("更新看板失败!boardCode={}" + boardCode, e);
-            throw new MetricException("更新看板失败!boardCode={}" + boardCode, e);
-        }
-        return new BaseResult(boardCode);
+    public BaseResult<String> delItemByCode(String itemCode) {
+        boardDao.remove(itemCode);
+        return new BaseResult<>();
     }
 
 

@@ -12,6 +12,6 @@ public interface IBaseService<T> {
     public PageData getPageList(T obj);
     public BaseResult<String> insertItem(T obj);
     public BaseResult<T> queryItemByCode(String itemCode);
-    public BaseResult<String> updateItem(String itemCode,Map<String, Object> setParams);
+    public BaseResult<String> updateItem(T obj);
     public BaseResult<String> delItemByCode(String itemCode);
 }

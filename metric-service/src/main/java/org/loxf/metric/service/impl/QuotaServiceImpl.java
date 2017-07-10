@@ -2,16 +2,11 @@ package org.loxf.metric.service.impl;
 
 import org.apache.commons.collections.map.HashedMap;
 import org.loxf.metric.api.IQuotaService;
-import org.loxf.metric.base.exception.MetricException;
-import org.loxf.metric.service.utils.*;
-import org.loxf.metric.client.QuotaService;
-import org.loxf.metric.common.constants.QuotaType;
-import org.loxf.metric.common.dto.*;
+import org.loxf.metric.common.utils.MapAndBeanTransUtils;
+import org.loxf.metric.dal.dao.interfaces.QuotaDao;
 import org.loxf.metric.dal.po.Quota;
-import org.loxf.metric.service.ChartManager;
-import org.loxf.metric.service.QuotaManager;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.loxf.metric.service.base.BaseService;
+import org.loxf.metric.common.dto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -22,49 +17,100 @@ import java.util.*;
 
 
 @Service("quotaService")
-public class QuotaServiceImpl implements IQuotaService {
+public class QuotaServiceImpl extends BaseService implements IQuotaService {
     private static Logger logger = LoggerFactory.getLogger(QuotaServiceImpl.class);
-    @Autowired
-    private QuotaManager quotaManager;
-    @Autowired
-    private ValidConditionUtil valid;
-    @Autowired
-    private QuotaOperation operation;
-    @Autowired
-    private ChartManager chartManager;
 
-    public BaseResult<String> insertIterm(QuotaDto quotaDto) {
-        try {
-            // 获取表达式的指标
-            if(StringUtils.isEmpty(quotaDto.getExpression())){
-                throw new MetricException("表达式不能为空");
-            }
-            String expression = quotaDto.getExpression();
-            List<String> quotaCodeList = QuotaSqlBuilder.quotaList(expression);
-            if(quotaDto.getType().equals(QuotaType.COMPOSITE.getValue()) && CollectionUtils.isEmpty(quotaCodeList)){
-                throw new MetricException("复合指标必须基于其他指标运算");
-            } else if(quotaDto.getType().equals(QuotaType.COMPOSITE.getValue())){
-                // 复合指标复合复合指标时，需要把运算公式换算为基础指标
-                for(String quotaCode : quotaCodeList){
-                    Map map=new HashedMap();
-                    map.put("quotaCode",quotaCode);
-                    Quota tmp = quotaManager.getQuotaByParams(map);
-                    if(tmp.getType().equals(QuotaType.COMPOSITE.getValue())){
-                        // 换算为基础指标
-                        expression = expression.replace("${" + quotaCode + "}", "(" + tmp.getExpression() + ")");
-                    }
-                }
-                quotaDto.setExpression(expression);
-            }
-            return new BaseResult(quotaManager.insert(quotaDto));
-        } catch (Exception e) {
-            logger.error("创建指标失败", e);
-            throw new MetricException("创建指标失败", e);
-        }
+    @Autowired
+    private QuotaDao quotaDao;
+    @Override
+    public BaseResult<String> insertItem(QuotaDto obj) {
+        Quota quota=new Quota();
+        BeanUtils.copyProperties(obj,quota);
+        quota.setCreatedAt(new Date());
+        quota.setUpdatedAt(new Date());
+        return new BaseResult<>(quotaDao.insert(quota));
     }
 
     @Override
-    public BaseResult<String> updateItem(String quotaCode,Map<String, Object> setParams) {
+    public PageData getPageList(QuotaDto obj) {
+        Pager pager=obj.getPager();
+        if(pager==null){
+            logger.info("分页信息为空，无法查询!");
+            return null;
+        }
+        Map<String, Object> params= MapAndBeanTransUtils.transBean2Map(obj);
+
+        List<Quota>  quotaList=quotaDao.findByPager(params, pager.getStart(), pager.getRownum());
+        PageData pageData=new PageData();
+        pageData.setTotalRecords(quotaList.size());
+        pageData.setRownum(pager.getRownum());
+        pageData.setCurrentPage(pager.getCurrentPage());
+        pageData.setRows(quotaList);
+        return pageData;
+    }
+
+    @Override
+    public BaseResult<QuotaDto> queryItemByCode(String itemCode) {
+        Map<String, Object> qryParams=new HashedMap();
+        qryParams.put("quotaCode",itemCode);
+        Quota quota=quotaDao.findOne(qryParams);
+        QuotaDto quotaDto=new QuotaDto();
+        BeanUtils.copyProperties(quota,quotaDto);//前者赋值给后者
+        return new BaseResult<>(quotaDto);
+    }
+
+    @Override
+    public BaseResult<String> updateItem(QuotaDto obj) {
+        String itemCode=obj.getQuotaCode();
+        if(org.springframework.util.StringUtils.isEmpty(itemCode)){
+            return new BaseResult<>("quotaCode不能为空！");
+        }
+        Map quotaMap= MapAndBeanTransUtils.transBean2Map(obj);
+        quotaDao.updateOne(itemCode,quotaMap);
+        return new BaseResult<>();
+    }
+
+    @Override
+    public BaseResult<String> delItemByCode(String itemCode) {
+        quotaDao.remove(itemCode);
+        return new BaseResult<>();
+    }
+
+}
+
+
+//    public BaseResult<String> insertIterm(QuotaDto quotaDto) {
+//        try {
+//            // 获取表达式的指标
+//            if(StringUtils.isEmpty(quotaDto.getExpression())){
+//                throw new MetricException("表达式不能为空");
+//            }
+//            String expression = quotaDto.getExpression();
+//            List<String> quotaCodeList = QuotaSqlBuilder.quotaList(expression);
+//            if(quotaDto.getType().equals(QuotaType.COMPOSITE.getValue()) && CollectionUtils.isEmpty(quotaCodeList)){
+//                throw new MetricException("复合指标必须基于其他指标运算");
+//            } else if(quotaDto.getType().equals(QuotaType.COMPOSITE.getValue())){
+//                // 复合指标复合复合指标时，需要把运算公式换算为基础指标
+//                for(String quotaCode : quotaCodeList){
+//                    Map map=new HashedMap();
+//                    map.put("quotaCode",quotaCode);
+//                    Quota tmp = quotaManager.getQuotaByParams(map);
+//                    if(tmp.getType().equals(QuotaType.COMPOSITE.getValue())){
+//                        // 换算为基础指标
+//                        expression = expression.replace("${" + quotaCode + "}", "(" + tmp.getExpression() + ")");
+//                    }
+//                }
+//                quotaDto.setExpression(expression);
+//            }
+//            return new BaseResult(quotaManager.insert(quotaDto));
+//        } catch (Exception e) {
+//            logger.error("创建指标失败", e);
+//            throw new MetricException("创建指标失败", e);
+//        }
+//    }
+//
+//    @Override
+//    public BaseResult<String> updateItem(String quotaCode,Map<String, Object> setParams) {
 //        try {
 //            // 获取表达式的指标
 //            if(StringUtils.isEmpty(quotaDto.getQuotaId())){
@@ -97,23 +143,23 @@ public class QuotaServiceImpl implements IQuotaService {
 //            logger.error("更新指标失败", e);
 //            throw new MetricException("更新指标失败", e);
 //        }
-        return null;
-    }
-
-    @Override
-    public BaseResult<String> delItemByCode(String code) {
-         quotaManager.delQuotaByCode(code);
-         return new BaseResult<>(code);
-    }
-
-    @Override
-    public BaseResult<QuotaDto> queryItemByCode(String quotaId){
-        Quota quota = quotaManager.getQuotaById(quotaId);
-        QuotaDto dto = new QuotaDto();
-        BeanUtils.copyProperties(quota, dto);
-        return new BaseResult(dto);
-    }
-
+//        return null;
+//    }
+//
+//    @Override
+//    public BaseResult<String> delItemByCode(String code) {
+//         quotaManager.delQuotaByCode(code);
+//         return new BaseResult<>(code);
+//    }
+//
+//    @Override
+//    public BaseResult<QuotaDto> queryItemByCode(String quotaId){
+//        Quota quota = quotaManager.getQuotaById(quotaId);
+//        QuotaDto dto = new QuotaDto();
+//        BeanUtils.copyProperties(quota, dto);
+//        return new BaseResult(dto);
+//    }
+//
 //    @Override
 //    public BaseResult getQuotaData(String scanId, ConditionVo condition){
 //        /*QuotaScan quotaScan = quotaScanManager.getQuotaScanById(scanId);
@@ -426,15 +472,15 @@ public class QuotaServiceImpl implements IQuotaService {
 //        return quotaManager.queryDimenListByQuotaCode(quotaCodes);
 //    }
 //
-    @Override
-    public PageData<QuotaDto> getPageList(QuotaDto quotaDto) {
-        try {
-            PageData<QuotaDto> list = quotaManager.listQuotaPage(quotaDto);
-            return list;
-        } catch (Exception e){
-            logger.error("分页获取指标：" + e.getMessage(), e);
-            throw new MetricException("分页获取指标：" + e.getMessage(), e);
-        }
+//    @Override
+//    public PageData<QuotaDto> getPageList(QuotaDto quotaDto) {
+//        try {
+//            PageData<QuotaDto> list = quotaManager.listQuotaPage(quotaDto);
+//            return list;
+//        } catch (Exception e){
+//            logger.error("分页获取指标：" + e.getMessage(), e);
+//            throw new MetricException("分页获取指标：" + e.getMessage(), e);
+//        }
 //    }
 //
 //    @Override
@@ -462,4 +508,4 @@ public class QuotaServiceImpl implements IQuotaService {
 //            return oper;
 //        }
 //    }
-}
+

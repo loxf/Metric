@@ -2,82 +2,88 @@ package org.loxf.metric.service.impl;
 
 
 import com.alibaba.dubbo.common.utils.CollectionUtils;
+import org.apache.commons.collections.map.HashedMap;
+import org.loxf.metric.api.ITargetService;
 import org.loxf.metric.base.exception.MetricException;
+import org.loxf.metric.common.dto.*;
+import org.loxf.metric.common.utils.MapAndBeanTransUtils;
+import org.loxf.metric.dal.dao.interfaces.TargetDao;
 import org.loxf.metric.service.base.BaseService;
-import org.loxf.metric.client.TargetService;
-import org.loxf.metric.common.dto.BaseResult;
-import org.loxf.metric.common.dto.PageData;
-import org.loxf.metric.common.dto.TargetDto;
 import org.loxf.metric.dal.po.Target;
-import org.loxf.metric.service.TargetManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 目标配置业务类
  * Created by caiyang on 2017/5/4.
  */
 @Service("targetService")
-public class TargetServiceImpl extends BaseService implements TargetService {
+public class TargetServiceImpl extends BaseService implements ITargetService {
     Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
-    private TargetManager targetManager;
+    private TargetDao targetDao;
 
     @Override
-    public PageData listTargetPage(TargetDto targetDto) {
-        Target target = new Target();
-        BeanUtils.copyProperties(targetDto, target);
-        PageData pageUtilsUI = null; //super.pageList(target, TargetMapper.class, "Target");
-        List<Target> targetList = pageUtilsUI.getRows();
-        List<TargetDto> targetDtoList = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(targetList)) {
-            for (Target t : targetList) {
-                TargetDto dto = new TargetDto();
-                BeanUtils.copyProperties(t, dto);
-                targetDtoList.add(dto);
-            }
+    public BaseResult<String> insertItem(TargetDto obj) {
+        Target target=new Target();
+        BeanUtils.copyProperties(obj,target);
+        target.setCreatedAt(new Date());
+        target.setUpdatedAt(new Date());
+        return new BaseResult<>(targetDao.insert(target));
+    }
+
+    @Override
+    public PageData getPageList(TargetDto obj) {
+        Pager pager=obj.getPager();
+        if(pager==null){
+            logger.info("分页信息为空，无法查询!");
+            return null;
         }
-        pageUtilsUI.setRows(targetDtoList);
-        return pageUtilsUI;
+        Map<String, Object> params= MapAndBeanTransUtils.transBean2Map(obj);
+
+        List<Target>  targetList=targetDao.findByPager(params, pager.getStart(), pager.getRownum());
+        PageData pageData=new PageData();
+        pageData.setTotalRecords(targetList.size());
+        pageData.setRownum(pager.getRownum());
+        pageData.setCurrentPage(pager.getCurrentPage());
+        pageData.setRows(targetList);
+        return pageData;
     }
 
     @Override
-    public BaseResult<String> createTarget(TargetDto targetDto) {
-        try {
-            //创建目标
-            String sid = targetManager.insert(targetDto);
-            return new BaseResult<String>(sid);
-        } catch (Exception e) {
-            logger.error("创建目标失败", e);
-            throw new MetricException("创建目标失败", e);
+    public BaseResult<TargetDto> queryItemByCode(String itemCode) {
+        Map<String, Object> qryParams=new HashedMap();
+        qryParams.put("targetCode",itemCode);
+        Target target=targetDao.findOne(qryParams);
+        TargetDto targetDto=new TargetDto();
+        BeanUtils.copyProperties(target,targetDto);//前者赋值给后者
+        return new BaseResult<>(targetDto);
+    }
+
+    @Override
+    public BaseResult<String> updateItem(TargetDto obj) {
+        String itemCode=obj.getTargetCode();
+        if(StringUtils.isEmpty(itemCode)){
+            return new BaseResult<>("targetCode不能为空！");
         }
+        Map targetMap= MapAndBeanTransUtils.transBean2Map(obj);
+        targetDao.updateOne(itemCode,targetMap);
+        return new BaseResult<>();
     }
 
     @Override
-    public BaseResult<String> updateTarget(TargetDto targetDto) {
-        try {
-            //创建目标
-            String i = targetManager.update(targetDto);
-            return new BaseResult<String>(i);
-        } catch (Exception e) {
-            logger.error("更新目标失败", e);
-            throw new MetricException("更新目标失败", e);
-        }
+    public BaseResult<String> delItemByCode(String itemCode) {
+        targetDao.remove(itemCode);
+        return new BaseResult<>();
     }
 
-
-    public List<TargetDto> listTargetByUser(String busiDomain, String objType, String objId, String startCircleTime, String endCircleTime) {
-        return targetManager.listTargetByUser(busiDomain, objType, objId, startCircleTime, endCircleTime);
-    }
-
-    @Override
-    public BaseResult<String> delTarget(String targetId) {
-        return targetManager.delTarget(targetId);
-    }
 }
