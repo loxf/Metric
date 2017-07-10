@@ -11,7 +11,7 @@
 
     <bean class="org.loxf.metric.service.base.SpringApplicationContextUtil"/>
 
-    <import resource="dubbo/dubbo-provider.xml"/>
+    <!--<import resource="dubbo/dubbo-provider.xml"/>-->
     <!-- 启动对@AspectJ注解的支持 -->
     <aop:aspectj-autoproxy/>
 </beans>

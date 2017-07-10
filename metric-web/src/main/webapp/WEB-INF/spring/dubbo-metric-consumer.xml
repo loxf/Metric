@@ -6,5 +6,6 @@
         http://www.springframework.org/schema/beans/spring-beans.xsd http://code.alibabatech.com/schema/dubbo
         http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
-    <!--<dubbo:reference id="wapAdvertClientService" timeout="${dubbo.service.timeout}" version="${dubbo.service.version}" interface="com.ywwl.collector.client.WapAdvertClientService"></dubbo:reference>-->
+    <dubbo:reference id="quotaService" timeout="${dubbo.service.timeout}" version="${dubbo.service.version}"
+                     interface="org.loxf.metric.api.IQuotaService"></dubbo:reference>
 </beans>

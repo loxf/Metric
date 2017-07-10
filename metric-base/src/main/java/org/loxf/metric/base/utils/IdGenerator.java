@@ -5,11 +5,7 @@ import org.apache.commons.lang.StringUtils;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
-/**
- * Created by guolongcang on 2017/3/17.
- */
 public class IdGenerator {
-
     private final static ThreadLocal<Integer> SEED = new ThreadLocal<Integer>() {
         protected Integer initialValue() {
             return 0;
@@ -18,7 +14,6 @@ public class IdGenerator {
     private final static int MAX = 9999;
     private final static int SIZE = 32;
     private final static int PREFIX_SIZE = 6;
-
 
     public static String generate(String prefix) {
 

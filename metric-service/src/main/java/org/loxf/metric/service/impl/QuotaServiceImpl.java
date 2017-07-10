@@ -15,8 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-
-@Service("quotaService")
+@Service
 public class QuotaServiceImpl extends BaseService implements IQuotaService {
     private static Logger logger = LoggerFactory.getLogger(QuotaServiceImpl.class);
 

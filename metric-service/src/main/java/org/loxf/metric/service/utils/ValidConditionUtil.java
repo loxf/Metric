@@ -6,8 +6,6 @@ import org.loxf.metric.base.exception.MetricException;
 import org.loxf.metric.common.dto.Condition;
 import org.loxf.metric.common.dto.ConditionVo;
 import org.loxf.metric.dal.po.Quota;
-import org.loxf.metric.dal.po.QuotaDimension;
-import org.loxf.metric.service.QuotaManager;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,8 +18,6 @@ import java.util.Map;
  */
 @Component
 public class ValidConditionUtil {
-    @Autowired
-    private QuotaManager quotaManager;
 
     public Quota valid(String quotaCode, ConditionVo vo) throws MetricException{
         if(StringUtils.isEmpty(quotaCode)){
@@ -32,7 +28,7 @@ public class ValidConditionUtil {
         }
         Map<String,Object> qryParams=new HashedMap();
         qryParams.put("quotaCode",quotaCode);
-        Quota quota = quotaManager.getQuotaByParams(qryParams);
+        Quota quota = null;// TODO quotaManager.getQuotaByParams(qryParams);
         if(quota==null) {
             throw new MetricException("指标CODE不正确");
         }

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 添加 DUBBO SCHEMA -->
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
        xmlns="http://www.springframework.org/schema/beans"
@@ -7,6 +6,6 @@
         http://www.springframework.org/schema/beans/spring-beans.xsd http://code.alibabatech.com/schema/dubbo
         http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
-    <dubbo:service timeout="${dubbo.service.timeout}" interface="org.loxf.metric.api.IQuotaService" ref="quotaService"
-                   version="${dubbo.service.version}"/>
+    <dubbo:reference id="quotaService" timeout="60000" version="1.0.0.rd"
+                     interface="org.loxf.metric.api.IQuotaService"></dubbo:reference>
 </beans>

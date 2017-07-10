@@ -26,7 +26,7 @@ public class BaseService {
                 return null;
             }
             PageData pageData=new PageData();
-            pageData.setRecords(totalCount);
+            pageData.setTotalRecords(totalCount);
             Method listMethod = clazz.getDeclaredMethod("findByPager", Map.class, int.class, int.class);
             List pageResult= (List) listMethod.invoke(params, start, pageSize);
             pageData.setRows(pageResult);
