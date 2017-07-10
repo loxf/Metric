@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>metric-serivce</artifactId>
+    <artifactId>metric-service</artifactId>
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
@@ -23,6 +23,10 @@
         <dependency>
             <groupId>org.loxf</groupId>
             <artifactId>metric-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.loxf</groupId>
+            <artifactId>metric-dal</artifactId>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
