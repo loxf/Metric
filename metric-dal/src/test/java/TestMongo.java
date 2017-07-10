@@ -2,9 +2,12 @@ import com.mongodb.*;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import org.apache.commons.collections.map.HashedMap;
 import org.bson.Document;
 import org.junit.Test;
 import org.loxf.metric.base.utils.DateUtil;
+import org.loxf.metric.base.utils.MapAndBeanTransUtils;
+import org.loxf.metric.dal.po.Chart;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -20,6 +23,23 @@ import java.util.Date;
  * Created by hutingting on 2017/7/5.
  */
 public class TestMongo {
+
+    @Test
+    public void test() {
+//        Chart chart=new Chart();
+//        chart.setChartCode("bb");
+//        chart.setChartName("罗傻逼");
+//        Map map=MapAndBeanTransUtils.transBean2Map(chart);
+//        System.out.print(map);
+//
+        Map beanMap=new HashedMap();
+        beanMap.put("chartCode","bb");
+        beanMap.put("state",1);
+
+        Chart chartBean=(Chart)MapAndBeanTransUtils.transMap2Bean2(beanMap,Chart.class);
+        System.out.println(chartBean);
+    }
+
     @Test
     public void testMongodb() {
         //地址

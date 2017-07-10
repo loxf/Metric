@@ -1,5 +1,6 @@
 package org.loxf.metric.dal.dao.impl;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.loxf.metric.base.constants.CollectionConstants;
 import org.loxf.metric.base.utils.IdGenerator;
 import org.loxf.metric.core.mongo.MongoDaoBase;
@@ -60,12 +61,16 @@ public class ChartDaoImpl extends MongoDaoBase<Chart> implements ChartDao{
     }
 
     @Override
-    public void updateOne(Map<String, Object> queryParams, Map<String, Object> setParams) {
+    public void updateOne(String itemCode, Map<String, Object> setParams) {
+        Map<String, Object> queryParams=new HashedMap();
+        queryParams.put("chartCode",itemCode);
         super.updateOne(queryParams, setParams, collectionName);
     }
 
     @Override
-    public void remove(Map<String, Object> params) {
+    public void remove(String itemCode) {
+        Map<String, Object> params=new HashedMap();
+        params.put("chartCode",itemCode);
         super.remove(params, collectionName);
     }
 

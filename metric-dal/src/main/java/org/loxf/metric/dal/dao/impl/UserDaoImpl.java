@@ -1,5 +1,6 @@
 package org.loxf.metric.dal.dao.impl;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.loxf.metric.base.constants.CollectionConstants;
 import org.loxf.metric.base.utils.DateUtil;
 import org.loxf.metric.base.utils.IdGenerator;
@@ -62,14 +63,19 @@ public class UserDaoImpl extends MongoDaoBase<User> implements UserDao {
     }
 
     @Override
-    public void updateOne(Map<String, Object> queryParams, Map<String, Object> setParams) {
+    public void updateOne(String itemCode, Map<String, Object> setParams) {
+        Map<String, Object> queryParams=new HashedMap();
+        queryParams.put("userCode",itemCode);
         super.updateOne(queryParams, setParams, collectionName);
     }
 
     @Override
-    public void remove(Map<String, Object> params) {
+    public void remove(String itemCode) {
+        Map<String, Object> params=new HashedMap();
+        params.put("userCode",itemCode);
         super.remove(params, collectionName);
     }
+
 
     @Override
     public long countByParams(Map<String, Object> params) {
