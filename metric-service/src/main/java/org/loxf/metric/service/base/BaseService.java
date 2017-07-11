@@ -3,6 +3,8 @@ package org.loxf.metric.service.base;
 import com.github.pagehelper.PageHelper;
 import org.apache.log4j.Logger;
 import org.loxf.metric.common.dto.PageData;
+import org.loxf.metric.core.mongo.IBaseDao;
+import org.loxf.metric.core.mongo.MongoDaoBase;
 import org.loxf.metric.dal.po.BasePO;
 import org.loxf.metric.dal.po.Common;
 
@@ -15,23 +17,24 @@ import java.util.Map;
  */
 public class BaseService {
     Logger logger = Logger.getLogger(this.getClass());
-
     public PageData getPageResult(Class<? extends Object> daoClazz, Map<String, Object> params,int start,int pageSize) {
+        IBaseDao dao = (IBaseDao)SpringApplicationContextUtil.getBean(daoClazz);
+        return getPageResult(dao, params, start, pageSize);
+    }
+
+
+    public PageData getPageResult(IBaseDao dao, Map<String, Object> params, int start, int pageSize) {
         try {
-            Object dao = SpringApplicationContextUtil.getBean(daoClazz);
-            Class<?> clazz = dao.getClass();
-            Method countMethod = clazz.getDeclaredMethod("countByParams", Map.class);
-            int totalCount = (Integer) countMethod.invoke(params);
+            long totalCount = (long) dao.countByParams(params);
             if (totalCount <= 0) {
                 return null;
             }
+            List pageResult = dao.findByPager(params, start, pageSize);
             PageData pageData=new PageData();
-            pageData.setTotalRecords(totalCount);
-            Method listMethod = clazz.getDeclaredMethod("findByPager", Map.class, int.class, int.class);
-            List pageResult= (List) listMethod.invoke(params, start, pageSize);
             pageData.setRows(pageResult);
-            pageData.setCurrentPage(start%pageSize==0?start/pageSize:start/pageSize+1);
-            pageData.setRownum(pageResult.size());
+            pageData.setTotalRecords(totalCount);
+            pageData.setCurrentPage(start/pageSize+1);
+            pageData.setRownum(pageSize);
             return pageData;
         }catch (Exception e){
             logger.error("查询分页异常！",e);

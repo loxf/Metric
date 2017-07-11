@@ -13,7 +13,7 @@ public class PageData<T> {
     /**
      * 总记录数
      */
-    private int totalRecords;
+    private long totalRecords;
     /**
      * 总页数
      */
@@ -43,11 +43,11 @@ public class PageData<T> {
         this.rows = rows;
     }
 
-    public int getTotalRecords() {
+    public long getTotalRecords() {
         return totalRecords;
     }
 
-    public void setTotalRecords(int totalRecords) {
+    public void setTotalRecords(long totalRecords) {
         this.totalRecords = totalRecords;
     }
 
@@ -55,7 +55,7 @@ public class PageData<T> {
         if(rownum==0){
             return 0;
         }
-        return totalRecords % rownum == 0 ? totalRecords / rownum : totalRecords / rownum + 1;
+        return (int)(totalRecords % rownum == 0 ? totalRecords / rownum : totalRecords / rownum + 1);
     }
 
     public int getCurrentPage() {

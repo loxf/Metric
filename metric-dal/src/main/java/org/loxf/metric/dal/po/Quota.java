@@ -10,17 +10,21 @@ public class Quota extends BasePO {
 
     private String quotaSource;
 
-    private String expression;
-
     private String quotaName;
 
     private String type;
 
     private String showOperation;
 
+    private String showType;
+
     private String state;
 
     private List<QuotaDimItem> quotaDim;
+
+    private String dataImportType;
+
+    private int intervalPeriod;
 
     private String updateUserName;
 
@@ -42,14 +46,6 @@ public class Quota extends BasePO {
 
     public void setQuotaSource(String quotaSource) {
         this.quotaSource = quotaSource;
-    }
-
-    public String getExpression() {
-        return expression;
-    }
-
-    public void setExpression(String expression) {
-        this.expression = expression;
     }
 
     public String getQuotaName() {
@@ -74,6 +70,14 @@ public class Quota extends BasePO {
 
     public void setShowOperation(String showOperation) {
         this.showOperation = showOperation;
+    }
+
+    public String getShowType() {
+        return showType;
+    }
+
+    public void setShowType(String showType) {
+        this.showType = showType;
     }
 
     public String getState() {
@@ -106,6 +110,22 @@ public class Quota extends BasePO {
 
     public void setQuotaDim(List<QuotaDimItem> quotaDim) {
         this.quotaDim = quotaDim;
+    }
+
+    public String getDataImportType() {
+        return dataImportType;
+    }
+
+    public void setDataImportType(String dataImportType) {
+        this.dataImportType = dataImportType;
+    }
+
+    public int getIntervalPeriod() {
+        return intervalPeriod;
+    }
+
+    public void setIntervalPeriod(int intervalPeriod) {
+        this.intervalPeriod = intervalPeriod;
     }
 
     public String getUniqueCode() {

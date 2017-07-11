@@ -51,7 +51,13 @@ public class MapAndBeanTransUtils {
                     Object value = getter.invoke(obj);
                     if(value!=null){//如果值为null就不设置到map中
                         if(!(value instanceof Pager)){//去除分页相关信息
-                            map.put(key, value);
+                            if(value instanceof Integer){
+                                if((int)value!=0){
+                                    map.put(key, value);
+                                }
+                            } else {
+                                map.put(key, value);
+                            }
                         }
                     }
                 }

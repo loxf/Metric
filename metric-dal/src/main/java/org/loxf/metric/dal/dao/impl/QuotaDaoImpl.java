@@ -15,6 +15,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -23,76 +24,25 @@ import java.util.Map;
  */
 @Service("quotaDao")
 public class QuotaDaoImpl extends MongoDaoBase<Quota> implements QuotaDao{
-    private static String quota_prefix = "QUOTA_";
-    private static Logger logger = LoggerFactory.getLogger(QuotaDaoImpl.class);
-
     private final String collectionName = CollectionConstants.QUOTA.getCollectionName();
 
-//    @Override
-//    public Quota selectQuota(Quota quota){
-//        Query query = getWhere(quota);
-//        return mongoTemplate.findOne(query, Quota.class, collectionName);
-//    }
-//
-//    @Override
-//    public List<Quota> selectList(Quota quota){
-//        Query query = getWhere(quota);
-//        return mongoTemplate.find(query, Quota.class, collectionName);
-//    }
-//
-//    public long count(Quota quota){
-//        Query query = getWhere(quota);
-//        return mongoTemplate.count(query, Quota.class, collectionName);
-//    }
-
-//    private Query getWhere(Quota quota){
-//        Query query = new Query();
-//        Criteria criteria = Criteria.where("1").is("1");
-//        if(StringUtils.isNotEmpty(quota.getQuotaId())){
-//            criteria = criteria.and("quotaId").is(quota.getQuotaId());
-//        }
-//        if(StringUtils.isNotEmpty(quota.getQuotaCode())){
-//            criteria = criteria.and("quotaCode").is(quota.getQuotaCode());
-//        }
-//        if(StringUtils.isNotEmpty(quota.getQuotaSource())){
-//            criteria = criteria.and("quotaSource").is(quota.getQuotaSource());
-//        }
-//        if(StringUtils.isNotEmpty(quota.getQuotaName())){
-//            criteria = criteria.and("quotaName").is(quota.getQuotaName());
-//        }
-//        if(StringUtils.isNotEmpty(quota.getQuotaDisplayName())){
-//            criteria = criteria.and("quotaDisplayName").regex(".*?\\" +quota.getQuotaDisplayName()+ ".*");
-//        }
-//        if(StringUtils.isNotEmpty(quota.getType())){
-//            criteria = criteria.and("type").is(quota.getType());
-//        }
-//        if( quota.getState()>=0){
-//            criteria = criteria.and("state").is(quota.getState());
-//        }
-//        if(StringUtils.isNotEmpty(quota.getCreatedAtStart())){
-//            criteria = criteria.and("createdAtStart").gte(quota.getCreatedAtStart());
-//        }
-//        if(StringUtils.isNotEmpty(quota.getCreatedAtEnd())){
-//            criteria = criteria.and("createdAtEnd").lte(quota.getCreatedAtEnd());
-//        }
-//        query.addCriteria(criteria);
-//        return query;
-//    }
-
     @Override
-    public String insert(Quota object) {
-        String sid = IdGenerator.generate(quota_prefix);
-        object.setQuotaCode(sid);
-        object.handleDateToMongo();
-        super.insert(object, collectionName);
-        return sid;
+    public String insert(Quota quota) {
+        quota.setCreatedAt(new Date());
+        quota.setUpdatedAt(new Date());
+        quota.handleDateToMongo();
+        super.insert(quota, collectionName);
+        return quota.getQuotaCode();
     }
 
     @Override
     public Quota findOne(Map<String, Object> params) {
         Quota quota= super.findOne(params, collectionName);
-        quota.handleMongoDateToJava();
-        return quota;
+        if(quota!=null) {
+            quota.handleMongoDateToJava();
+            return quota;
+        }
+        return null;
     }
 
     private void handleDateForList(List<Quota> list){
@@ -135,7 +85,7 @@ public class QuotaDaoImpl extends MongoDaoBase<Quota> implements QuotaDao{
 
     @Override
     public long countByParams(Map<String, Object> params) {
-        return super.countByParams(params,collectionName);
+        return super.countByParams(params, collectionName);
     }
 
 }

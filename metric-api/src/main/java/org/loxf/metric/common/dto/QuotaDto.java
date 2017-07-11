@@ -11,15 +11,19 @@ public class QuotaDto extends BaseDto{
 
     private String quotaSource;
 
-    private String expression;
-
     private String quotaName;
 
     private String type;
 
     private String showOperation;
 
+    private String showType;
+
     private String state;
+
+    private String dataImportType;
+
+    private int intervalPeriod;
 
     private List<QuotaDimensionDto> quotaDim;
 
@@ -39,14 +43,6 @@ public class QuotaDto extends BaseDto{
 
     public void setQuotaSource(String quotaSource) {
         this.quotaSource = quotaSource;
-    }
-
-    public String getExpression() {
-        return expression;
-    }
-
-    public void setExpression(String expression) {
-        this.expression = expression;
     }
 
     public String getQuotaName() {
@@ -73,12 +69,36 @@ public class QuotaDto extends BaseDto{
         this.showOperation = showOperation;
     }
 
+    public String getShowType() {
+        return showType;
+    }
+
+    public void setShowType(String showType) {
+        this.showType = showType;
+    }
+
     public String getState() {
         return state;
     }
 
     public void setState(String state) {
         this.state = state;
+    }
+
+    public int getIntervalPeriod() {
+        return intervalPeriod;
+    }
+
+    public void setIntervalPeriod(int intervalPeriod) {
+        this.intervalPeriod = intervalPeriod;
+    }
+
+    public String getDataImportType() {
+        return dataImportType;
+    }
+
+    public void setDataImportType(String dataImportType) {
+        this.dataImportType = dataImportType;
     }
 
     public List<QuotaDimensionDto> getQuotaDim() {

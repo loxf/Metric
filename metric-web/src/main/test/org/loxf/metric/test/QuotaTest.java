@@ -6,10 +6,9 @@ import org.junit.runner.RunWith;
 import org.loxf.metric.api.IQuotaService;
 import org.loxf.metric.common.constants.QuotaType;
 import org.loxf.metric.common.constants.StandardState;
-import org.loxf.metric.common.dto.BaseResult;
-import org.loxf.metric.common.dto.QuotaDimensionDto;
-import org.loxf.metric.common.dto.QuotaDto;
+import org.loxf.metric.common.dto.*;
 import org.loxf.metric.dal.po.QuotaDimension;
+import org.loxf.metric.test.core.JUnit4ClassRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,7 @@ import java.util.List;
 /**
  * Created by luohj on 2017/7/10.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(JUnit4ClassRunner.class)
 @ActiveProfiles("rd")
 @ContextConfiguration(locations = {"classpath*:root-test.xml"})
 public class QuotaTest {
@@ -35,10 +34,9 @@ public class QuotaTest {
     @Test
     public void create(){
         QuotaDto quotaDto = new QuotaDto();
-        for(int i=1;i<=10;i++) {
+        for(int i=1;i<=2;i++) {
             quotaDto.setQuotaSource("quota_data_test_00" + i);
-            quotaDto.setExpression("${test_00" + i + "}");
-            quotaDto.setQuotaSource("自动测试指标" + i);
+            quotaDto.setQuotaName("自动测试指标" + i);
             quotaDto.setType(QuotaType.BASIC.getValue());
             quotaDto.setShowOperation("SUM");
             quotaDto.setState(StandardState.AVAILABLE.getValue());
@@ -69,7 +67,19 @@ public class QuotaTest {
 
     @Test
     public void delQuota(){
-        BaseResult<String> result = quotaService.delItemByCode("QUOTA_00000001499743845983733819");
+        BaseResult<String> result = quotaService.delItemByCode("QUOTA_00000001499743845968266918");
         logger.debug(JSON.toJSONString(result));
+    }
+
+    @Test
+    public void getPageList(){
+        QuotaDto quotaDto = new QuotaDto();
+        quotaDto.setType(QuotaType.BASIC.getValue());
+        Pager pager = new Pager();
+        pager.setRownum(10);
+        pager.setCurrentPage(1);
+        quotaDto.setPager(pager);
+        PageData pageData = quotaService.getPageList(quotaDto);
+        logger.debug(JSON.toJSONString(pageData));
     }
 }

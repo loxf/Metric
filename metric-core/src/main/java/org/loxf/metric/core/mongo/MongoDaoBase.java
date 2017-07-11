@@ -49,7 +49,7 @@ public class MongoDaoBase<T> {
         DBObject obj = new BasicDBObject();
         obj.putAll(params);
         Query query = new BasicQuery(obj);
-        query.skip(start).limit(start+pageSize);
+        query.skip(start).limit(pageSize);
         Class<T> clazz = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
         return mongoTemplate.find(query, clazz, collectionName);
     }
