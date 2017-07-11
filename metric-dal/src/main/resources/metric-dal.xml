@@ -8,7 +8,7 @@
        http://www.springframework.org/schema/data/mongo
        http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd">
     <!-- MONGODB数据库配置 -->
-    <mongo:mongo id="mongo" host="${mongodb.host}" port="${mongodb.port}"/>
+    <mongo:mongo id="mongo" host="${mongodb.host}" port="${mongodb.port}"></mongo:mongo>
 
     <bean id="userCredentials" class="org.springframework.data.authentication.UserCredentials">
         <constructor-arg name="username" value="${mongodb.user}"/>

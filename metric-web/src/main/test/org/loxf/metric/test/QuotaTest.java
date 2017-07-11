@@ -33,8 +33,7 @@ public class QuotaTest {
     @Autowired
     private IQuotaService quotaService;
     @Test
-    @Rollback(false)
-    public void getValue(){
+    public void create(){
         QuotaDto quotaDto = new QuotaDto();
         for(int i=1;i<=10;i++) {
             quotaDto.setQuotaSource("quota_data_test_00" + i);
@@ -59,5 +58,12 @@ public class QuotaTest {
             BaseResult<String> result = quotaService.insertItem(quotaDto);
             logger.debug(JSON.toJSONString(result));
         }
+    }
+
+    @Test
+    public void getQuota(){
+        QuotaDto quotaDto = new QuotaDto();
+        BaseResult<QuotaDto> result = quotaService.queryItemByCode("QUOTA001");
+        logger.debug(JSON.toJSONString(result));
     }
 }
