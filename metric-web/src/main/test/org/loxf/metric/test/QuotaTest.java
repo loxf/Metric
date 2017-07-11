@@ -69,7 +69,7 @@ public class QuotaTest {
 
     @Test
     public void delQuota(){
-        BaseResult<String> result = quotaService.delItemByCode("QUOTA_00000001499743845561158610");
+        BaseResult<String> result = quotaService.delItemByCode("QUOTA_00000001499743845983733819");
         logger.debug(JSON.toJSONString(result));
     }
 }

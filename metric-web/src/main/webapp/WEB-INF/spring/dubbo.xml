@@ -12,5 +12,6 @@
     <dubbo:protocol name="dubbo" port="-1"/>
     <dubbo:consumer check="false"/>
 
+    <import resource="classpath:dubbo/dubbo-provider.xml"/>
     <import resource="dubbo-metric-consumer.xml" />
 </beans>
