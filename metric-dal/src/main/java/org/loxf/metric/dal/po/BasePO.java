@@ -5,6 +5,8 @@ import org.bson.types.ObjectId;
 import org.loxf.metric.base.utils.DateUtil;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -28,12 +30,22 @@ public class BasePO {
         return createdAt;
     }
 
+    public void setCreatedAt(String createdAt) throws ParseException {
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mi:ss");
+        this.createdAt = sf.parse(createdAt);
+    }
+
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
 
     public Date getUpdatedAt() {
         return updatedAt;
+    }
+
+    public void setUpdatedAt(String updatedAt) throws ParseException {
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mi:ss");
+        this.updatedAt = sf.parse(updatedAt);
     }
 
     public void setUpdatedAt(Date updatedAt) {

@@ -1,23 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mongo="http://www.springframework.org/schema/data/mongo"
-       xmlns="http://www.springframework.org/schema/beans"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
-	   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
-       http://www.springframework.org/schema/data/mongo
-       http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd">
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context.xsd
+            http://www.springframework.org/schema/data/mongo
+			http://www.springframework.org/schema/data/mongo/spring-mongo.xsd
+            http://www.springframework.org/schema/tx
+            http://www.springframework.org/schema/tx/spring-tx.xsd
+            http://www.springframework.org/schema/aop
+            http://www.springframework.org/schema/aop/spring-aop.xsd
+            http://www.springframework.org/schema/util
+            http://www.springframework.org/schema/util/spring-util.xsd ">
     <!-- MONGODB数据库配置 -->
-    <mongo:mongo id="mongo" host="${mongodb.host}" port="${mongodb.port}"></mongo:mongo>
+    <mongo:mongo-client  id="mongo" host="${mongodb.host}" port="${mongodb.port}" credentials="${mongodb.url}">
+        <mongo:client-options
+                min-connections-per-host="2"
+                connections-per-host="100"
+                connect-timeout="5000"
+                max-wait-time="120000"
+                heartbeat-frequency="2000"
+                heartbeat-connect-timeout="10000"
+                max-connection-life-time="3000"
+                socket-keep-alive="true"
+                socket-timeout="3000"
+                threads-allowed-to-block-for-connection-multiplier="5"
+                write-concern="SAFE"/>
+    </mongo:mongo-client>
+    <mongo:db-factory id="mongoDbFactory" mongo-ref="mongo" dbname="test-metric"/>
 
-    <bean id="userCredentials" class="org.springframework.data.authentication.UserCredentials">
-        <constructor-arg name="username" value="${mongodb.user}"/>
-        <constructor-arg name="password" value="${mongodb.password}"/>
-    </bean>
     <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
-        <constructor-arg ref="mongo"/>
-        <constructor-arg value="${mongodb.db}"/>
-        <constructor-arg ref="userCredentials"/>
+        <constructor-arg name="mongoDbFactory" ref="mongoDbFactory"/>
+        <property name="writeResultChecking" value="EXCEPTION" />
     </bean>
 
     <context:component-scan base-package="org.loxf.metric.dal.dao"/>

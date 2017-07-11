@@ -19,7 +19,7 @@ public class QuotaDto extends BaseDto{
 
     private String showOperation;
 
-    private Integer state;
+    private String state;
 
     private List<QuotaDimensionDto> quotaDim;
 
@@ -73,11 +73,11 @@ public class QuotaDto extends BaseDto{
         this.showOperation = showOperation;
     }
 
-    public Integer getState() {
+    public String getState() {
         return state;
     }
 
-    public void setState(Integer state) {
+    public void setState(String state) {
         this.state = state;
     }
 

@@ -26,7 +26,7 @@ public class QuotaDaoImpl extends MongoDaoBase<Quota> implements QuotaDao{
     private static String quota_prefix = "QUOTA_";
     private static Logger logger = LoggerFactory.getLogger(QuotaDaoImpl.class);
 
-    private final String collectionName = CollectionConstants.QUOTA.name();
+    private final String collectionName = CollectionConstants.QUOTA.getCollectionName();
 
 //    @Override
 //    public Quota selectQuota(Quota quota){

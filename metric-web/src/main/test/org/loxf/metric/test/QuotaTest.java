@@ -66,4 +66,10 @@ public class QuotaTest {
         BaseResult<QuotaDto> result = quotaService.queryItemByCode("QUOTA001");
         logger.debug(JSON.toJSONString(result));
     }
+
+    @Test
+    public void delQuota(){
+        BaseResult<String> result = quotaService.delItemByCode("QUOTA_00000001499743845561158610");
+        logger.debug(JSON.toJSONString(result));
+    }
 }

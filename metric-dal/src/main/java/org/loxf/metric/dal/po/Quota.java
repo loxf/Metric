@@ -18,7 +18,7 @@ public class Quota extends BasePO {
 
     private String showOperation;
 
-    private Integer state;
+    private String state;
 
     private List<QuotaDimItem> quotaDim;
 
@@ -76,11 +76,11 @@ public class Quota extends BasePO {
         this.showOperation = showOperation;
     }
 
-    public Integer getState() {
+    public String getState() {
         return state;
     }
 
-    public void setState(Integer state) {
+    public void setState(String state) {
         this.state = state;
     }
 
