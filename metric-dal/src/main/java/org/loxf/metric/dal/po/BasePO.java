@@ -30,22 +30,12 @@ public class BasePO {
         return createdAt;
     }
 
-    public void setCreatedAt(String createdAt) throws ParseException {
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mi:ss");
-        this.createdAt = sf.parse(createdAt);
-    }
-
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
 
     public Date getUpdatedAt() {
         return updatedAt;
-    }
-
-    public void setUpdatedAt(String updatedAt) throws ParseException {
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mi:ss");
-        this.updatedAt = sf.parse(updatedAt);
     }
 
     public void setUpdatedAt(Date updatedAt) {
