@@ -17,6 +17,8 @@ public class BasePO {
     private ObjectId _id;
     private Date createdAt;
     private Date updatedAt;
+    private String createUserName;
+    private  String updateUserName;
 
     public ObjectId get_id() {
         return _id;
@@ -50,6 +52,22 @@ public class BasePO {
     public void handleMongoDateToJava(){
         this.createdAt=DateUtil.mongoDateTurnToJavaDate(this.createdAt);
         this.updatedAt=DateUtil.mongoDateTurnToJavaDate(this.updatedAt);
+    }
+
+    public String getCreateUserName() {
+        return createUserName;
+    }
+
+    public void setCreateUserName(String createUserName) {
+        this.createUserName = createUserName;
+    }
+
+    public String getUpdateUserName() {
+        return updateUserName;
+    }
+
+    public void setUpdateUserName(String updateUserName) {
+        this.updateUserName = updateUserName;
     }
 
 //    public void handleMongoDateForList(List<BasePO> list){

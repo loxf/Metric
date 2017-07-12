@@ -18,10 +18,6 @@ public class Target extends BasePO{
 
     private String uniqueCode;
 
-    private String createUserName;
-
-    private String updatedUserName;
-
     private List<org.loxf.metric.base.ItermList.TargetItem> itemList;
 
     public String getTargetCode() {
@@ -72,28 +68,12 @@ public class Target extends BasePO{
         this.targetEndTime = targetEndTime;
     }
 
-    public String getCreateUserName() {
-        return createUserName;
-    }
-
-    public void setCreateUserName(String createUserName) {
-        this.createUserName = createUserName;
-    }
-
     public String getUniqueCode() {
         return uniqueCode;
     }
 
     public void setUniqueCode(String uniqueCode) {
         this.uniqueCode = uniqueCode;
-    }
-
-    public String getUpdatedUserName() {
-        return updatedUserName;
-    }
-
-    public void setUpdatedUserName(String updatedUserName) {
-        this.updatedUserName = updatedUserName;
     }
 
     public List<org.loxf.metric.base.ItermList.TargetItem> getItemList() {

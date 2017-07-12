@@ -118,7 +118,7 @@ public class QuotaServiceImpl extends BaseService implements IQuotaService {
     }
 
     @Override
-    public BaseResult<QuotaDto> queryItemByCode(String itemCode) {
+    public BaseResult<QuotaDto> queryItemByCode(String itemCode,String handleUserName) {
         Map<String, Object> qryParams=new HashedMap();
         qryParams.put("quotaCode",itemCode);
         Quota quota=quotaDao.findOne(qryParams);
@@ -139,7 +139,7 @@ public class QuotaServiceImpl extends BaseService implements IQuotaService {
     }
 
     @Override
-    public BaseResult<String> delItemByCode(String itemCode) {
+    public BaseResult<String> delItemByCode(String itemCode,String handleUserName) {
         quotaDao.remove(itemCode);
         return new BaseResult<>();
     }

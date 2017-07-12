@@ -12,6 +12,7 @@ public class BaseDto implements Serializable {
     private Date updatedAt;
     private String updateUserName;
     private String createUserName;
+    private String handleUserName;
     private Pager pager;
 
     public Long get_id() {
@@ -60,5 +61,17 @@ public class BaseDto implements Serializable {
 
     public void setPager(Pager pager) {
         this.pager = pager;
+    }
+
+    public String getHandleUserName() {
+        return handleUserName;
+    }
+
+    public void setHandleUserName(String handleUserName) {
+        this.handleUserName = handleUserName;
+    }
+
+    public boolean validHandleUser(){
+        return !(this.handleUserName.isEmpty());
     }
 }

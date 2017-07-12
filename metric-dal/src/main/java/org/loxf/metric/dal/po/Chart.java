@@ -15,11 +15,13 @@ public class Chart extends BasePO{
 
     private String type;
 
+    private String visibleType;
+
+    private List<String> visibleList;
+
     private String chartDim;
 
-    private Integer state;
-
-    private String createUserName;
+    private String state;
 
     private String uniqueCode;
 
@@ -63,20 +65,12 @@ public class Chart extends BasePO{
         this.chartDim = chartDim;
     }
 
-    public Integer getState() {
+    public String getState() {
         return state;
     }
 
-    public void setState(Integer state) {
+    public void setState(String state) {
         this.state = state;
-    }
-
-    public String getCreateUserName() {
-        return createUserName;
-    }
-
-    public void setCreateUserName(String createUserName) {
-        this.createUserName = createUserName;
     }
 
     public String getUniqueCode() {
@@ -87,4 +81,19 @@ public class Chart extends BasePO{
         this.uniqueCode = uniqueCode;
     }
 
+    public String getVisibleType() {
+        return visibleType;
+    }
+
+    public void setVisibleType(String visibleType) {
+        this.visibleType = visibleType;
+    }
+
+    public List<String> getVisibleList() {
+        return visibleList;
+    }
+
+    public void setVisibleList(List<String> visibleList) {
+        this.visibleList = visibleList;
+    }
 }

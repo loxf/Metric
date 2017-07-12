@@ -17,4 +17,8 @@ public enum  ComPareConstants {//$lt/$lte/$gt/$gte/$ne，依次等价于</<=/>/>
     ComPareConstants(String displayName){
         this.displayName=displayName;
     }
+
+    public String getDisplayName() {
+        return displayName;
+    }
 }

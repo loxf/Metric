@@ -11,7 +11,7 @@ import java.util.Map;
 public interface IBaseService<T> {
     public PageData getPageList(T obj);
     public BaseResult<String> insertItem(T obj);
-    public BaseResult<T> queryItemByCode(String itemCode);
+    public BaseResult<T> queryItemByCode(String itemCode,String handleUserName);
     public BaseResult<String> updateItem(T obj);
-    public BaseResult<String> delItemByCode(String itemCode);
+    public BaseResult<String> delItemByCode(String itemCode,String handleUserName);
 }

@@ -4,8 +4,8 @@ package org.loxf.metric.user.dto;
  * Created by luohj on 2017/7/6.
  */
 public class UserDto {
-    private String userName;
-    private String realName;
+    private String userName;//自己填，邮箱，英文等等。全局唯一
+    private String realName;//不必填
     private String phone;
     private String email;
     private String userType;// ROOT SUB

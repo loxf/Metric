@@ -7,7 +7,6 @@ import org.loxf.metric.common.dto.*;
 import org.loxf.metric.common.utils.MapAndBeanTransUtils;
 import org.loxf.metric.dal.dao.interfaces.QuotaDimensionValueDao;
 import org.loxf.metric.dal.po.QuotaDimensionValue;
-import org.loxf.metric.service.base.BaseService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,7 +20,7 @@ import java.util.Map;
  * Created by luohj on 2017/5/15.
  */
 @Service("quotaDimenValueService")
-public class QuotaDimenValueServiceImpl extends BaseService implements IQuotaDimenValueService {
+public class QuotaDimenValueServiceImpl implements IQuotaDimenValueService {
     Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
@@ -55,7 +54,7 @@ public class QuotaDimenValueServiceImpl extends BaseService implements IQuotaDim
     }
 
     @Override
-    public BaseResult<QuotaDimensionValueDto> queryItemByCode(String itemCode) {
+    public BaseResult<QuotaDimensionValueDto> queryItemByCode(String itemCode,String handleUserName) {
         Map<String, Object> qryParams = new HashedMap();
         qryParams.put("quotaDimensionValueCode", itemCode);
         QuotaDimensionValue quotaDimensionValue = quotaDimensionValueDao.findOne(qryParams);
@@ -76,7 +75,7 @@ public class QuotaDimenValueServiceImpl extends BaseService implements IQuotaDim
     }
 
     @Override
-    public BaseResult<String> delItemByCode(String itemCode) {
+    public BaseResult<String> delItemByCode(String itemCode,String handleUserName) {
         quotaDimensionValueDao.remove(itemCode);
         return new BaseResult<>();
     }

@@ -7,8 +7,6 @@ public class QuotaDimension extends BasePO{
 
     private String dimName;
 
-    private String createdUser;
-
     private String uniqueCode;
 
     public String getDimCode() {
@@ -25,14 +23,6 @@ public class QuotaDimension extends BasePO{
 
     public void setDimName(String dimName) {
         this.dimName = dimName;
-    }
-
-    public String getCreatedUser() {
-        return createdUser;
-    }
-
-    public void setCreatedUser(String createdUser) {
-        this.createdUser = createdUser;
     }
 
     public String getUniqueCode() {

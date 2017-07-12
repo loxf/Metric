@@ -6,7 +6,6 @@ import org.loxf.metric.common.dto.*;
 import org.loxf.metric.common.utils.MapAndBeanTransUtils;
 import org.loxf.metric.dal.dao.interfaces.BoardDao;
 import org.loxf.metric.dal.po.Board;
-import org.loxf.metric.service.base.BaseService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,7 @@ import java.util.Map;
  * Created by caiyang on 2017/5/4.
  */
 @Service("boardService")
-public class BoardServiceImpl extends BaseService implements IBoardService {
+public class BoardServiceImpl implements IBoardService {
     Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
@@ -55,7 +54,7 @@ public class BoardServiceImpl extends BaseService implements IBoardService {
     }
 
     @Override
-    public BaseResult<BoardDto> queryItemByCode(String itemCode) {
+    public BaseResult<BoardDto> queryItemByCode(String itemCode,String handleUserName) {
         Map<String, Object> qryParams = new HashedMap();
         qryParams.put("boardCode", itemCode);
         Board board = boardDao.findOne(qryParams);
@@ -76,7 +75,7 @@ public class BoardServiceImpl extends BaseService implements IBoardService {
     }
 
     @Override
-    public BaseResult<String> delItemByCode(String itemCode) {
+    public BaseResult<String> delItemByCode(String itemCode,String handleUserName) {
         boardDao.remove(itemCode);
         return new BaseResult<>();
     }

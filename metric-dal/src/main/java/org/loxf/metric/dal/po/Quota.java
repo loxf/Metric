@@ -26,10 +26,6 @@ public class Quota extends BasePO {
 
     private int intervalPeriod;
 
-    private String updateUserName;
-
-    private String createUserName;
-
     private String uniqueCode;
 
     public String getQuotaCode() {
@@ -86,22 +82,6 @@ public class Quota extends BasePO {
 
     public void setState(String state) {
         this.state = state;
-    }
-
-    public String getUpdateUserName() {
-        return updateUserName;
-    }
-
-    public void setUpdateUserName(String updateUserName) {
-        this.updateUserName = updateUserName;
-    }
-
-    public String getCreateUserName() {
-        return createUserName;
-    }
-
-    public void setCreateUserName(String createUserName) {
-        this.createUserName = createUserName;
     }
 
     public List<QuotaDimItem> getQuotaDim() {

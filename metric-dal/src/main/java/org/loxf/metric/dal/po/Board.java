@@ -16,10 +16,6 @@ public class Board extends BasePO{
 
     private String uniqueCode;
 
-    private String createUserName;
-
-    private  String updateUserName;
-
     public String getBoardCode() {
         return boardCode;
     }
@@ -58,22 +54,6 @@ public class Board extends BasePO{
 
     public void setUniqueCode(String uniqueCode) {
         this.uniqueCode = uniqueCode;
-    }
-
-    public String getCreateUserName() {
-        return createUserName;
-    }
-
-    public void setCreateUserName(String createUserName) {
-        this.createUserName = createUserName;
-    }
-
-    public String getUpdateUserName() {
-        return updateUserName;
-    }
-
-    public void setUpdateUserName(String updateUserName) {
-        this.updateUserName = updateUserName;
     }
 
 }

@@ -1,6 +1,7 @@
 package org.loxf.metric.common.dto;
 
 import java.util.List;
+import java.util.Set;
 
 public class ChartDto extends BaseDto{
 
@@ -8,19 +9,17 @@ public class ChartDto extends BaseDto{
 
     private String chartName;
 
-    private List<QuotaDto> quotaList;
+    private Set<QuotaDto> quotaList;
 
     private String type;
 
     private String visibleType;
 
-    private List<String> userNameList;
+    private Set<String> visibleList;
 
     private String chartDim;
 
     private Integer state;
-
-    private String createUserName;
 
     private String uniqueCode;
 
@@ -38,14 +37,6 @@ public class ChartDto extends BaseDto{
 
     public void setChartName(String chartName) {
         this.chartName = chartName;
-    }
-
-    public List<QuotaDto> getQuotaList() {
-        return quotaList;
-    }
-
-    public void setQuotaList(List<QuotaDto> quotaList) {
-        this.quotaList = quotaList;
     }
 
     public String getType() {
@@ -72,14 +63,6 @@ public class ChartDto extends BaseDto{
         this.state = state;
     }
 
-    public String getCreateUserName() {
-        return createUserName;
-    }
-
-    public void setCreateUserName(String createUserName) {
-        this.createUserName = createUserName;
-    }
-
     public String getUniqueCode() {
         return uniqueCode;
     }
@@ -96,11 +79,19 @@ public class ChartDto extends BaseDto{
         this.visibleType = visibleType;
     }
 
-    public List<String> getUserNameList() {
-        return userNameList;
+    public Set<QuotaDto> getQuotaList() {
+        return quotaList;
     }
 
-    public void setUserNameList(List<String> userNameList) {
-        this.userNameList = userNameList;
+    public void setQuotaList(Set<QuotaDto> quotaList) {
+        this.quotaList = quotaList;
+    }
+
+    public Set<String> getVisibleList() {
+        return visibleList;
+    }
+
+    public void setVisibleList(Set<String> visibleList) {
+        this.visibleList = visibleList;
     }
 }

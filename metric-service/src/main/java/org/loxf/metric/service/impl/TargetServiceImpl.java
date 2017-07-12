@@ -8,7 +8,6 @@ import org.loxf.metric.base.exception.MetricException;
 import org.loxf.metric.common.dto.*;
 import org.loxf.metric.common.utils.MapAndBeanTransUtils;
 import org.loxf.metric.dal.dao.interfaces.TargetDao;
-import org.loxf.metric.service.base.BaseService;
 import org.loxf.metric.dal.po.Target;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -26,7 +25,7 @@ import java.util.Map;
  * Created by caiyang on 2017/5/4.
  */
 @Service("targetService")
-public class TargetServiceImpl extends BaseService implements ITargetService {
+public class TargetServiceImpl implements ITargetService {
     Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
@@ -60,7 +59,7 @@ public class TargetServiceImpl extends BaseService implements ITargetService {
     }
 
     @Override
-    public BaseResult<TargetDto> queryItemByCode(String itemCode) {
+    public BaseResult<TargetDto> queryItemByCode(String itemCode,String handleUserName) {
         Map<String, Object> qryParams=new HashedMap();
         qryParams.put("targetCode",itemCode);
         Target target=targetDao.findOne(qryParams);
@@ -81,7 +80,7 @@ public class TargetServiceImpl extends BaseService implements ITargetService {
     }
 
     @Override
-    public BaseResult<String> delItemByCode(String itemCode) {
+    public BaseResult<String> delItemByCode(String itemCode,String handleUserName) {
         targetDao.remove(itemCode);
         return new BaseResult<>();
     }
