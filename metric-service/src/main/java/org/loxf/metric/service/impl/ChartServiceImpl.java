@@ -4,6 +4,7 @@ package org.loxf.metric.service.impl;
 import org.apache.commons.collections.map.HashedMap;
 import org.loxf.metric.api.IChartService;
 import org.loxf.metric.base.constants.ComPareConstants;
+import org.loxf.metric.base.exception.MetricException;
 import org.loxf.metric.common.constants.ResultCodeEnum;
 import org.loxf.metric.common.constants.StandardState;
 import org.loxf.metric.common.constants.UserTypeEnum;
@@ -18,6 +19,7 @@ import org.loxf.metric.dal.dao.interfaces.UserDao;
 import org.loxf.metric.dal.po.Chart;
 import org.apache.log4j.Logger;
 import org.loxf.metric.dal.po.User;
+import org.loxf.metric.service.base.BaseService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +32,7 @@ import java.util.*;
  * Created by caiyang on 2017/5/4.
  */
 @Service("chartService")
-public class ChartServiceImpl implements IChartService {
+public class ChartServiceImpl extends BaseService implements IChartService {
     Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
@@ -110,37 +112,46 @@ public class ChartServiceImpl implements IChartService {
     }
 
     @Override
-    public PageData getPageList(ChartDto obj) {
-        //db.blog.find({"comments":{"$elemMatch":{"author":"joe","score":{"$gte":5}}}})
-        Pager pager=obj.getPager();
-        if(!obj.validHandleUser()){
-            logger.info("经办人信息缺失");
-            return null;
-        }
-        if(pager==null){
-            logger.info("分页信息为空");
-            return null;
-        }else{
-            if(pager.getRownum()<=0){
-                //todo
-            }
-        }
-
-        Map<String, Object> params=MapAndBeanTransUtils.transBean2Map(obj);
-        params.put("state",StandardState.AVAILABLE.getValue());
-        Map visibleMap=new HashedMap();
-        visibleMap.put(ComPareConstants.ELEMMATCH.getDisplayName(),obj.getHandleUserName());
-        params.put("visibleList", visibleMap);
-
-        List<Chart>  userVisibleChartList=chartDao.findByPager(params, pager.getStart(), pager.getRownum());
-        long totalCount=chartDao.countByParams(params);
-        PageData pageData=new PageData();
-        pageData.setTotalRecords(totalCount);
-        pageData.setRownum(pager.getRownum());
-        pageData.setCurrentPage(pager.getCurrentPage());
-        pageData.setRows(userVisibleChartList);
-        return pageData;
+    public BaseResult<PageData> getPageList(ChartDto obj){
+        return null;
     }
+
+//    @Override
+//    public PageData getPageList(ChartDto obj) {
+//        //db.blog.find({"comments":{"$elemMatch":{"author":"joe","score":{"$gte":5}}}})
+//        Pager pager=obj.getPager();
+//        if(!obj.validHandleUser()){
+//            logger.info("经办人信息缺失");
+//            return null;
+//        }
+//        if(pager==null){
+//            logger.info("分页信息为空");
+//            return null;
+//        }else{
+//            if(pager.getRownum()<=0){
+//                //todo
+//            }
+//        }
+//
+//        Map<String, Object> params=MapAndBeanTransUtils.transBean2Map(obj);
+//        params.put("state",StandardState.AVAILABLE.getValue());
+//        Map visibleMap=new HashedMap();
+//        Map nameMap=new HashedMap();
+//        nameMap.put("userName",obj.getHandleUserName());
+//        visibleMap.put(ComPareConstants.ELEMMATCH.getDisplayName(),nameMap);
+//        params.put("visibleList", visibleMap);
+//
+//        return getPageResult(chartDao, params, pager.getStart(), pager.getRownum());
+//
+////        List<Chart>  userVisibleChartList=chartDao.findByPager(params, pager.getStart(), pager.getRownum());
+////        long totalCount=chartDao.countByParams(params);
+////        PageData pageData=new PageData();
+////        pageData.setTotalRecords(totalCount);
+////        pageData.setRownum(pager.getRownum());
+////        pageData.setCurrentPage(pager.getCurrentPage());
+////        pageData.setRows(userVisibleChartList);
+////        return pageData;
+//    }
 
     private List<Chart> getUserVisibleChartList(List<Chart> chartList,String handleUserName){
         List<Chart>  userVisibleChartList=new ArrayList<>();

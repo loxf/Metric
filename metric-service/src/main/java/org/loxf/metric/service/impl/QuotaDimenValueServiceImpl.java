@@ -36,22 +36,27 @@ public class QuotaDimenValueServiceImpl implements IQuotaDimenValueService {
     }
 
     @Override
-    public PageData getPageList(QuotaDimensionValueDto obj) {
-        Pager pager = obj.getPager();
-        if (pager == null) {
-            logger.info("分页信息为空，无法查询!");
-            return null;
-        }
-        Map<String, Object> params = MapAndBeanTransUtils.transBean2Map(obj);
-
-        List<QuotaDimensionValue> quotaDimensionValueList = quotaDimensionValueDao.findByPager(params, pager.getStart(), pager.getRownum());
-        PageData pageData = new PageData();
-        pageData.setTotalRecords(quotaDimensionValueList.size());
-        pageData.setRownum(pager.getRownum());
-        pageData.setCurrentPage(pager.getCurrentPage());
-        pageData.setRows(quotaDimensionValueList);
-        return pageData;
+    public BaseResult<PageData> getPageList(QuotaDimensionValueDto obj){
+        return null;
     }
+
+//    @Override
+//    public PageData getPageList(QuotaDimensionValueDto obj) {
+//        Pager pager = obj.getPager();
+//        if (pager == null) {
+//            logger.info("分页信息为空，无法查询!");
+//            return null;
+//        }
+//        Map<String, Object> params = MapAndBeanTransUtils.transBean2Map(obj);
+//
+//        List<QuotaDimensionValue> quotaDimensionValueList = quotaDimensionValueDao.findByPager(params, pager.getStart(), pager.getRownum());
+//        PageData pageData = new PageData();
+//        pageData.setTotalRecords(quotaDimensionValueList.size());
+//        pageData.setRownum(pager.getRownum());
+//        pageData.setCurrentPage(pager.getCurrentPage());
+//        pageData.setRows(quotaDimensionValueList);
+//        return pageData;
+//    }
 
     @Override
     public BaseResult<QuotaDimensionValueDto> queryItemByCode(String itemCode,String handleUserName) {

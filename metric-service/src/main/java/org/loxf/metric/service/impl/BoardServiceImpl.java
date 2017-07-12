@@ -36,22 +36,27 @@ public class BoardServiceImpl implements IBoardService {
     }
 
     @Override
-    public PageData getPageList(BoardDto obj) {
-        Pager pager = obj.getPager();
-        if (pager == null) {
-            logger.info("分页信息为空，无法查询!");
-            return null;
-        }
-        Map<String, Object> params = MapAndBeanTransUtils.transBean2Map(obj);
-
-        List<Board> boardList = boardDao.findByPager(params, pager.getStart(), pager.getRownum());
-        PageData pageData = new PageData();
-        pageData.setTotalRecords(boardList.size());
-        pageData.setRownum(pager.getRownum());
-        pageData.setCurrentPage(pager.getCurrentPage());
-        pageData.setRows(boardList);
-        return pageData;
+    public BaseResult<PageData> getPageList(BoardDto obj){
+        return null;
     }
+
+//    @Override
+//    public PageData getPageList(BoardDto obj) {
+//        Pager pager = obj.getPager();
+//        if (pager == null) {
+//            logger.info("分页信息为空，无法查询!");
+//            return null;
+//        }
+//        Map<String, Object> params = MapAndBeanTransUtils.transBean2Map(obj);
+//
+//        List<Board> boardList = boardDao.findByPager(params, pager.getStart(), pager.getRownum());
+//        PageData pageData = new PageData();
+//        pageData.setTotalRecords(boardList.size());
+//        pageData.setRownum(pager.getRownum());
+//        pageData.setCurrentPage(pager.getCurrentPage());
+//        pageData.setRows(boardList);
+//        return pageData;
+//    }
 
     @Override
     public BaseResult<BoardDto> queryItemByCode(String itemCode,String handleUserName) {
