@@ -116,42 +116,41 @@ public class ChartServiceImpl extends BaseService implements IChartService {
         return null;
     }
 
-//    @Override
-//    public PageData getPageList(ChartDto obj) {
-//        //db.blog.find({"comments":{"$elemMatch":{"author":"joe","score":{"$gte":5}}}})
-//        Pager pager=obj.getPager();
-//        if(!obj.validHandleUser()){
-//            logger.info("经办人信息缺失");
-//            return null;
-//        }
-//        if(pager==null){
-//            logger.info("分页信息为空");
-//            return null;
-//        }else{
-//            if(pager.getRownum()<=0){
-//                //todo
-//            }
-//        }
-//
-//        Map<String, Object> params=MapAndBeanTransUtils.transBean2Map(obj);
+    public PageData getPageList2(ChartDto obj) {
+        //db.blog.find({"comments":{"$elemMatch":{"author":"joe","score":{"$gte":5}}}})
+        Pager pager=obj.getPager();
+        if(!obj.validHandleUser()){
+            logger.info("经办人信息缺失");
+            return null;
+        }
+        if(pager==null){
+            logger.info("分页信息为空");
+            return null;
+        }else{
+            if(pager.getRownum()<=0){
+                //todo
+            }
+        }
+
+        Map<String, Object> params=MapAndBeanTransUtils.transBean2Map(obj);
 //        params.put("state",StandardState.AVAILABLE.getValue());
 //        Map visibleMap=new HashedMap();
 //        Map nameMap=new HashedMap();
 //        nameMap.put("userName",obj.getHandleUserName());
 //        visibleMap.put(ComPareConstants.ELEMMATCH.getDisplayName(),nameMap);
 //        params.put("visibleList", visibleMap);
-//
-//        return getPageResult(chartDao, params, pager.getStart(), pager.getRownum());
-//
-////        List<Chart>  userVisibleChartList=chartDao.findByPager(params, pager.getStart(), pager.getRownum());
-////        long totalCount=chartDao.countByParams(params);
-////        PageData pageData=new PageData();
-////        pageData.setTotalRecords(totalCount);
-////        pageData.setRownum(pager.getRownum());
-////        pageData.setCurrentPage(pager.getCurrentPage());
-////        pageData.setRows(userVisibleChartList);
-////        return pageData;
-//    }
+
+        return getPageResult(chartDao, params, pager.getStart(), pager.getRownum());
+
+//        List<Chart>  userVisibleChartList=chartDao.findByPager(params, pager.getStart(), pager.getRownum());
+//        long totalCount=chartDao.countByParams(params);
+//        PageData pageData=new PageData();
+//        pageData.setTotalRecords(totalCount);
+//        pageData.setRownum(pager.getRownum());
+//        pageData.setCurrentPage(pager.getCurrentPage());
+//        pageData.setRows(userVisibleChartList);
+//        return pageData;
+    }
 
     private List<Chart> getUserVisibleChartList(List<Chart> chartList,String handleUserName){
         List<Chart>  userVisibleChartList=new ArrayList<>();
