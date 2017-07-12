@@ -1,13 +1,12 @@
 package org.loxf.metric.service.utils;
 
 import org.apache.commons.collections.map.HashedMap;
-import org.loxf.metric.base.ItermList.QuotaDimItem;
+import org.loxf.metric.base.ItemList.QuotaDimItem;
 import org.loxf.metric.base.exception.MetricException;
 import org.loxf.metric.common.dto.Condition;
 import org.loxf.metric.common.dto.ConditionVo;
 import org.loxf.metric.dal.po.Quota;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

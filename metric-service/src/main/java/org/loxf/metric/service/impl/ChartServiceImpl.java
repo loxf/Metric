@@ -3,6 +3,7 @@ package org.loxf.metric.service.impl;
 
 import org.apache.commons.collections.map.HashedMap;
 import org.loxf.metric.api.IChartService;
+import org.loxf.metric.base.constants.ComPareConstants;
 import org.loxf.metric.common.constants.ResultCodeEnum;
 import org.loxf.metric.common.constants.StandardState;
 import org.loxf.metric.common.constants.UserTypeEnum;
@@ -108,34 +109,33 @@ public class ChartServiceImpl implements IChartService {
         return result;
     }
 
-//    private  Set<String> findAllUserName(Set<String> visibleSet){
-//        //db.test.find({"name":{"$in":["stephen","stephen1"]}})
-//        Map userMap=new HashedMap();
-//        Map userValueMap=new HashedMap();
-//        userValueMap.put(ComPareConstants.IN.getDisplayName(),visibleSet);
-//        userMap.put("userName",userValueMap);
-//        List<User> userRangeList=userDao.findAll(userMap);
-//
-//        Set<String> findUserSet= new HashSet();//查询出来的用户
-//        for (User user:userRangeList) {
-//            findUserSet.add(user.getUserName());
-//        }
-//        return findUserSet;
-//    }
-
     @Override
     public PageData getPageList(ChartDto obj) {
+        //db.blog.find({"comments":{"$elemMatch":{"author":"joe","score":{"$gte":5}}}})
         Pager pager=obj.getPager();
-        if(pager==null||(!obj.validHandleUser())){
-            logger.info("分页信息为空或经办人信息缺失");
+        if(!obj.validHandleUser()){
+            logger.info("经办人信息缺失");
             return null;
         }
+        if(pager==null){
+            logger.info("分页信息为空");
+            return null;
+        }else{
+            if(pager.getRownum()<=0){
+                //todo
+            }
+        }
+
         Map<String, Object> params=MapAndBeanTransUtils.transBean2Map(obj);
         params.put("state",StandardState.AVAILABLE.getValue());
-        List<Chart>  chartList=chartDao.findByPager(params, pager.getStart(), pager.getRownum());
-        List<Chart>  userVisibleChartList=getUserVisibleChartList(chartList, obj.getHandleUserName());
+        Map visibleMap=new HashedMap();
+        visibleMap.put(ComPareConstants.ELEMMATCH.getDisplayName(),obj.getHandleUserName());
+        params.put("visibleList", visibleMap);
+
+        List<Chart>  userVisibleChartList=chartDao.findByPager(params, pager.getStart(), pager.getRownum());
+        long totalCount=chartDao.countByParams(params);
         PageData pageData=new PageData();
-        pageData.setTotalRecords(userVisibleChartList.size());
+        pageData.setTotalRecords(totalCount);
         pageData.setRownum(pager.getRownum());
         pageData.setCurrentPage(pager.getCurrentPage());
         pageData.setRows(userVisibleChartList);
@@ -217,4 +217,18 @@ public class ChartServiceImpl implements IChartService {
         return result;
     }
 
+    //    private  Set<String> findAllUserName(Set<String> visibleSet){
+//        //db.test.find({"name":{"$in":["stephen","stephen1"]}})
+//        Map userMap=new HashedMap();
+//        Map userValueMap=new HashedMap();
+//        userValueMap.put(ComPareConstants.IN.getDisplayName(),visibleSet);
+//        userMap.put("userName",userValueMap);
+//        List<User> userRangeList=userDao.findAll(userMap);
+//
+//        Set<String> findUserSet= new HashSet();//查询出来的用户
+//        for (User user:userRangeList) {
+//            findUserSet.add(user.getUserName());
+//        }
+//        return findUserSet;
+//    }
 }

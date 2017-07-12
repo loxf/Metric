@@ -199,11 +199,12 @@ public class QuotaServiceImpl extends BaseService implements IQuotaService {
         targetItemDto.setQuotaCode(quotaCode);
         List<TargetItem> itemList = new ArrayList<>();
         itemList.add(targetItemDto);
-        target.setItemList(itemList);
+        //target.setItemList(itemList);
         Date now = new Date();
         target.setTargetStartTime(now);
         target.setTargetEndTime(now);
         List<Target> targetList = targetDao.findAllByQuery(target);
+        System.out.println("查处数据"+targetList.size()+"tiao");
         if(CollectionUtils.isNotEmpty(targetList)){
             int i=0;
             String[] targetName = new String[targetList.size()];

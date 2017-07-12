@@ -99,7 +99,7 @@ public class TargetDaoImpl extends MongoDaoBase<Target> implements TargetDao{
         Query query = new Query();
         BasicDBObject query1 = new BasicDBObject();
         Map<String, Object> startT = new HashMap<>();
-        startT.put("$gt", target.getTargetStartTime());
+        startT.put("$lt", DateUtil.turnToMongoDate(target.getTargetStartTime()));
         query1.put("targetStartTime", startT);
         return new BasicQuery(query1);
         /*Criteria criteria = new Criteria();

@@ -1,4 +1,4 @@
-package org.loxf.metric.base.ItermList;
+package org.loxf.metric.base.ItemList;
 
 /**
  * Created by hutingting on 2017/7/6.

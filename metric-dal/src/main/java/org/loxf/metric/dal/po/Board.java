@@ -1,8 +1,7 @@
 package org.loxf.metric.dal.po;
 
-import org.loxf.metric.base.ItermList.ChartItem;
+import org.loxf.metric.base.ItemList.ChartItem;
 
-import java.util.Date;
 import java.util.List;
 
 public class Board extends BasePO{
@@ -10,7 +9,7 @@ public class Board extends BasePO{
 
     private String boardName;
 
-    private Integer state;
+    private String state;
 
     private List<ChartItem> chartList;
 
@@ -32,11 +31,11 @@ public class Board extends BasePO{
         this.boardName = boardName;
     }
 
-    public Integer getState() {
+    public String getState() {
         return state;
     }
 
-    public void setState(Integer state) {
+    public void setState(String state) {
         this.state = state;
     }
 

@@ -1,5 +1,7 @@
 package org.loxf.metric.common.dto;
 
+import org.loxf.metric.base.ItemList.TargetItem;
+
 import java.util.Date;
 import java.util.List;
 
@@ -11,7 +13,7 @@ public class TargetDto extends BaseDto{
 
     private String targetDesc;
 
-    private Integer state;
+    private String state;
 
     private Date targetStartTime;
 
@@ -23,7 +25,7 @@ public class TargetDto extends BaseDto{
 
     private String updatedUserName;
 
-    private List<TargetItemDto> itemList;
+    private List<TargetItem> itemList;
 
     public String getTargetCode() {
         return targetCode;
@@ -49,11 +51,11 @@ public class TargetDto extends BaseDto{
         this.targetDesc = targetDesc == null ? null : targetDesc.trim();
     }
 
-    public Integer getState() {
+    public String getState() {
         return state;
     }
 
-    public void setState(Integer state) {
+    public void setState(String state) {
         this.state = state;
     }
 
@@ -97,11 +99,11 @@ public class TargetDto extends BaseDto{
         this.updatedUserName = updatedUserName;
     }
 
-    public List<TargetItemDto> getItemList() {
+    public List<TargetItem> getItemList() {
         return itemList;
     }
 
-    public void setItemList(List<TargetItemDto> itemList) {
+    public void setItemList(List<TargetItem> itemList) {
         this.itemList = itemList;
     }
 }

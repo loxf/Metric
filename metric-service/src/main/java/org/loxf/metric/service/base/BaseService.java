@@ -44,7 +44,7 @@ public class BaseService {
     }
 
     public boolean validHandlerUser(String userName){
-        if(StringUtils.isNotEmpty(userName)){
+        if(StringUtils.isEmpty(userName)){
             return false;
         }
         // TODO 校验用户是否存在
