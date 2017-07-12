@@ -114,7 +114,7 @@ public class QuotaServiceImpl extends BaseService implements IQuotaService {
     }
 
     @Override
-    public PageData getPageList(QuotaDto obj) {
+    public BaseResult<PageData> getPageList(QuotaDto obj) {
         if (!validHandlerUser(obj.getHandleUserName())) {
             throw new MetricException("经办人错误");
         }
@@ -124,7 +124,7 @@ public class QuotaServiceImpl extends BaseService implements IQuotaService {
             return null;
         }
         Map<String, Object> params = MapAndBeanTransUtils.transBean2Map(obj);
-        return getPageResult(quotaDao, params, pager.getStart(), pager.getRownum());
+        return new BaseResult<>(getPageResult(quotaDao, params, pager.getStart(), pager.getRownum()));
     }
 
     @Override
