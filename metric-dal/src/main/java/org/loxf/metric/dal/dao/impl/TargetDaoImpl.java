@@ -5,17 +5,18 @@ import com.mongodb.BasicDBObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
+import org.loxf.metric.base.ItemList.TargetItem;
 import org.loxf.metric.base.constants.CollectionConstants;
 import org.loxf.metric.base.utils.IdGenerator;
 import org.loxf.metric.core.mongo.MongoDaoBase;
 import org.loxf.metric.dal.dao.interfaces.TargetDao;
 import org.loxf.metric.dal.po.Target;
-import org.loxf.metric.dal.po.TargetItem;
 import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * Created by hutingting on 2017/7/4.
@@ -97,7 +98,8 @@ public class TargetDaoImpl extends MongoDaoBase<Target> implements TargetDao{
             query.put("quotaId", target.getTargetCode());
         }
         if(StringUtils.isNotEmpty(target.getTargetName())){
-            query.put("targetName", ".*?\\" +target.getTargetName()+ ".*");
+            Pattern pattern = Pattern.compile("^.*" + target.getTargetName() +".*$", Pattern.CASE_INSENSITIVE);
+            query.put("targetName", pattern);
         }
         if(StringUtils.isNotEmpty(target.getUniqueCode())){
             query.put("uniqueCode", target.getUniqueCode());

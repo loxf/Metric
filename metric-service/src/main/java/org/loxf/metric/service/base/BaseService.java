@@ -3,6 +3,7 @@ package org.loxf.metric.service.base;
 import com.github.pagehelper.PageHelper;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.loxf.metric.api.IBaseService;
 import org.loxf.metric.base.exception.MetricException;
 import org.loxf.metric.common.dto.PageData;
 import org.loxf.metric.core.mongo.IBaseDao;

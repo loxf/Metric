@@ -4,8 +4,8 @@ import com.alibaba.fastjson.JSON;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.loxf.metric.api.ITargetService;
+import org.loxf.metric.base.ItemList.TargetItem;
 import org.loxf.metric.common.dto.TargetDto;
-import org.loxf.metric.common.dto.TargetItemDto;
 import org.loxf.metric.test.core.JUnit4ClassRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,12 +31,13 @@ public class TargetTest {
     @Test
     public void queryTarget(){
         TargetDto targetDto = new TargetDto();
-        targetDto.setTargetEndTime(new Date());
-        TargetItemDto item = new TargetItemDto();
+        TargetItem item = new TargetItem();
         item.setQuotaCode("QUOTA001");
-        List<TargetItemDto> list = new ArrayList<>();
+        List<TargetItem> list = new ArrayList<>();
         list.add(item);
         targetDto.setItemList(list);
+        targetDto.setTargetName("测试");
+        targetDto.setTargetEndTime(new Date());
         logger.debug(JSON.toJSONString(targetService.queryTarget(targetDto)));
     }
 

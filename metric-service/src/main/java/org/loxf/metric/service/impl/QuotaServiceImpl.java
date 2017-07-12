@@ -4,6 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.loxf.metric.api.IQuotaService;
+import org.loxf.metric.base.ItemList.TargetItem;
 import org.loxf.metric.base.exception.MetricException;
 import org.loxf.metric.base.utils.DateUtil;
 import org.loxf.metric.base.utils.IdGenerator;
@@ -195,10 +196,10 @@ public class QuotaServiceImpl extends BaseService implements IQuotaService {
         }
         // 查询是否被目标依赖
         Target target = new Target();
-        TargetItem targetItemDto = new TargetItem();
-        targetItemDto.setQuotaCode(quotaCode);
+        TargetItem targetItem = new TargetItem();
+        targetItem.setQuotaCode(quotaCode);
         List<TargetItem> itemList = new ArrayList<>();
-        itemList.add(targetItemDto);
+        itemList.add(targetItem);
         //target.setItemList(itemList);
         Date now = new Date();
         target.setTargetStartTime(now);

@@ -1,5 +1,7 @@
 package org.loxf.metric.dal.po;
 
+import org.loxf.metric.base.ItemList.TargetItem;
+
 import java.util.Date;
 import java.util.List;
 
