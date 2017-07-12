@@ -85,4 +85,10 @@ public class TargetServiceImpl implements ITargetService {
         return new BaseResult<>();
     }
 
+    @Override
+    public BaseResult<List<TargetDto>> queryTarget(TargetDto targetDto) {
+        Target target = new Target();
+        BeanUtils.copyProperties(targetDto, target);
+        return new BaseResult(targetDao.findAllByQuery(target));
+    }
 }

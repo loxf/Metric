@@ -11,7 +11,7 @@ public class TargetDto extends BaseDto{
 
     private String targetDesc;
 
-    private Integer state;
+    private String state;
 
     private Date targetStartTime;
 
@@ -49,11 +49,11 @@ public class TargetDto extends BaseDto{
         this.targetDesc = targetDesc == null ? null : targetDesc.trim();
     }
 
-    public Integer getState() {
+    public String getState() {
         return state;
     }
 
-    public void setState(Integer state) {
+    public void setState(String state) {
         this.state = state;
     }
 

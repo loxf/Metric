@@ -1,25 +1,21 @@
 package org.loxf.metric.dal.dao.impl;
 
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.loxf.metric.base.constants.CollectionConstants;
-import org.loxf.metric.base.utils.DateUtil;
 import org.loxf.metric.base.utils.IdGenerator;
 import org.loxf.metric.core.mongo.MongoDaoBase;
 import org.loxf.metric.dal.dao.interfaces.TargetDao;
 import org.loxf.metric.dal.po.Target;
-import org.loxf.metric.dal.po.Target;
+import org.loxf.metric.dal.po.TargetItem;
 import org.springframework.data.mongodb.core.query.BasicQuery;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by hutingting on 2017/7/4.
@@ -58,13 +54,6 @@ public class TargetDaoImpl extends MongoDaoBase<Target> implements TargetDao{
     }
 
     @Override
-    public List<Target> findAllByQuery(Target target) {
-        List<Target> targetList=super.findAll(getCommonQuery(target), collectionName);
-        handleDateForList(targetList);
-        return targetList;
-    }
-
-    @Override
     public List<Target> findByPager(Map<String, Object> params, int start, int pageSize) {
         List<Target> targetList=super.findByPager(params, start, pageSize, collectionName);
         handleDateForList(targetList);
@@ -95,33 +84,41 @@ public class TargetDaoImpl extends MongoDaoBase<Target> implements TargetDao{
         return super.countByParams(params,collectionName);
     }
 
+    @Override
+    public List<Target> findAllByQuery(Target target) {
+        List<Target> targetList=super.findAll(getCommonQuery(target), collectionName);
+        handleDateForList(targetList);
+        return targetList;
+    }
+
     private Query getCommonQuery(Target target){
-        Query query = new Query();
-        BasicDBObject query1 = new BasicDBObject();
-        Map<String, Object> startT = new HashMap<>();
-        startT.put("$gt", target.getTargetStartTime());
-        query1.put("targetStartTime", startT);
-        return new BasicQuery(query1);
-        /*Criteria criteria = new Criteria();
-        criteria.where("");
+        BasicDBObject query = new BasicDBObject();
         if(StringUtils.isNotEmpty(target.getTargetCode())){
-            criteria = criteria.and("quotaId").is(target.getTargetCode());
+            query.put("quotaId", target.getTargetCode());
         }
         if(StringUtils.isNotEmpty(target.getTargetName())){
-            criteria = criteria.and("targetName").regex(".*?\\" +target.getTargetName()+ ".*");
+            query.put("targetName", ".*?\\" +target.getTargetName()+ ".*");
         }
         if(StringUtils.isNotEmpty(target.getUniqueCode())){
-            criteria = criteria.and("uniqueCode").is(target.getUniqueCode());
+            query.put("uniqueCode", target.getUniqueCode());
         }
         if(target.getTargetStartTime()!=null){
-            //criteria = criteria.and("targetStartTime").lte(DateUtil.dateToISODATEString(target.getTargetStartTime()));
-            criteria = criteria.and("targetStartTime").lte(target.getTargetStartTime().getTime());
+            Map<String, Object> startT = new HashMap<>();
+            startT.put("$lt", target.getTargetStartTime());
+            query.put("targetStartTime", startT);
         }
         if(target.getTargetEndTime()!=null){
-            //criteria = criteria.and("targetEndTime").gte(DateUtil.dateToISODATEString(target.getTargetEndTime()));
-            criteria = criteria.and("targetEndTime").gte(target.getTargetEndTime().getTime());
+            Map<String, Object> endT = new HashMap<>();
+            endT.put("$gt", target.getTargetEndTime());
+            query.put("targetEndTime", endT);
         }
-        query.addCriteria(criteria);
-        return query;*/
+        if(CollectionUtils.isNotEmpty(target.getItemList())){
+            BasicDBList includeQuotaCodes = new BasicDBList();
+            for(TargetItem item : target.getItemList()){
+                includeQuotaCodes.add(item.getQuotaCode());
+            }
+            query.put("itemList.quotaCode", new BasicDBObject("$in", includeQuotaCodes));
+        }
+        return new BasicQuery(query);
     }
 }
