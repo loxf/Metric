@@ -3,6 +3,7 @@ package org.loxf.metric.base.utils;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by hutingting on 2017/7/5.
@@ -31,10 +32,9 @@ public class DateUtil {
     }
 
     public static String dateToISODATEString(Date date){
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.CHINA);;
         try {
-            String str = sdf.format(date);
-            return "ISODate(\"" + str + "\")";
+            return sdf.format(date);
         }catch (Exception e){
             return null;
         }
