@@ -93,7 +93,7 @@ public class TargetDaoImpl extends MongoDaoBase<Target> implements TargetDao{
 
     private Query getCommonQuery(Target target){
         BasicDBObject query = new BasicDBObject();
-        if(StringUtils.isNotEmpty(target.getTargetCode())){
+		if(StringUtils.isNotEmpty(target.getTargetCode())){
             query.put("quotaId", target.getTargetCode());
         }
         if(StringUtils.isNotEmpty(target.getTargetName())){

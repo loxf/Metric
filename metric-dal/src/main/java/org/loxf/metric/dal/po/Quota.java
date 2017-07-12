@@ -1,8 +1,7 @@
 package org.loxf.metric.dal.po;
 
-import org.loxf.metric.base.ItermList.QuotaDimItem;
+import org.loxf.metric.base.ItemList.QuotaDimItem;
 
-import java.util.Date;
 import java.util.List;
 
 public class Quota extends BasePO {

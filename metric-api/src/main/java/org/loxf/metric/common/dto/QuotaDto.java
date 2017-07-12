@@ -1,5 +1,7 @@
 package org.loxf.metric.common.dto;
 
+import org.loxf.metric.base.ItemList.QuotaDimItem;
+
 import java.util.List;
 
 /**
@@ -25,7 +27,7 @@ public class QuotaDto extends BaseDto{
 
     private int intervalPeriod;
 
-    private List<QuotaDimensionDto> quotaDim;
+    private List<QuotaDimItem> quotaDim;
 
     private String uniqueCode;
 
@@ -101,11 +103,11 @@ public class QuotaDto extends BaseDto{
         this.dataImportType = dataImportType;
     }
 
-    public List<QuotaDimensionDto> getQuotaDim() {
+    public List<QuotaDimItem> getQuotaDim() {
         return quotaDim;
     }
 
-    public void setQuotaDim(List<QuotaDimensionDto> quotaDim) {
+    public void setQuotaDim(List<QuotaDimItem> quotaDim) {
         this.quotaDim = quotaDim;
     }
 

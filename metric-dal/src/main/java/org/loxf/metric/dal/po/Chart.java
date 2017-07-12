@@ -1,8 +1,7 @@
 package org.loxf.metric.dal.po;
 
-import org.loxf.metric.base.ItermList.QuotaItem;
+import org.loxf.metric.base.ItemList.QuotaItem;
 
-import java.util.Date;
 import java.util.List;
 
 public class Chart extends BasePO{

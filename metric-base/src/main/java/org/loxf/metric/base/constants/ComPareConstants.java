@@ -11,7 +11,8 @@ public enum  ComPareConstants {//$lt/$lte/$gt/$gte/$ne，依次等价于</<=/>/>
     NOTEQUAL("$ne"),
     IN("$in"),
     NOTIN("$nin"),
-    OR("$or");
+    OR("$or"),
+    ELEMMATCH("$elemMatch");
 
     private String displayName;
     ComPareConstants(String displayName){

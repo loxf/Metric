@@ -13,7 +13,7 @@ public class QuotaScan extends Common{
 
     private String busiDomain;
 
-    private Integer state;
+    private String state;
 
     private String updateUserId;
 
@@ -75,11 +75,11 @@ public class QuotaScan extends Common{
         this.busiDomain = busiDomain == null ? null : busiDomain.trim();
     }
 
-    public Integer getState() {
+    public String getState() {
         return state;
     }
 
-    public void setState(Integer state) {
+    public void setState(String state) {
         this.state = state;
     }
 

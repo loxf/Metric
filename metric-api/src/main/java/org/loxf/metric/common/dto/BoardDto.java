@@ -1,7 +1,7 @@
 package org.loxf.metric.common.dto;
 
 
-import javafx.scene.chart.Chart;
+import org.loxf.metric.base.ItemList.ChartItem;
 
 import java.util.List;
 
@@ -11,9 +11,9 @@ public class BoardDto extends BaseDto{
 
     private String boardName;
 
-    private Integer state;
+    private String state;
 
-    private List<Chart> chartList;
+    private List<ChartItem> chartList;
 
     private String uniqueCode;
 
@@ -37,19 +37,20 @@ public class BoardDto extends BaseDto{
         this.boardName = boardName;
     }
 
-    public Integer getState() {
+
+    public String getState() {
         return state;
     }
 
-    public void setState(Integer state) {
+    public void setState(String state) {
         this.state = state;
     }
 
-    public List<Chart> getChartList() {
+    public List<ChartItem> getChartList() {
         return chartList;
     }
 
-    public void setChartList(List<Chart> chartList) {
+    public void setChartList(List<ChartItem> chartList) {
         this.chartList = chartList;
     }
 
