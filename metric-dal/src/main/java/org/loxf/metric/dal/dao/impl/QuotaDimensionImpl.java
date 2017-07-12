@@ -18,7 +18,7 @@ import java.util.Map;
  */
 @Service("quotaDimension")
 public class QuotaDimensionImpl extends MongoDaoBase<QuotaDimension> implements QuotaDimensionDao{
-    private final String collectionName = CollectionConstants.QUOTA_DIMENSION.name();
+    private final String collectionName = CollectionConstants.QUOTA_DIMENSION.getCollectionName();
     private static String quota_dim_prefix = "QUOTA_DIMENSION";
 
     @Override

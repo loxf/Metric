@@ -17,7 +17,7 @@ import java.util.Map;
  */
 @Service("chartDao")
 public class ChartDaoImpl extends MongoDaoBase<Chart> implements ChartDao{
-    private final String collectionName = CollectionConstants.CHART.name();
+    private final String collectionName = CollectionConstants.CHART.getCollectionName();
     private static String chart_prefix = "CHART_";
 
     @Override

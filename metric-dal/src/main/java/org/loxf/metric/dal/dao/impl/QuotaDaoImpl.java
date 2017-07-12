@@ -53,23 +53,21 @@ public class QuotaDaoImpl extends MongoDaoBase<Quota> implements QuotaDao{
         }
         return null;
     }
-
+/*
     private void handleDateForList(List<Quota> list){
         for(Quota quota:list){
             quota.handleMongoDateToJava();
         }
-    }
+    }*/
     @Override
     public List<Quota> findAll(Map<String, Object> params) {
         List<Quota> quotaList=super.findAll(params, collectionName);
-        handleDateForList(quotaList);
         return quotaList;
     }
 
     @Override
     public List<Quota> findByPager(Map<String, Object> params, int start, int pageSize) {
         List<Quota> quotaList=super.findByPager(params, start, pageSize, collectionName);
-        handleDateForList(quotaList);
         return quotaList;
     }
 
@@ -114,6 +112,9 @@ public class QuotaDaoImpl extends MongoDaoBase<Quota> implements QuotaDao{
         if(StringUtils.isNotEmpty(quota.getType())){
             query.put("type", quota.getType());
         }
+        if(StringUtils.isNotEmpty(quota.getShowType())){
+            query.put("showType", quota.getShowType());
+        }
         if(StringUtils.isNotEmpty(quota.getShowOperation())){
             query.put("showOperation", quota.getShowOperation());
         }
@@ -144,7 +145,6 @@ public class QuotaDaoImpl extends MongoDaoBase<Quota> implements QuotaDao{
     @Override
     public List<Quota> findAllByQuery(Quota quota) {
         List<Quota> quotaList = super.findAll(getCommonQuery(quota), collectionName);
-        handleDateForList(quotaList);
         return quotaList;
     }
 }

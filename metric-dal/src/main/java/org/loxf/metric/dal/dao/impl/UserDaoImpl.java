@@ -19,7 +19,7 @@ import java.util.Map;
  */
 @Service("user")
 public class UserDaoImpl extends MongoDaoBase<User> implements UserDao {
-    private final String collectionName = CollectionConstants.USER.name();
+    private final String collectionName = CollectionConstants.USER.getCollectionName();
     private static String target_prefix = "USER_";
 
     @Override

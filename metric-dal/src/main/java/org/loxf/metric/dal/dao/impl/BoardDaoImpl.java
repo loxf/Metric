@@ -19,7 +19,7 @@ import java.util.Map;
 @Service("boardDao")
 public class BoardDaoImpl extends MongoDaoBase<Board> implements BoardDao {
     private static String board_prefix = "BOARDD_";
-    private final String collectionName = CollectionConstants.BOARD.name();
+    private final String collectionName = CollectionConstants.BOARD.getCollectionName();
 
     @Override
     public String insert(Board board) {

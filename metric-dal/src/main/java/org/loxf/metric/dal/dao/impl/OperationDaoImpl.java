@@ -18,7 +18,7 @@ import java.util.Map;
  */
 @Service("operationDao")
 public class OperationDaoImpl extends MongoDaoBase<Operation> implements OperationDao{
-    private final String collectionName = CollectionConstants.OPERATION.name();
+    private final String collectionName = CollectionConstants.OPERATION.getCollectionName();
     private static String oper_prefix = "OPERRATION_";
 
     @Override

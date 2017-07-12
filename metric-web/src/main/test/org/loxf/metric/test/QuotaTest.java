@@ -7,6 +7,7 @@ import org.loxf.metric.api.IQuotaService;
 import org.loxf.metric.base.ItemList.QuotaDimItem;
 import org.loxf.metric.common.constants.*;
 import org.loxf.metric.common.dto.*;
+import org.loxf.metric.dal.po.Quota;
 import org.loxf.metric.dal.po.QuotaDimension;
 import org.loxf.metric.test.core.JUnit4ClassRunner;
 import org.slf4j.Logger;
@@ -18,6 +19,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -93,7 +95,7 @@ public class QuotaTest {
         pager.setRownum(10);
         pager.setCurrentPage(1);
         quotaDto.setPager(pager);
-        PageData pageData = quotaService.getPageList(quotaDto);
+        BaseResult<PageData> pageData = quotaService.getPageList(quotaDto);
         logger.debug(JSON.toJSONString(pageData));
     }
 
@@ -104,7 +106,15 @@ public class QuotaTest {
 
     @Test
     public void queryList(){
+        QuotaDimItem quotaDimItem = new QuotaDimItem();
+        quotaDimItem.setDimCode("productName");
+        List<QuotaDimItem> quotaDimItemList = new ArrayList<>();
+        quotaDimItemList.add(quotaDimItem);
+
         QuotaDto quotaDto = new QuotaDto();
+        quotaDto.setQuotaDim(quotaDimItemList);
+        quotaDto.setQuotaName("指标");
+        quotaDto.setStartDate(new Date());
         logger.debug(JSON.toJSONString(quotaService.queryQuotaList(quotaDto)));
     }
 }
