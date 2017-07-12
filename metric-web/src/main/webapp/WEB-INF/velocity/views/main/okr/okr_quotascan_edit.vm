@@ -18,11 +18,11 @@
        <div class="form-group"  id="js_relQuota">
            <label class="col-sm-3 control-label">关键指标：</label>
            <div class="col-sm-8" style="width:430px">
-               <select style="width:400px;height:30px"  name="quotaId" id="quotaId" class="single_quota_select">
+               <select style="width:400px;height:30px"  name="quotaCode" id="quotaCode" class="single_quota_select">
                    <option value="" data-showOper="" >请选择关键指标</option>
                    #foreach($item in ${quotas})
                    <option data-showOper="$!{item.showOperation}"
-                           value="$!{item.quotaId}" #if($!item.quotaId == $!quotascan.quotaId) selected="selected" #end>$!{item.quotaDisplayName}</option>
+                           value="$!{item.quotaCode}" #if($!item.quotaCode == $!quotascan.quotaCode) selected="selected" #end>$!{item.quotaDisplayName}</option>
                    #end
                </select>
            </div>
@@ -99,18 +99,18 @@
   }
 
   $(".single_quota_select").change(function(){
-        var value=$("#quotaId").find("option:selected").text();
+        var value=$("#quotaCode").find("option:selected").text();
         $("#quotaScanShowName").val(value.trim());
-        var showOper = $("#quotaId").find("option:selected").attr("data-showOper");
+        var showOper = $("#quotaCode").find("option:selected").attr("data-showOper");
         if(showOper && showOper.indexOf("COUNT")>-1){
-            var quotaId = $("#quotaId").val();
+            var quotaCode = $("#quotaCode").val();
             $("#js_relQuotaDim").show();
             // 加载维度
             $.ajax({
                 type: "POST",
                 url: "${rc.contextPath}/admin/okr/chart/queryDimension.html",
                 dataType:"json",
-                data:{"quotaId":quotaId},
+                data:{"quotaCode":quotaCode},
                 success: function(data) {
                    if(data.code == 1){
                         $("#quotaDim").html("");
@@ -139,7 +139,7 @@
         $("#js_relQuota").css('display','none')
         $("#js_relQuotaDim").hide();//隐藏维度
         $("#quotaDim").html("");
-        $("#quotaId").val("");
+        $("#quotaCode").val("");
      }
    });
 </script>

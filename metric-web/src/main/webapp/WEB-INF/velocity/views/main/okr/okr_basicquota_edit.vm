@@ -5,7 +5,7 @@
 <div class="ibox-content">
    <form class="form-horizontal" id="form1">
            <input type="hidden" name="type" value="BASIC">
-           <input type="hidden" name="quotaId" value="$!{quota.quotaId}">
+           <input type="hidden" name="quotaCode" value="$!{quota.quotaCode}">
            <div class="form-group">
                    <label class="col-sm-3 control-label">展示名称：</label>
                    <div class="col-sm-8" style="width:430px">

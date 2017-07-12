@@ -18,7 +18,7 @@ public class Target extends BasePO{
 
     private String uniqueCode;
 
-    private List<org.loxf.metric.base.ItermList.TargetItem> itemList;
+    private List<TargetItem> itemList;
 
     public String getTargetCode() {
         return targetCode;
@@ -76,11 +76,11 @@ public class Target extends BasePO{
         this.uniqueCode = uniqueCode;
     }
 
-    public List<org.loxf.metric.base.ItermList.TargetItem> getItemList() {
+    public List<TargetItem> getItemList() {
         return itemList;
     }
 
-    public void setItemList(List<org.loxf.metric.base.ItermList.TargetItem> itemList) {
+    public void setItemList(List<TargetItem> itemList) {
         this.itemList = itemList;
     }
 }

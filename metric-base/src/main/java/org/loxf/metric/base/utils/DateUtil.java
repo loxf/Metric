@@ -20,6 +20,26 @@ public class DateUtil {
         }
     }
 
+    public static String dateToString(Date date){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            String str = sdf.format(date);
+            return str;
+        }catch (Exception e){
+            return null;
+        }
+    }
+
+    public static String dateToISODATEString(Date date){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            String str = sdf.format(date);
+            return "ISODate(\"" + str + "\")";
+        }catch (Exception e){
+            return null;
+        }
+    }
+
     public static Date turnToMongoDate(Date date) {
         return getTargetDate(date,8);
     }

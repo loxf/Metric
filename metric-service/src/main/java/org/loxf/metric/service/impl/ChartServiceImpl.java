@@ -133,7 +133,7 @@ public class ChartServiceImpl implements IChartService {
         Map<String, Object> params=MapAndBeanTransUtils.transBean2Map(obj);
         params.put("state",StandardState.AVAILABLE.getValue());
         List<Chart>  chartList=chartDao.findByPager(params, pager.getStart(), pager.getRownum());
-        List<Chart>  userVisibleChartList=getUserVisibleChartList(chartList,obj.getHandleUserName());
+        List<Chart>  userVisibleChartList=getUserVisibleChartList(chartList, obj.getHandleUserName());
         PageData pageData=new PageData();
         pageData.setTotalRecords(userVisibleChartList.size());
         pageData.setRownum(pager.getRownum());

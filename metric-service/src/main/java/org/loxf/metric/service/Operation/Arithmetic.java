@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 public class Arithmetic {
     private static Logger logger = LoggerFactory.getLogger(Arithmetic.class);
     public static void main(String args[]){
-        System.out.println(arithmetic("(126.0/0*598.3199999999999)/1059.74"));
+        System.out.println(arithmetic("1/((4)+(7))"));
         //System.out.println(isNum("-2.212+13"));
     }
     public static boolean isNum(String expression){
@@ -38,6 +38,9 @@ public class Arithmetic {
     }
     public static String arithmetic(String exp){
         try {
+            if(exp.startsWith("(") && exp.endsWith(")")){
+                exp = exp + "+0";
+            }
             return parseExp(exp, 0).replaceAll("[\\[\\]]", "");
         } catch (MetricException e){
             logger.error("运算错误：" + exp, e);
@@ -111,11 +114,11 @@ public class Arithmetic {
 
         String operator=exp.replaceFirst("^.*\\d([\\+\\-\\*\\/]).+$", "$1");
         if("+".equals(operator)){
-            result=number1.add(number2).setScale(4, BigDecimal.ROUND_HALF_UP);
+            result=number1.add(number2);
         }else if("-".equals(operator)){
-            result=number1.subtract(number2).setScale(4, BigDecimal.ROUND_HALF_UP);
+            result=number1.subtract(number2);
         }else if("*".equals(operator)){
-            result=number1.multiply(number2).setScale(4, BigDecimal.ROUND_HALF_UP);
+            result=number1.multiply(number2);
         }else if("/".equals(operator)){
             if(number2.compareTo(BigDecimal.ZERO)==0){
                 // 被除数等于0

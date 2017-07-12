@@ -1,15 +1,20 @@
 package org.loxf.metric.dal.dao.impl;
 
 import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.lang.StringUtils;
 import org.loxf.metric.base.constants.CollectionConstants;
+import org.loxf.metric.base.utils.DateUtil;
 import org.loxf.metric.base.utils.IdGenerator;
 import org.loxf.metric.core.mongo.MongoDaoBase;
 import org.loxf.metric.dal.dao.interfaces.TargetDao;
 import org.loxf.metric.dal.po.Target;
 import org.loxf.metric.dal.po.Target;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +55,13 @@ public class TargetDaoImpl extends MongoDaoBase<Target> implements TargetDao{
     }
 
     @Override
+    public List<Target> findAllByQuery(Target target) {
+        List<Target> targetList=super.findAll(getCommonQuery(target), collectionName);
+        handleDateForList(targetList);
+        return targetList;
+    }
+
+    @Override
     public List<Target> findByPager(Map<String, Object> params, int start, int pageSize) {
         List<Target> targetList=super.findByPager(params, start, pageSize, collectionName);
         handleDateForList(targetList);
@@ -80,4 +92,26 @@ public class TargetDaoImpl extends MongoDaoBase<Target> implements TargetDao{
         return super.countByParams(params,collectionName);
     }
 
+    private Query getCommonQuery(Target target){
+        Query query = new Query();
+        Criteria criteria = new Criteria();
+        criteria.where("");
+        if(StringUtils.isNotEmpty(target.getTargetCode())){
+            criteria = criteria.and("quotaId").is(target.getTargetCode());
+        }
+        if(StringUtils.isNotEmpty(target.getTargetName())){
+            criteria = criteria.and("targetName").regex(".*?\\" +target.getTargetName()+ ".*");
+        }
+        if(StringUtils.isNotEmpty(target.getUniqueCode())){
+            criteria = criteria.and("uniqueCode").is(target.getUniqueCode());
+        }
+        if(target.getTargetStartTime()!=null){
+            criteria = criteria.and("targetStartTime").lte(DateUtil.dateToISODATEString(target.getTargetStartTime()));
+        }
+        if(target.getTargetEndTime()!=null){
+            criteria = criteria.and("targetEndTime").lte(DateUtil.dateToISODATEString(target.getTargetEndTime()));
+        }
+        query.addCriteria(criteria);
+        return query;
+    }
 }

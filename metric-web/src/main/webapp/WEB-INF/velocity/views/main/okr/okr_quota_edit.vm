@@ -66,7 +66,7 @@
                             <div>公式：<span class="c-val">$!{quota.expression}</span></div>
                             <input type="hidden" id="J_formulaVal" value="$!{quota.quotaSource}"/>
                             <input type="hidden" id="J_particleSize" data-psize=""  value="$!{quota.particleSize}"/>
-                            <input type="hidden" id="J_formQuotaId" value="$!{quota.quotaId}"/>
+                            <input type="hidden" id="J_formQuotaId" value="$!{quota.quotaCode}"/>
                         </div>
                     </div>
                     <div class="ibox float-e-margins">

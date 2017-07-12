@@ -109,7 +109,7 @@
                     width: 10
                   },
                   {
-                   name:'quotaId',
+                   name:'quotaCode',
                    width:15,
                    formatter : function(value, options, rowObject) {
                         var b = '';
@@ -118,7 +118,7 @@
                         }
                         if(rowObject.type == 'COMPOSITE'){
                           b = b+'<a href="javascript:void(0)" onclick="edit(\'' + value + '\')" class="btn btn-primary" ><i class="glyphicon glyphicon-pencil"></i>编辑</a>';
-                          b =b+ '&nbsp;&nbsp;<a onclick="delQuota(\'' + rowObject.quotaId + '\')" class="btn btn-danger "><i class="glyphicon glyphicon-remove"></i>删除</a>';
+                          b =b+ '&nbsp;&nbsp;<a onclick="delQuota(\'' + rowObject.quotaCode + '\')" class="btn btn-danger "><i class="glyphicon glyphicon-remove"></i>删除</a>';
                         }
                         return b;
                     }
@@ -127,7 +127,7 @@
               pager: "#pager_list_1"
          });
    });
-     function edit(quotaId){
+     function edit(quotaCode){
         var width = (document.body.clientWidth-220)+"px";
       layer.open({
        type: 2,
@@ -135,16 +135,16 @@
        offset: ['0px', '220px'],
        fixed: false,
        maxmin: true,
-       content: 'toEdit.html?quotaId='+quotaId
+       content: 'toEdit.html?quotaCode='+quotaCode
       });
       }
-      function basicedit(quotaId){
+      function basicedit(quotaCode){
             layer.open({
                type: 2,
                area: ['800px', '400px'],
                fixed: false,
                maxmin: true,
-               content: 'toBasicQuotaEdit.html?quotaId='+quotaId
+               content: 'toBasicQuotaEdit.html?quotaCode='+quotaCode
             });
       }
      function add(){
@@ -159,11 +159,11 @@
               });
         }
 
-    function delQuota(quotaId){
+    function delQuota(quotaCode){
            layer.confirm('确认执行该操作？',{icon: 3, title:'删除指标预览'}, function(){
            $.ajax({
                   type: "POST",
-                 url:"deleteQuota.html?quotaId="+quotaId,
+                 url:"deleteQuota.html?quotaCode="+quotaCode,
                  dataType:"json",
                  success: function(data) {
                     if(data.code == 1){

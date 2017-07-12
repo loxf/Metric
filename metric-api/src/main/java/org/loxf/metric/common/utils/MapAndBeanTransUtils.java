@@ -1,6 +1,7 @@
 package org.loxf.metric.common.utils;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.loxf.metric.common.dto.Pager;
 
 import java.beans.BeanInfo;
@@ -8,6 +9,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -69,46 +71,41 @@ public class MapAndBeanTransUtils {
 
         return map;
     }
+    public static Map<String, Object> transBean2Map(Object obj, List<String> properties) {
+        if(obj == null){
+            return null;
+        }
+        if(CollectionUtils.isEmpty(properties)){
+            return null;
+        }
+        Map<String, Object> map = new HashMap<String, Object>();
+        try {
+            BeanInfo beanInfo = Introspector.getBeanInfo(obj.getClass());
+            PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+            for (PropertyDescriptor property : propertyDescriptors) {
+                String key = property.getName();
+                // 过滤class属性
+                if (!key.equals("class") && properties.contains(key)) {
+                    // 得到property对应的getter方法
+                    Method getter = property.getReadMethod();
+                    Object value = getter.invoke(obj);
+                    if(value!=null){//如果值为null就不设置到map中
+                        if(!(value instanceof Pager)){//去除分页相关信息
+                            if(value instanceof Integer){
+                                if((int)value!=0){
+                                    map.put(key, value);
+                                }
+                            } else {
+                                map.put(key, value);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("transBean2Map Error " + e);
+        }
 
-    // Map --> Bean 1: 利用Introspector,PropertyDescriptor实现 Map --> Bean
-//    public static void transMap2Bean(Map<String, Object> map, Object obj) {
-//
-//        try {
-//            BeanInfo beanInfo = Introspector.getBeanInfo(obj.getClass());
-//            PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
-//
-//            for (PropertyDescriptor property : propertyDescriptors) {
-//                String key = property.getName();
-//
-//                if (map.containsKey(key)) {
-//                    Object value = map.get(key);
-//                    // 得到property对应的setter方法
-//                    Method setter = property.getWriteMethod();
-//                    setter.invoke(obj, value);
-//                }
-//
-//            }
-//
-//        } catch (Exception e) {
-//            System.out.println("transMap2Bean Error " + e);
-//        }
-//
-//        return;
-//
-//    }
-
-
-//    public static Map<String, String> transBean2Map2(Object obj) {
-//        if (obj == null) {
-//            return null;
-//        }
-//        Map<String, String> map=new HashedMap();
-//        try {
-//            map = BeanUtils.describe(obj);
-//        } catch (Exception e) {
-//            System.out.println("transMap2Bean2 Error " + e);
-//        }
-//        return map;
-//    }
-
+        return map;
+    }
 }

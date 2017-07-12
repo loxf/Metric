@@ -60,10 +60,10 @@
 <script type="text/html" id="relQuotaDivScript">
     <div class="col-sm-8 quotaSelectDiv">
         <div class="childQuotaSelectDiv">
-            <select name="quotaId" onchange="firstQuotaSelect(this)">
+            <select name="quotaCode" onchange="firstQuotaSelect(this)">
                 <option value="-1">请选择</option>
                 #foreach($item in $!{quotas})
-                <option value="$!{item.quotaId}">$!{item.quotaName}</option>
+                <option value="$!{item.quotaCode}">$!{item.quotaName}</option>
                 #end
             </select>
         </div>
@@ -129,7 +129,7 @@
             type: "POST",
             url:"queryDimension.html",
             dataType:"json",
-            data:{"quotaId":value},
+            data:{"quotaCode":value},
             success: function(data) {
                if(data.code == 1){
                     var html = '<select name=\'quotaDimension\'>';

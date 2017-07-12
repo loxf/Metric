@@ -4,8 +4,7 @@ import com.alibaba.fastjson.JSON;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.loxf.metric.api.IQuotaService;
-import org.loxf.metric.common.constants.QuotaType;
-import org.loxf.metric.common.constants.StandardState;
+import org.loxf.metric.common.constants.*;
 import org.loxf.metric.common.dto.*;
 import org.loxf.metric.dal.po.QuotaDimension;
 import org.loxf.metric.test.core.JUnit4ClassRunner;
@@ -38,7 +37,7 @@ public class QuotaTest {
             quotaDto.setQuotaSource("quota_data_test_00" + i);
             quotaDto.setQuotaName("自动测试指标" + i);
             quotaDto.setType(QuotaType.BASIC.getValue());
-            quotaDto.setShowOperation("SUM");
+            quotaDto.setShowOperation(SummaryType.SUM.name());
             quotaDto.setState(StandardState.AVAILABLE.getValue());
             List<QuotaDimensionDto> quotaDimensionList = new ArrayList<>();
             QuotaDimensionDto dim1 = new QuotaDimensionDto();
@@ -50,6 +49,7 @@ public class QuotaTest {
             quotaDimensionList.add(dim1);
             quotaDimensionList.add(dim2);
             quotaDto.setQuotaDim(quotaDimensionList);
+            quotaDto.setShowType(ShowType.MONEY.name());
             quotaDto.setUniqueCode(uniqueCode);
             quotaDto.setCreateUserName("admin");
             quotaDto.setUpdateUserName("admin");
@@ -61,13 +61,25 @@ public class QuotaTest {
     @Test
     public void getQuota(){
         QuotaDto quotaDto = new QuotaDto();
-        BaseResult<QuotaDto> result = quotaService.queryItemByCode("QUOTA001");
+        BaseResult<QuotaDto> result = quotaService.queryItemByCode("QUOTA001", "admin");
+        logger.debug(JSON.toJSONString(result));
+    }
+
+    @Test
+    public void updateQuota(){
+        QuotaDto quotaDto = new QuotaDto();
+        quotaDto.setQuotaCode("QUOTA001");
+        quotaDto.setType(QuotaType.BASIC.getValue());
+        quotaDto.setQuotaSource("q_d_QUOTATEST");
+        quotaDto.setShowType(ShowType.MONEY.getValue());
+        quotaDto.setDataImportType(DataImportType.SDK.name());
+        BaseResult<String> result = quotaService.updateItem(quotaDto);
         logger.debug(JSON.toJSONString(result));
     }
 
     @Test
     public void delQuota(){
-        BaseResult<String> result = quotaService.delItemByCode("QUOTA_00000001499743845968266918");
+        BaseResult<String> result = quotaService.delItemByCode("QUOTA_00000001499743845968266918", "admin");
         logger.debug(JSON.toJSONString(result));
     }
 
@@ -81,5 +93,10 @@ public class QuotaTest {
         quotaDto.setPager(pager);
         PageData pageData = quotaService.getPageList(quotaDto);
         logger.debug(JSON.toJSONString(pageData));
+    }
+
+    @Test
+    public void checkDependcy(){
+        logger.debug(JSON.toJSONString(quotaService.checkDependencyQuota("QUOTA001")));
     }
 }

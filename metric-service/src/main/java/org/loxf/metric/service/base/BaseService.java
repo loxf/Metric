@@ -1,7 +1,9 @@
 package org.loxf.metric.service.base;
 
 import com.github.pagehelper.PageHelper;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.loxf.metric.base.exception.MetricException;
 import org.loxf.metric.common.dto.PageData;
 import org.loxf.metric.core.mongo.IBaseDao;
 import org.loxf.metric.core.mongo.MongoDaoBase;
@@ -22,7 +24,6 @@ public class BaseService {
         return getPageResult(dao, params, start, pageSize);
     }
 
-
     public PageData getPageResult(IBaseDao dao, Map<String, Object> params, int start, int pageSize) {
         try {
             long totalCount = (long) dao.countByParams(params);
@@ -42,4 +43,11 @@ public class BaseService {
         }
     }
 
+    public boolean validHandlerUser(String userName){
+        if(StringUtils.isNotEmpty(userName)){
+            return false;
+        }
+        // TODO 校验用户是否存在
+        return true;
+    }
 }

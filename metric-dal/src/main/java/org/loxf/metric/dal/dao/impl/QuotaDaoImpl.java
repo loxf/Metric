@@ -80,6 +80,7 @@ public class QuotaDaoImpl extends MongoDaoBase<Quota> implements QuotaDao{
     public void remove(String itemCode) {
         Map<String, Object> params=new HashedMap();
         params.put("quotaCode",itemCode);
+        // 如果删除基础指标，需先删除对应的数据集合，再删除指标。
         super.remove(params, collectionName);
     }
 

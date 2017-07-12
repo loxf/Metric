@@ -33,6 +33,10 @@ public class MongoDaoBase<T> {
         DBObject obj = new BasicDBObject();
         obj.putAll(params);
         Query query = new BasicQuery(obj);
+        return findOne(query, collectionName);
+    }
+
+    public T findOne(Query query, String collectionName) {
         Class<T> clazz = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
         return mongoTemplate.findOne(query, clazz, collectionName);
     }
@@ -41,6 +45,10 @@ public class MongoDaoBase<T> {
         DBObject obj = new BasicDBObject();
         obj.putAll(params);
         Query query = new BasicQuery(obj);
+        return findAll(query, collectionName);
+    }
+
+    public List<T> findAll(Query query, String collectionName) {
         Class<T> clazz = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
         return mongoTemplate.find(query, clazz, collectionName);
     }
@@ -49,6 +57,10 @@ public class MongoDaoBase<T> {
         DBObject obj = new BasicDBObject();
         obj.putAll(params);
         Query query = new BasicQuery(obj);
+        return findByPager(query, start, pageSize, collectionName);
+    }
+
+    public List<T> findByPager(Query query, int start, int pageSize, String collectionName) {
         query.skip(start).limit(pageSize);
         Class<T> clazz = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
         return mongoTemplate.find(query, clazz, collectionName);
@@ -62,10 +74,15 @@ public class MongoDaoBase<T> {
             }
         }
     }
+
     public void update(Map<String, Object> queryParams, Map<String, Object> setParams, String collectionName) {
         DBObject queryObj = new BasicDBObject();
         queryObj.putAll(queryParams);
         Query query = new BasicQuery(queryObj);
+        update(query, setParams, collectionName);
+    }
+
+    public void update(Query query, Map<String, Object> setParams, String collectionName) {
         BasicDBObject setObj = new BasicDBObject();
         handleUpdateTime(setParams);
         setObj.put(SET, new BasicDBObject(setParams));
@@ -77,6 +94,10 @@ public class MongoDaoBase<T> {
         DBObject queryObj = new BasicDBObject();
         queryObj.putAll(queryParams);
         Query query = new BasicQuery(queryObj);
+        updateOne(query, setParams, collectionName);
+    }
+
+    public void updateOne(Query query, Map<String, Object> setParams, String collectionName) {
         BasicDBObject setObj = new BasicDBObject();
         handleUpdateTime(setParams);
         setObj.put(SET, new BasicDBObject(setParams));
@@ -92,6 +113,10 @@ public class MongoDaoBase<T> {
         DBObject obj = new BasicDBObject();
         obj.putAll(params);
         Query query = new BasicQuery(obj);
+        remove(query, collectionName);
+    }
+
+    public void remove(Query query, String collectionName) {
         mongoTemplate.remove(query, collectionName);
     }
 
@@ -99,6 +124,10 @@ public class MongoDaoBase<T> {
         DBObject obj = new BasicDBObject();
         obj.putAll(params);
         Query query = new BasicQuery(obj);
+        return countByParams(query, collectionName);
+    }
+
+    public long countByParams(Query query, String collectionName) {
         return mongoTemplate.count(query, collectionName);
     }
 }

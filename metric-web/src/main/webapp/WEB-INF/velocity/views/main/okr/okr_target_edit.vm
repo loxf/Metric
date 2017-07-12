@@ -17,12 +17,12 @@
                       </button>
                        <button type="button" id="addButton" class="btn btn-success">添加</i></button>
                       <div class="col-sm-8" style="width:430px">
-                       <select name="targetItemDtoLists[0].quotaId" class="form-control">
+                       <select name="targetItemDtoLists[0].quotaCode" class="form-control">
                           #foreach($item in ${quotas})
-                             #if($!{target.quotaId} == $!{item.quotaId})
-                                <option value="$!{item.quotaId}" selected="selected">$!{item.quotaName}</option>
+                             #if($!{target.quotaCode} == $!{item.quotaCode})
+                                <option value="$!{item.quotaCode}" selected="selected">$!{item.quotaName}</option>
                               #else
-                                <option value="$!{item.quotaId}">$!{item.quotaName}</option>
+                                <option value="$!{item.quotaCode}">$!{item.quotaName}</option>
                               #end
                            #end
                        </select>
@@ -150,12 +150,12 @@
           var html="";
           html=html+' <div class="col-sm-8" style="width:430px"><select name="targetItemDtoLists[';
           html=html+index;
-          html=html+'].quotaId" class="form-control">';
+          html=html+'].quotaCode" class="form-control">';
                 #foreach($item in ${quotas})
-                       #if($!{target.quotaId} == $!{item.quotaId})
-                        html=html+'<option value="$!{item.quotaId}" selected="selected">$!{item.quotaName}</option>';
+                       #if($!{target.quotaCode} == $!{item.quotaCode})
+                        html=html+'<option value="$!{item.quotaCode}" selected="selected">$!{item.quotaName}</option>';
                       #else
-                         html=html+'<option value="$!{item.quotaId}">$!{item.quotaName}</option>';
+                         html=html+'<option value="$!{item.quotaCode}">$!{item.quotaName}</option>';
                       #end
                     #end
           html=html+'</select><input type="text" class="form-control" onchange="if(!/^\\d+(\\.\\d+)?$/.test(this.value)){alert(\'只能输入数字\');this.value=\'\';}" placeholder="目标值" name="targetItemDtoLists[';

@@ -23,7 +23,7 @@ public class TargetDto extends BaseDto{
 
     private String updatedUserName;
 
-    private List<TargetItem> itemList;
+    private List<TargetItemDto> itemList;
 
     public String getTargetCode() {
         return targetCode;
@@ -97,11 +97,11 @@ public class TargetDto extends BaseDto{
         this.updatedUserName = updatedUserName;
     }
 
-    public List<TargetItem> getItemList() {
+    public List<TargetItemDto> getItemList() {
         return itemList;
     }
 
-    public void setItemList(List<TargetItem> itemList) {
+    public void setItemList(List<TargetItemDto> itemList) {
         this.itemList = itemList;
     }
 }

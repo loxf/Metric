@@ -8,7 +8,7 @@ public class TargetItem extends Common{
 
     private String targetId;
 
-    private String quotaId;
+    private String quotaCode;
 
     private String targetValue;
 
@@ -36,12 +36,12 @@ public class TargetItem extends Common{
         this.targetId = targetId == null ? null : targetId.trim();
     }
 
-    public String getQuotaId() {
-        return quotaId;
+    public String getQuotaCode() {
+        return quotaCode;
     }
 
-    public void setQuotaId(String quotaId) {
-        this.quotaId = quotaId == null ? null : quotaId.trim();
+    public void setQuotaCode(String quotaCode) {
+        this.quotaCode = quotaCode == null ? null : quotaCode.trim();
     }
 
     public String getTargetValue() {

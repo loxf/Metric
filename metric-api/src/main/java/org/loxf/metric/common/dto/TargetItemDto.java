@@ -3,7 +3,7 @@ package org.loxf.metric.common.dto;
 /**
  * Created by luohj on 2017/7/8.
  */
-public class TargetItem {
+public class TargetItemDto {
     private String quotaCode;
     private String quotaName;
     private String targetValue;
