@@ -87,6 +87,7 @@ public class QuotaTest {
     @Test
     public void getPageList(){
         QuotaDto quotaDto = new QuotaDto();
+        quotaDto.setHandleUserName("admin");
         quotaDto.setType(QuotaType.BASIC.getValue());
         Pager pager = new Pager();
         pager.setRownum(10);
@@ -99,5 +100,11 @@ public class QuotaTest {
     @Test
     public void checkDependcy(){
         logger.debug(JSON.toJSONString(quotaService.checkDependencyQuota("QUOTA001")));
+    }
+
+    @Test
+    public void queryList(){
+        QuotaDto quotaDto = new QuotaDto();
+        logger.debug(JSON.toJSONString(quotaService.queryQuotaList(quotaDto)));
     }
 }

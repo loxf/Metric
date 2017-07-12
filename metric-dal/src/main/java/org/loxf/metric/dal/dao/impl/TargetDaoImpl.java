@@ -95,7 +95,7 @@ public class TargetDaoImpl extends MongoDaoBase<Target> implements TargetDao{
     private Query getCommonQuery(Target target){
         BasicDBObject query = new BasicDBObject();
 		if(StringUtils.isNotEmpty(target.getTargetCode())){
-            query.put("quotaId", target.getTargetCode());
+            query.put("targetCode", target.getTargetCode());
         }
         if(StringUtils.isNotEmpty(target.getTargetName())){
             Pattern pattern = Pattern.compile("^.*" + target.getTargetName() +".*$", Pattern.CASE_INSENSITIVE);

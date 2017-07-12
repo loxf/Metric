@@ -219,4 +219,11 @@ public class QuotaServiceImpl extends BaseService implements IQuotaService {
         return new BaseResult<>();
     }
 
+    @Override
+    public BaseResult<List<QuotaDto>> queryQuotaList(QuotaDto quotaDto) {
+        Quota quota = new Quota();
+        BeanUtils.copyProperties(quotaDto, quota);
+        return new BaseResult(quotaDao.findAllByQuery(quota));
+    }
+
 }

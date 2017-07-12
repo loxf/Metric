@@ -17,6 +17,8 @@ public class BasePO {
     private ObjectId _id;
     private Date createdAt;
     private Date updatedAt;
+    private Date startDate;
+    private Date endDate;
     private String createUserName;
     private  String updateUserName;
 
@@ -70,9 +72,19 @@ public class BasePO {
         this.updateUserName = updateUserName;
     }
 
-//    public void handleMongoDateForList(List<BasePO> list){
-//        for(BasePO po:list){
-//            po.handleMongoDateToJava();
-//        }
-//    }
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
 }

@@ -1,23 +1,32 @@
 package org.loxf.metric.dal.dao.impl;
 
+import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 
+import org.loxf.metric.base.ItemList.QuotaDimItem;
+import org.loxf.metric.base.ItemList.TargetItem;
 import org.loxf.metric.base.constants.CollectionConstants;
 import org.loxf.metric.base.utils.IdGenerator;
 import org.loxf.metric.core.mongo.MongoDaoBase;
 import org.loxf.metric.dal.dao.interfaces.QuotaDao;
 import org.loxf.metric.dal.po.Quota;
+import org.loxf.metric.dal.po.Target;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Created by luohj on 2017/6/26.
@@ -89,4 +98,53 @@ public class QuotaDaoImpl extends MongoDaoBase<Quota> implements QuotaDao{
         return super.countByParams(params, collectionName);
     }
 
+
+    private Query getCommonQuery(Quota quota){
+        BasicDBObject query = new BasicDBObject();
+        if(StringUtils.isNotEmpty(quota.getQuotaCode())){
+            query.put("quotaCode", quota.getQuotaCode());
+        }
+        if(StringUtils.isNotEmpty(quota.getQuotaName())){
+            Pattern pattern = Pattern.compile("^.*" + quota.getQuotaName() +".*$", Pattern.CASE_INSENSITIVE);
+            query.put("quotaName", pattern);
+        }
+        if(StringUtils.isNotEmpty(quota.getUniqueCode())){
+            query.put("uniqueCode", quota.getUniqueCode());
+        }
+        if(StringUtils.isNotEmpty(quota.getType())){
+            query.put("type", quota.getType());
+        }
+        if(StringUtils.isNotEmpty(quota.getShowOperation())){
+            query.put("showOperation", quota.getShowOperation());
+        }
+        if(StringUtils.isNotEmpty(quota.getCreateUserName())){
+            query.put("createUserName", quota.getCreateUserName());
+        }
+        if(StringUtils.isNotEmpty(quota.getDataImportType())){
+            query.put("dataImportType", quota.getDataImportType());
+        }
+        if(quota.getStartDate()!=null||quota.getEndDate()!=null){
+            Map<String, Object> createT = new HashMap<>();
+            if(quota.getStartDate()!=null)
+                createT.put("$gte", quota.getStartDate());
+            if(quota.getEndDate()!=null)
+                createT.put("$lte", quota.getEndDate());
+            query.put("createdAt", createT);
+        }
+        if(CollectionUtils.isNotEmpty(quota.getQuotaDim())){
+            BasicDBList includeDims = new BasicDBList();
+            for(QuotaDimItem item : quota.getQuotaDim()){
+                includeDims.add(item.getDimCode());
+            }
+            query.put("quotaDim.dimCode", new BasicDBObject("$in", includeDims));
+        }
+        return new BasicQuery(query);
+    }
+
+    @Override
+    public List<Quota> findAllByQuery(Quota quota) {
+        List<Quota> quotaList = super.findAll(getCommonQuery(quota), collectionName);
+        handleDateForList(quotaList);
+        return quotaList;
+    }
 }
