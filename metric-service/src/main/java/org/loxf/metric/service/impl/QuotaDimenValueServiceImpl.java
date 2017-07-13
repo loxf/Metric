@@ -4,7 +4,7 @@ import org.apache.commons.collections.map.HashedMap;
 import org.apache.log4j.Logger;
 import org.loxf.metric.api.IQuotaDimenValueService;
 import org.loxf.metric.common.dto.*;
-import org.loxf.metric.common.utils.MapAndBeanTransUtils;
+import org.loxf.metric.base.utils.MapAndBeanTransUtils;
 import org.loxf.metric.dal.dao.interfaces.QuotaDimensionValueDao;
 import org.loxf.metric.dal.po.QuotaDimensionValue;
 import org.springframework.beans.BeanUtils;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -60,8 +59,8 @@ public class QuotaDimenValueServiceImpl implements IQuotaDimenValueService {
 
     @Override
     public BaseResult<QuotaDimensionValueDto> queryItemByCode(String itemCode,String handleUserName) {
-        Map<String, Object> qryParams = new HashedMap();
-        qryParams.put("quotaDimensionValueCode", itemCode);
+        QuotaDimensionValue qryParams = new QuotaDimensionValue();
+        qryParams.setDimCode(itemCode);
         QuotaDimensionValue quotaDimensionValue = quotaDimensionValueDao.findOne(qryParams);
         QuotaDimensionValueDto quotaDimensionValueDto = new QuotaDimensionValueDto();
         BeanUtils.copyProperties(quotaDimensionValue, quotaDimensionValueDto);//前者赋值给后者

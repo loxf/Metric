@@ -2,7 +2,6 @@ package org.loxf.metric.core.mongo;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-import org.loxf.metric.base.utils.DateUtil;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.BasicUpdate;
@@ -11,7 +10,6 @@ import org.springframework.data.mongodb.core.query.Update;
 
 import javax.annotation.Resource;
 import java.lang.reflect.ParameterizedType;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -66,15 +64,6 @@ public class MongoDaoBase<T> {
         return mongoTemplate.find(query, clazz, collectionName);
     }
 
-    private void handleUpdateTime(Map<String, Object> setParams){
-        for (String key : setParams.keySet()) {
-            Object value=setParams.get(key);
-            if(value instanceof Date){
-                setParams.replace(key, DateUtil.turnToMongoDate((Date)value));
-            }
-        }
-    }
-
     public void update(Map<String, Object> queryParams, Map<String, Object> setParams, String collectionName) {
         DBObject queryObj = new BasicDBObject();
         queryObj.putAll(queryParams);
@@ -84,7 +73,6 @@ public class MongoDaoBase<T> {
 
     public void update(Query query, Map<String, Object> setParams, String collectionName) {
         BasicDBObject setObj = new BasicDBObject();
-        handleUpdateTime(setParams);
         setObj.put(SET, new BasicDBObject(setParams));
         Update update = new BasicUpdate(setObj);
         mongoTemplate.updateMulti(query, update, collectionName);
@@ -99,7 +87,6 @@ public class MongoDaoBase<T> {
 
     public void updateOne(Query query, Map<String, Object> setParams, String collectionName) {
         BasicDBObject setObj = new BasicDBObject();
-        handleUpdateTime(setParams);
         setObj.put(SET, new BasicDBObject(setParams));
         Update update = new BasicUpdate(setObj);
         mongoTemplate.updateFirst(query, update, collectionName);

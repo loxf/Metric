@@ -3,14 +3,12 @@ package org.loxf.metric.service.impl;
 
 import org.apache.commons.collections.map.HashedMap;
 import org.loxf.metric.api.IChartService;
-import org.loxf.metric.base.constants.ComPareConstants;
-import org.loxf.metric.base.exception.MetricException;
 import org.loxf.metric.common.constants.ResultCodeEnum;
 import org.loxf.metric.common.constants.StandardState;
 import org.loxf.metric.common.constants.UserTypeEnum;
 import org.loxf.metric.common.constants.VisibleTypeEnum;
 import org.loxf.metric.common.dto.Pager;
-import org.loxf.metric.common.utils.MapAndBeanTransUtils;
+import org.loxf.metric.base.utils.MapAndBeanTransUtils;
 import org.loxf.metric.dal.dao.interfaces.ChartDao;
 import org.loxf.metric.common.dto.BaseResult;
 import org.loxf.metric.common.dto.ChartDto;
@@ -42,23 +40,23 @@ public class ChartServiceImpl extends BaseService implements IChartService {
 
     @Override
     public BaseResult<String> insertItem(ChartDto obj) {//前端去重，可见范围列表。只有root用户可以添加图
-        BaseResult<String> result=new BaseResult<>();
-        String createUserName=obj.getCreateUserName();
-        if(StringUtils.isEmpty(createUserName)){
+        BaseResult<String> result = new BaseResult<>();
+        String createUserName = obj.getCreateUserName();
+        if (StringUtils.isEmpty(createUserName)) {
             result.setCode(ResultCodeEnum.PARAM_LACK.getCode());
             result.setMsg("创建人不能为空!");
             return result;
-        }else{//判断该用户是否存在
-            Map createUserMap=new HashedMap();
-            createUserMap.put("userName",createUserName);
-            User createUser=userDao.findOne(createUserMap);
-            if(createUser==null){
+        } else {//判断该用户是否存在
+            User createUserMap = new User();
+            createUserMap.setUserName(createUserName);
+            User createUser = userDao.findOne(createUserMap);
+            if (createUser == null) {
                 result.setCode(ResultCodeEnum.USER_NOT_EXIST.getCode());
                 result.setMsg(ResultCodeEnum.USER_NOT_EXIST.getCodeMsg());
                 return result;
-            }else{//判断该用户是否为root用户
-                String type=createUser.getUserType();
-                if(!(UserTypeEnum.ROOT.equals(type))){
+            } else {//判断该用户是否为root用户
+                String type = createUser.getUserType();
+                if (!(UserTypeEnum.ROOT.equals(type))) {
                     result.setCode(ResultCodeEnum.NO_PERMISSION.getCode());
                     result.setMsg(ResultCodeEnum.NO_PERMISSION.getCodeMsg());
                     return result;
@@ -66,29 +64,29 @@ public class ChartServiceImpl extends BaseService implements IChartService {
             }
         }
 
-        if(StringUtils.isEmpty(obj.getChartName())||StringUtils.isEmpty(obj.getType())||
-                StringUtils.isEmpty(obj.getChartDim())||obj.getQuotaList().size()==0||obj.getQuotaList()==null){
+        if (StringUtils.isEmpty(obj.getChartName()) || StringUtils.isEmpty(obj.getType()) ||
+                StringUtils.isEmpty(obj.getChartDim()) || obj.getQuotaList().size() == 0 || obj.getQuotaList() == null) {
             result.setCode(ResultCodeEnum.PARAM_LACK.getCode());
-            result.setMsg("图名称、类型、维度、指标都不能为空！操作用户为："+obj.getCreateUserName());
+            result.setMsg("图名称、类型、维度、指标都不能为空！操作用户为：" + obj.getCreateUserName());
             return result;
         }
 
-        if(StringUtils.isEmpty(obj.getVisibleType())){//全局可见，不传
+        if (StringUtils.isEmpty(obj.getVisibleType())) {//全局可见，不传
             obj.setVisibleType(VisibleTypeEnum.ALL.name());
-        }else if(!obj.getVisibleType().equals(VisibleTypeEnum.SPECIFICRANGE.name())){
-            logger.info("入参visibleType不在可见范围之内,visibleType="+obj.getVisibleType()+"操作用户为："+obj.getCreateUserName());
+        } else if (!obj.getVisibleType().equals(VisibleTypeEnum.SPECIFICRANGE.name())) {
+            logger.info("入参visibleType不在可见范围之内,visibleType=" + obj.getVisibleType() + "操作用户为：" + obj.getCreateUserName());
             result.setCode(ResultCodeEnum.PARAM_ERROR.getCode());
             result.setMsg(ResultCodeEnum.PARAM_ERROR.getCodeMsg());
             return result;
         }
-        if(!StringUtils.isEmpty(obj.getVisibleType())&&(obj.getVisibleList()==null||obj.getVisibleList().size()==0)){
-            logger.info("可见范围中没有用户列表，"+obj.getVisibleType()+"操作用户为："+obj.getCreateUserName());
+        if (!StringUtils.isEmpty(obj.getVisibleType()) && (obj.getVisibleList() == null || obj.getVisibleList().size() == 0)) {
+            logger.info("可见范围中没有用户列表，" + obj.getVisibleType() + "操作用户为：" + obj.getCreateUserName());
             result.setCode(ResultCodeEnum.PARAM_ERROR.getCode());
             result.setMsg(ResultCodeEnum.PARAM_ERROR.getCodeMsg());
             return result;
         }
-        Chart chart=new Chart();
-        BeanUtils.copyProperties(obj,chart);
+        Chart chart = new Chart();
+        BeanUtils.copyProperties(obj, chart);
         //是否需要校验可见范围内的用户合法性。
 //        Set<String> visibleSet=obj.getVisibleList();//入参指定用户
 //        StringBuilder notExistList=null;
@@ -112,27 +110,27 @@ public class ChartServiceImpl extends BaseService implements IChartService {
     }
 
     @Override
-    public BaseResult<PageData> getPageList(ChartDto obj){
+    public BaseResult<PageData> getPageList(ChartDto obj) {
         return null;
     }
 
     public PageData getPageList2(ChartDto obj) {
         //db.blog.find({"comments":{"$elemMatch":{"author":"joe","score":{"$gte":5}}}})
-        Pager pager=obj.getPager();
-        if(!obj.validHandleUser()){
+        Pager pager = obj.getPager();
+        if (!obj.validHandleUser()) {
             logger.info("经办人信息缺失");
             return null;
         }
-        if(pager==null){
+        if (pager == null) {
             logger.info("分页信息为空");
             return null;
-        }else{
-            if(pager.getRownum()<=0){
+        } else {
+            if (pager.getRownum() <= 0) {
                 //todo
             }
         }
 
-        Map<String, Object> params=MapAndBeanTransUtils.transBean2Map(obj);
+        Map<String, Object> params = MapAndBeanTransUtils.transBean2Map(obj);
 //        params.put("state",StandardState.AVAILABLE.getValue());
 //        Map visibleMap=new HashedMap();
 //        Map nameMap=new HashedMap();
@@ -152,16 +150,16 @@ public class ChartServiceImpl extends BaseService implements IChartService {
 //        return pageData;
     }
 
-    private List<Chart> getUserVisibleChartList(List<Chart> chartList,String handleUserName){
-        List<Chart>  userVisibleChartList=new ArrayList<>();
-        for(Chart chart:chartList){
-            String visibleType=chart.getVisibleType();
-            if(VisibleTypeEnum.SPECIFICRANGE.name().equals(visibleType)){//指定人可见
-                List<String> visibleUserNameList=chart.getVisibleList();
-                if(!visibleUserNameList.contains(handleUserName)){
-                    logger.info("该用户没有该图的查看权限,chartCode="+chart.getChartCode()+",handleUserName="+handleUserName);
+    private List<Chart> getUserVisibleChartList(List<Chart> chartList, String handleUserName) {
+        List<Chart> userVisibleChartList = new ArrayList<>();
+        for (Chart chart : chartList) {
+            String visibleType = chart.getVisibleType();
+            if (VisibleTypeEnum.SPECIFICRANGE.name().equals(visibleType)) {//指定人可见
+                List<String> visibleUserNameList = chart.getVisibleList();
+                if (!visibleUserNameList.contains(handleUserName)) {
+                    logger.info("该用户没有该图的查看权限,chartCode=" + chart.getChartCode() + ",handleUserName=" + handleUserName);
                     continue;
-                }else{
+                } else {
                     userVisibleChartList.add(chart);
                 }
             }
@@ -170,24 +168,24 @@ public class ChartServiceImpl extends BaseService implements IChartService {
     }
 
     @Override
-    public BaseResult<ChartDto> queryItemByCode(String itemCode,String handleUserName) {//是否要查询已失效的图
-        BaseResult<ChartDto> result=new BaseResult<>();
-        if(StringUtils.isEmpty(itemCode)){
+    public BaseResult<ChartDto> queryItemByCode(String itemCode, String handleUserName) {//是否要查询已失效的图
+        BaseResult<ChartDto> result = new BaseResult<>();
+        if (StringUtils.isEmpty(itemCode)) {
             result.setCode(ResultCodeEnum.PARAM_LACK.getCode());
             result.setMsg(ResultCodeEnum.PARAM_LACK.getCodeMsg());
             return result;
         }
-        Map<String, Object> qryParams=new HashedMap();
-        qryParams.put("chartCode",itemCode);
-        Chart chart=chartDao.findOne(qryParams);
-        List<Chart> baseChartList=new ArrayList<>();
+        Chart qryParams = new Chart();
+        qryParams.setChartCode(itemCode);
+        Chart chart = chartDao.findOne(qryParams);
+        List<Chart> baseChartList = new ArrayList<>();
         baseChartList.add(chart);
         //获取该用户可见范围内的图
-        List<Chart> visibleChartList=getUserVisibleChartList(baseChartList,handleUserName);
-        ChartDto chartDto=null;
-        if(visibleChartList!=null&&visibleChartList.size()>0){
-            chartDto=new ChartDto();
-            BeanUtils.copyProperties(visibleChartList.get(0),chartDto);
+        List<Chart> visibleChartList = getUserVisibleChartList(baseChartList, handleUserName);
+        ChartDto chartDto = null;
+        if (visibleChartList != null && visibleChartList.size() > 0) {
+            chartDto = new ChartDto();
+            BeanUtils.copyProperties(visibleChartList.get(0), chartDto);
         }
         //前者赋值给后者
         result.setCode(ResultCodeEnum.SUCCESS.getCode());
@@ -197,32 +195,32 @@ public class ChartServiceImpl extends BaseService implements IChartService {
 
     @Override
     public BaseResult<String> updateItem(ChartDto obj) {
-        BaseResult<String> result=new BaseResult<>();
-        String itemCode=obj.getChartCode();
-        if(StringUtils.isEmpty(itemCode)||StringUtils.isEmpty(obj.getCreateUserName())){
+        BaseResult<String> result = new BaseResult<>();
+        String itemCode = obj.getChartCode();
+        if (StringUtils.isEmpty(itemCode) || StringUtils.isEmpty(obj.getCreateUserName())) {
             result.setCode(ResultCodeEnum.PARAM_LACK.getCode());
             result.setMsg(ResultCodeEnum.PARAM_LACK.getCodeMsg());
             return result;
         }
-        Map chartMap= MapAndBeanTransUtils.transBean2Map(obj);
-        chartDao.updateOne(itemCode,chartMap);
+        Map chartMap = MapAndBeanTransUtils.transBean2Map(obj);
+        chartDao.updateOne(itemCode, chartMap);
         result.setCode(ResultCodeEnum.SUCCESS.getCode());
         return result;
     }
 
     @Override
-    public BaseResult<String> delItemByCode(String itemCode,String handleUserName) {
-        logger.info("客户:"+handleUserName+"将要删除图,itemCode"+itemCode);
-        BaseResult<String> result=new BaseResult<>();
-        if(StringUtils.isEmpty(itemCode)||StringUtils.isEmpty(handleUserName)){
+    public BaseResult<String> delItemByCode(String itemCode, String handleUserName) {
+        logger.info("客户:" + handleUserName + "将要删除图,itemCode" + itemCode);
+        BaseResult<String> result = new BaseResult<>();
+        if (StringUtils.isEmpty(itemCode) || StringUtils.isEmpty(handleUserName)) {
             result.setCode(ResultCodeEnum.PARAM_LACK.getCode());
             result.setMsg(ResultCodeEnum.PARAM_LACK.getCodeMsg());
             return result;
         }
-        Map chartMap=new HashedMap();
+        Map chartMap = new HashedMap();
         chartMap.put("state", StandardState.DISABLED.getValue());
-        chartMap.put("updateUserName",handleUserName);
-        chartDao.updateOne(itemCode,chartMap);
+        chartMap.put("updateUserName", handleUserName);
+        chartDao.updateOne(itemCode, chartMap);
         chartDao.remove(itemCode);
         return result;
     }

@@ -2,12 +2,11 @@ package org.loxf.metric.dal.dao.impl;
 
 import org.apache.commons.collections.map.HashedMap;
 import org.loxf.metric.base.constants.CollectionConstants;
-import org.loxf.metric.base.utils.DateUtil;
 import org.loxf.metric.base.utils.IdGenerator;
 import org.loxf.metric.core.mongo.MongoDaoBase;
 import org.loxf.metric.dal.dao.interfaces.UserDao;
 import org.loxf.metric.dal.po.User;
-import org.springframework.stereotype.Component;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -26,40 +25,31 @@ public class UserDaoImpl extends MongoDaoBase<User> implements UserDao {
     public String insert(User object) {
         String sid = IdGenerator.generate(target_prefix);
         object.setUserCode(sid);
-        object.handleDateToMongo();
         super.insert(object, collectionName);
         return  sid;
     }
 
     @Override
-    public User findOne(Map<String, Object> params) {
-        User user= super.findOne(params, collectionName);
-        user.handleMongoDateToJava();
+    public User findOne(User object) {
+        User user= super.findOne(getCommonQuery(object), collectionName);
         return user;
     }
 
-    private void handleDateForList(List<User> list){
-        for(User user:list){
-            user.handleMongoDateToJava();
-        }
-    }
     @Override
-    public List<User> findAll(Map<String, Object> params) {
-        List<User> userList=super.findAll(params, collectionName);
-        handleDateForList(userList);
+    public List<User> findAll(User object) {
+        List<User> userList=super.findAll(getCommonQuery(object), collectionName);
         return userList;
     }
 
     @Override
-    public List<User> findByPager(Map<String, Object> params, int start, int pageSize) {
-        List<User> userList=super.findByPager(params, start, pageSize, collectionName);
-        handleDateForList(userList);
+    public List<User> findByPager(User object, int start, int pageSize) {
+        List<User> userList=super.findByPager(getCommonQuery(object), start, pageSize, collectionName);
         return userList;
     }
 
     @Override
-    public void update(Map<String, Object> queryParams, Map<String, Object> setParams) {
-        super.update(queryParams, setParams, collectionName);
+    public void update(User object, Map<String, Object> setParams) {
+        super.update(getCommonQuery(object), setParams, collectionName);
     }
 
     @Override
@@ -78,8 +68,12 @@ public class UserDaoImpl extends MongoDaoBase<User> implements UserDao {
 
 
     @Override
-    public long countByParams(Map<String, Object> params) {
-        return super.countByParams(params,collectionName);
+    public long countByParams(User object) {
+        return super.countByParams(getCommonQuery(object),collectionName);
     }
 
+    private Query getCommonQuery(User user){
+        //TODO 实现各个dao自己的query
+        return null;
+    }
 }

@@ -3,7 +3,7 @@ package org.loxf.metric.service.impl;
 import org.apache.commons.collections.map.HashedMap;
 import org.loxf.metric.api.IBoardService;
 import org.loxf.metric.common.dto.*;
-import org.loxf.metric.common.utils.MapAndBeanTransUtils;
+import org.loxf.metric.base.utils.MapAndBeanTransUtils;
 import org.loxf.metric.dal.dao.interfaces.BoardDao;
 import org.loxf.metric.dal.po.Board;
 import org.apache.log4j.Logger;
@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -60,8 +59,8 @@ public class BoardServiceImpl implements IBoardService {
 
     @Override
     public BaseResult<BoardDto> queryItemByCode(String itemCode,String handleUserName) {
-        Map<String, Object> qryParams = new HashedMap();
-        qryParams.put("boardCode", itemCode);
+        Board qryParams = new Board();
+        qryParams.setBoardCode(itemCode);
         Board board = boardDao.findOne(qryParams);
         BoardDto boardDto = new BoardDto();
         BeanUtils.copyProperties(board, boardDto);//前者赋值给后者

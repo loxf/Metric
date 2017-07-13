@@ -7,6 +7,8 @@ import org.loxf.metric.base.utils.IdGenerator;
 import org.loxf.metric.core.mongo.MongoDaoBase;
 import org.loxf.metric.dal.dao.interfaces.BoardDao;
 import org.loxf.metric.dal.po.Board;
+import org.loxf.metric.dal.po.Chart;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -18,47 +20,38 @@ import java.util.Map;
  */
 @Service("boardDao")
 public class BoardDaoImpl extends MongoDaoBase<Board> implements BoardDao {
-    private static String board_prefix = "BOARDD_";
+    private static String board_prefix = "BOARD_";
     private final String collectionName = CollectionConstants.BOARD.getCollectionName();
 
     @Override
     public String insert(Board board) {
         String sid = IdGenerator.generate(board_prefix);
         board.setBoardCode(sid);
-        board.handleDateToMongo();
         super.insert(board, collectionName);
         return sid;
     }
 
     @Override
-    public Board findOne(Map<String, Object> params) {
-        Board board= super.findOne(params, collectionName);
-        board.handleMongoDateToJava();
+    public Board findOne(Board object) {
+        Board board= super.findOne(getCommonQuery(object), collectionName);
         return board;
     }
 
-    private void handleDateForList(List<Board> list){
-        for(Board board:list){
-            board.handleMongoDateToJava();
-        }
-    }
     @Override
-    public List<Board> findAll(Map<String, Object> params) {
-        List<Board> boardList=super.findAll(params, collectionName);
-        handleDateForList(boardList);
+    public List<Board> findAll(Board object) {
+        List<Board> boardList=super.findAll(getCommonQuery(object), collectionName);
         return boardList;
     }
 
     @Override
-    public List<Board> findByPager(Map<String, Object> params, int start, int pageSize) {
-        List<Board> boardList=super.findByPager(params, start, pageSize, collectionName);
-        handleDateForList(boardList);
+    public List<Board> findByPager(Board object, int start, int pageSize) {
+        List<Board> boardList=super.findByPager(getCommonQuery(object), start, pageSize, collectionName);
         return boardList;
     }
 
     @Override
-    public void update(Map<String, Object> queryParams, Map<String, Object> setParams) {
-        super.update(queryParams, setParams, collectionName);
+    public void update(Board object, Map<String, Object> setParams) {
+        super.update(getCommonQuery(object), setParams, collectionName);
     }
 
     @Override
@@ -76,8 +69,12 @@ public class BoardDaoImpl extends MongoDaoBase<Board> implements BoardDao {
     }
 
     @Override
-    public long countByParams(Map<String, Object> params) {
-        return super.countByParams(params,collectionName);
+    public long countByParams(Board object) {
+        return super.countByParams(getCommonQuery(object),collectionName);
     }
 
+    private Query getCommonQuery(Board board){
+        //TODO 实现各个dao自己的query
+        return null;
+    }
 }

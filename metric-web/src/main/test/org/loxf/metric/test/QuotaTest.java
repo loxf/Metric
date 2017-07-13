@@ -18,6 +18,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,36 +38,34 @@ public class QuotaTest {
     @Test
     public void create(){
         QuotaDto quotaDto = new QuotaDto();
-        for(int i=1;i<=2;i++) {
-            quotaDto.setQuotaSource("quota_data_test_00" + i);
-            quotaDto.setQuotaName("自动测试指标" + i);
-            quotaDto.setType(QuotaType.BASIC.getValue());
-            quotaDto.setShowOperation(SummaryType.SUM.name());
-            quotaDto.setState(StandardState.AVAILABLE.getValue());
-            List<QuotaDimItem> quotaDimItemList = new ArrayList<>();
-            QuotaDimItem dim1 = new QuotaDimItem();
-            dim1.setDimCode("productName");
-            dim1.setDimName("产品名称");
-            QuotaDimItem dim2 = new QuotaDimItem();
-            dim2.setDimCode("productAddr");
-            dim2.setDimName("产地");
-            quotaDimItemList.add(dim1);
-            quotaDimItemList.add(dim2);
-            quotaDto.setQuotaDim(quotaDimItemList);
-            quotaDto.setShowType(ShowType.MONEY.name());
-            quotaDto.setUniqueCode(uniqueCode);
-            quotaDto.setCreateUserName("admin");
-            quotaDto.setUpdateUserName("admin");
-            BaseResult<String> result = quotaService.insertItem(quotaDto);
-            logger.debug(JSON.toJSONString(result));
-        }
+        quotaDto.setQuotaName("自动测试指标");
+        quotaDto.setType(QuotaType.BASIC.getValue());
+        quotaDto.setShowOperation(SummaryType.SUM.name());
+        quotaDto.setState(StandardState.AVAILABLE.getValue());
+        List<QuotaDimItem> quotaDimItemList = new ArrayList<>();
+        QuotaDimItem dim1 = new QuotaDimItem();
+        dim1.setDimCode("productName");
+        dim1.setDimName("产品名称");
+        QuotaDimItem dim2 = new QuotaDimItem();
+        dim2.setDimCode("productAddr");
+        dim2.setDimName("产地");
+        quotaDimItemList.add(dim1);
+        quotaDimItemList.add(dim2);
+        quotaDto.setQuotaDim(quotaDimItemList);
+        quotaDto.setShowType(ShowType.MONEY.name());
+        quotaDto.setUniqueCode(uniqueCode);
+        quotaDto.setIntervalPeriod(1440);
+        quotaDto.setHandleUserName("admin");
+        quotaDto.setDataImportType(DataImportType.EXCEL.name());
+        BaseResult<String> result = quotaService.insertItem(quotaDto);
+        logger.debug("获取结果：" + JSON.toJSONString(result));
     }
 
     @Test
     public void getQuota(){
         QuotaDto quotaDto = new QuotaDto();
         BaseResult<QuotaDto> result = quotaService.queryItemByCode("QUOTA001", "admin");
-        logger.debug(JSON.toJSONString(result));
+        logger.debug("获取结果：" + JSON.toJSONString(result));
     }
 
     @Test
@@ -77,13 +77,13 @@ public class QuotaTest {
         quotaDto.setShowType(ShowType.MONEY.getValue());
         quotaDto.setDataImportType(DataImportType.SDK.name());
         BaseResult<String> result = quotaService.updateItem(quotaDto);
-        logger.debug(JSON.toJSONString(result));
+        logger.debug("获取结果：" + JSON.toJSONString(result));
     }
 
     @Test
     public void delQuota(){
         BaseResult<String> result = quotaService.delItemByCode("QUOTA_00000001499743845968266918", "admin");
-        logger.debug(JSON.toJSONString(result));
+        logger.debug("获取结果：" + JSON.toJSONString(result));
     }
 
     @Test
@@ -96,12 +96,12 @@ public class QuotaTest {
         pager.setCurrentPage(1);
         quotaDto.setPager(pager);
         BaseResult<PageData> pageData = quotaService.getPageList(quotaDto);
-        logger.debug(JSON.toJSONString(pageData));
+        logger.debug("获取结果：" + JSON.toJSONString(pageData));
     }
 
     @Test
     public void checkDependcy(){
-        logger.debug(JSON.toJSONString(quotaService.checkDependencyQuota("QUOTA001")));
+        logger.debug("获取结果：" + JSON.toJSONString(quotaService.checkDependencyQuota("QUOTA001")));
     }
 
     @Test
@@ -114,7 +114,15 @@ public class QuotaTest {
         QuotaDto quotaDto = new QuotaDto();
         quotaDto.setQuotaDim(quotaDimItemList);
         quotaDto.setQuotaName("指标");
-        quotaDto.setStartDate(new Date());
-        logger.debug(JSON.toJSONString(quotaService.queryQuotaList(quotaDto)));
+        try {
+            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date start = sf.parse("2017-07-10 00:00:00");
+            Date end = sf.parse("2017-07-13 23:59:59");
+            quotaDto.setStartDate(start);
+            quotaDto.setEndDate(end);
+        } catch (ParseException e){
+            logger.error("时间解析错误", e);
+        }
+        logger.debug("获取结果：" + JSON.toJSONString(quotaService.queryQuotaList(quotaDto)));
     }
 }

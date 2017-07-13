@@ -7,6 +7,7 @@ import org.loxf.metric.core.mongo.MongoDaoBase;
 import org.loxf.metric.dal.dao.interfaces.QuotaDimensionValueDao;
 import org.loxf.metric.dal.po.QuotaDimensionValue;
 import org.loxf.metric.dal.po.QuotaDimensionValue;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -19,46 +20,37 @@ import java.util.Map;
 @Service("quotaDimensionValue")
 public class QuotaDimensionValueImpl extends MongoDaoBase<QuotaDimensionValue> implements QuotaDimensionValueDao{
     private final String collectionName = CollectionConstants.QUOTA_DIMENSION_VALUE.getCollectionName();
-    private static String quota_dim_value_prefix = "QUOTA_DIM_VALUE";
+    private static String quota_dim_value_prefix = "DIM_V_";
 
     @Override
     public String insert(QuotaDimensionValue object) {
         String sid = IdGenerator.generate(quota_dim_value_prefix);
         object.setDimValueCode(sid);
-        object.handleDateToMongo();
         super.insert(object, collectionName);
         return sid;
     }
 
     @Override
-    public QuotaDimensionValue findOne(Map<String, Object> params) {
-        QuotaDimensionValue quotaDimensionValue= super.findOne(params, collectionName);
-        quotaDimensionValue.handleMongoDateToJava();
+    public QuotaDimensionValue findOne(QuotaDimensionValue object) {
+        QuotaDimensionValue quotaDimensionValue= super.findOne(getCommonQuery(object), collectionName);
         return quotaDimensionValue;
     }
 
-    private void handleDateForList(List<QuotaDimensionValue> list){
-        for(QuotaDimensionValue quotaDimensionValue:list){
-            quotaDimensionValue.handleMongoDateToJava();
-        }
-    }
     @Override
-    public List<QuotaDimensionValue> findAll(Map<String, Object> params) {
-        List<QuotaDimensionValue> quotaDimensionValueList=super.findAll(params, collectionName);
-        handleDateForList(quotaDimensionValueList);
+    public List<QuotaDimensionValue> findAll(QuotaDimensionValue object) {
+        List<QuotaDimensionValue> quotaDimensionValueList=super.findAll(getCommonQuery(object), collectionName);
         return quotaDimensionValueList;
     }
 
     @Override
-    public List<QuotaDimensionValue> findByPager(Map<String, Object> params, int start, int pageSize) {
-        List<QuotaDimensionValue> QuotaDimensionValueList=super.findByPager(params, start, pageSize, collectionName);
-        handleDateForList(QuotaDimensionValueList);
+    public List<QuotaDimensionValue> findByPager(QuotaDimensionValue object, int start, int pageSize) {
+        List<QuotaDimensionValue> QuotaDimensionValueList=super.findByPager(getCommonQuery(object), start, pageSize, collectionName);
         return QuotaDimensionValueList;
     }
 
     @Override
-    public void update(Map<String, Object> queryParams, Map<String, Object> setParams) {
-        super.update(queryParams, setParams, collectionName);
+    public void update(QuotaDimensionValue object, Map<String, Object> setParams) {
+        super.update(getCommonQuery(object), setParams, collectionName);
     }
 
     @Override
@@ -76,8 +68,13 @@ public class QuotaDimensionValueImpl extends MongoDaoBase<QuotaDimensionValue> i
     }
 
     @Override
-    public long countByParams(Map<String, Object> params) {
-        return super.countByParams(params,collectionName);
+    public long countByParams(QuotaDimensionValue object) {
+        return super.countByParams(getCommonQuery(object),collectionName);
+    }
+
+    private Query getCommonQuery(QuotaDimensionValue quotaDimensionValue){
+        //TODO 实现各个dao自己的query
+        return null;
     }
 
 }

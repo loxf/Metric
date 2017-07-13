@@ -1,16 +1,16 @@
 package org.loxf.metric.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.loxf.metric.api.IQuotaService;
 import org.loxf.metric.base.ItemList.TargetItem;
 import org.loxf.metric.base.exception.MetricException;
-import org.loxf.metric.base.utils.DateUtil;
 import org.loxf.metric.base.utils.IdGenerator;
 import org.loxf.metric.common.constants.QuotaType;
 import org.loxf.metric.common.constants.ResultCodeEnum;
-import org.loxf.metric.common.utils.MapAndBeanTransUtils;
+import org.loxf.metric.base.utils.MapAndBeanTransUtils;
 import org.loxf.metric.dal.dao.interfaces.QuotaDao;
 import org.loxf.metric.dal.dao.interfaces.TargetDao;
 import org.loxf.metric.dal.po.*;
@@ -40,6 +40,8 @@ public class QuotaServiceImpl extends BaseService implements IQuotaService {
             return new BaseResult(ResultCodeEnum.NO_PERMISSION.getCode(), "经办人错误");
         }
         BaseResult validResult = validQuota(quotaDto);
+        quotaDto.setCreateUserName(quotaDto.getHandleUserName());
+        quotaDto.setUpdateUserName(quotaDto.getHandleUserName());
         if (ResultCodeEnum.SUCCESS.getCode().equals(validResult.getCode())) {
             try {
                 if (quotaDto.getType().equals(QuotaType.BASIC.getValue())) {
@@ -47,8 +49,8 @@ public class QuotaServiceImpl extends BaseService implements IQuotaService {
                     String ids = null;
                     while (true) {
                         ids = IdGenerator.generate("QUOTA_", 13);
-                        Map<String, Object> qryParams = new HashedMap();
-                        qryParams.put("quotaCode", ids);
+                        Quota qryParams = new Quota();
+                        qryParams.setQuotaCode(ids);
                         Quota quota = quotaDao.findOne(qryParams);
                         if (quota == null) {
                             break;
@@ -60,7 +62,6 @@ public class QuotaServiceImpl extends BaseService implements IQuotaService {
                     // 复合指标
                     // 获取表达式的源
                     String quotaSource = quotaDto.getQuotaSource();
-                    // 复合指标复合复合指标时，需要把运算公式换算为基础指标
                     List<String> quotaCodeList = QuotaSqlBuilder.quotaList(quotaSource);
                     if (CollectionUtils.isEmpty(quotaCodeList)) {
                         return new BaseResult(ResultCodeEnum.PARAM_ERROR.getCode(), "复合指标必须基于其他指标运算");
@@ -107,9 +108,6 @@ public class QuotaServiceImpl extends BaseService implements IQuotaService {
                 return new BaseResult(ResultCodeEnum.PARAM_LACK.getCode(), "指标源不能为空");
             }
         }
-        if (StringUtils.isEmpty(quotaDto.getCreateUserName())) {
-            return new BaseResult(ResultCodeEnum.PARAM_ERROR.getCode(), "指标创建人为空");
-        }
         return new BaseResult();
     }
 
@@ -132,8 +130,8 @@ public class QuotaServiceImpl extends BaseService implements IQuotaService {
         if (!validHandlerUser(handleUserName)) {
             return new BaseResult(ResultCodeEnum.NO_PERMISSION.getCode(), "经办人错误");
         }
-        Map<String, Object> qryParams = new HashedMap();
-        qryParams.put("quotaCode", itemCode);
+        Quota qryParams = new Quota();
+        qryParams.setQuotaCode(itemCode);
         Quota quota = quotaDao.findOne(qryParams);
         QuotaDto quotaDto = new QuotaDto();
         BeanUtils.copyProperties(quota, quotaDto);//前者赋值给后者
@@ -180,41 +178,48 @@ public class QuotaServiceImpl extends BaseService implements IQuotaService {
     @Override
     public BaseResult<String> checkDependencyQuota(String quotaCode){
         // 如果基础指标被其他指标引用，不能删除。如果被有效目标（当前日期在目标的时间范围）引用，不能删除。
+        boolean flag = false;
         // 查询是否被指标依赖
+        String[] quotaName = null;
         String quotaExpression = QuotaSqlBuilder.getQuotaExpress(quotaCode);
-        Map quotaMap = new HashMap();
-        quotaMap.put("quotaSource", quotaExpression);
+        Quota quotaMap = new Quota();
+        quotaMap.setQuotaSource(quotaExpression);
         List<Quota> allDependencyByQuota = quotaDao.findAll(quotaMap);
         if(CollectionUtils.isNotEmpty(allDependencyByQuota)){
-            String[] quotaName = new String[allDependencyByQuota.size()];
+            flag = true;
+            quotaName = new String[allDependencyByQuota.size()];
             int i=0;
             for(Quota q : allDependencyByQuota){
                 quotaName[i] = q.getQuotaName();
             }
-            return new BaseResult<>(ResultCodeEnum.PARAM_ERROR.getCode(),"当前指标被指标依赖",
-                    StringUtils.join(quotaName,","));
         }
         // 查询是否被目标依赖
+        String[] targetName = null;
         Target target = new Target();
         TargetItem targetItem = new TargetItem();
         targetItem.setQuotaCode(quotaCode);
         List<TargetItem> itemList = new ArrayList<>();
         itemList.add(targetItem);
-        //target.setItemList(itemList);
+        target.setItemList(itemList);
         Date now = new Date();
         target.setTargetStartTime(now);
         target.setTargetEndTime(now);
         List<Target> targetList = targetDao.findAllByQuery(target);
-        System.out.println("查处数据"+targetList.size()+"tiao");
         if(CollectionUtils.isNotEmpty(targetList)){
+            flag = true;
             int i=0;
-            String[] targetName = new String[targetList.size()];
+            targetName = new String[targetList.size()];
             for(Target t : targetList){
                 targetName[i] = t.getTargetName();
             }
-            return new BaseResult<>(ResultCodeEnum.PARAM_ERROR.getCode(),"当前指标被目标依赖",
-                    StringUtils.join(targetName,","));
 
+        }
+        if(flag) {
+            Map map = new HashMap();
+            map.put("TARGET", targetName);
+            map.put("QUOTA", quotaName);
+            return new BaseResult<>(ResultCodeEnum.PARAM_ERROR.getCode(), "当前指标被依赖",
+                    JSON.toJSONString(map));
         }
         return new BaseResult<>();
     }
@@ -223,7 +228,7 @@ public class QuotaServiceImpl extends BaseService implements IQuotaService {
     public BaseResult<List<QuotaDto>> queryQuotaList(QuotaDto quotaDto) {
         Quota quota = new Quota();
         BeanUtils.copyProperties(quotaDto, quota);
-        return new BaseResult(quotaDao.findAllByQuery(quota));
+        return new BaseResult(quotaDao.findAll(quota));
     }
 
 }

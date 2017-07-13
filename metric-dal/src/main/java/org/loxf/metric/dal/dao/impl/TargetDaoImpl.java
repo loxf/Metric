@@ -30,40 +30,37 @@ public class TargetDaoImpl extends MongoDaoBase<Target> implements TargetDao{
     public String insert(Target object) {
         String sid = IdGenerator.generate(target_prefix);
         object.setTargetCode(sid);
-        object.handleDateToMongo();
         super.insert(object, collectionName);
         return  sid;
     }
 
     @Override
-    public Target findOne(Map<String, Object> params) {
-        Target target= super.findOne(params, collectionName);
-        target.handleMongoDateToJava();
+    public Target findOne(Target object) {
+        Target target= super.findOne(getCommonQuery(object), collectionName);
         return target;
     }
 
     private void handleDateForList(List<Target> list){
         for(Target target:list){
-            target.handleMongoDateToJava();
         }
     }
     @Override
-    public List<Target> findAll(Map<String, Object> params) {
-        List<Target> targetList=super.findAll(params, collectionName);
+    public List<Target> findAll(Target object) {
+        List<Target> targetList=super.findAll(getCommonQuery(object), collectionName);
         handleDateForList(targetList);
         return targetList;
     }
 
     @Override
-    public List<Target> findByPager(Map<String, Object> params, int start, int pageSize) {
-        List<Target> targetList=super.findByPager(params, start, pageSize, collectionName);
+    public List<Target> findByPager(Target object, int start, int pageSize) {
+        List<Target> targetList=super.findByPager(getCommonQuery(object), start, pageSize, collectionName);
         handleDateForList(targetList);
         return targetList;
     }
 
     @Override
-    public void update(Map<String, Object> queryParams, Map<String, Object> setParams) {
-        super.update(queryParams, setParams, collectionName);
+    public void update(Target object, Map<String, Object> setParams) {
+        super.update(getCommonQuery(object), setParams, collectionName);
     }
 
     @Override
@@ -81,8 +78,8 @@ public class TargetDaoImpl extends MongoDaoBase<Target> implements TargetDao{
     }
 
     @Override
-    public long countByParams(Map<String, Object> params) {
-        return super.countByParams(params,collectionName);
+    public long countByParams(Target object) {
+        return super.countByParams(getCommonQuery(object),collectionName);
     }
 
     @Override

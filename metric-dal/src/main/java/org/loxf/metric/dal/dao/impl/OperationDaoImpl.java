@@ -3,6 +3,7 @@ package org.loxf.metric.dal.dao.impl;
 import org.apache.commons.collections.map.HashedMap;
 import org.loxf.metric.base.constants.CollectionConstants;
 import org.loxf.metric.base.utils.IdGenerator;
+import org.loxf.metric.base.utils.MapAndBeanTransUtils;
 import org.loxf.metric.core.mongo.MongoDaoBase;
 import org.loxf.metric.dal.dao.interfaces.OperationDao;
 import org.loxf.metric.dal.po.Operation;
@@ -14,71 +15,56 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * 这个方法 不实现 只需要query就行了
  * Created by hutingting on 2017/7/4.
  */
 @Service("operationDao")
 public class OperationDaoImpl extends MongoDaoBase<Operation> implements OperationDao{
     private final String collectionName = CollectionConstants.OPERATION.getCollectionName();
-    private static String oper_prefix = "OPERRATION_";
 
     @Override
     public String insert(Operation object) {
-        String sid = IdGenerator.generate(oper_prefix);
-        object.setOperationCode(sid);
-        object.handleDateToMongo();
-        super.insert(object, collectionName);
-        return  sid;
+        return null;
     }
 
     @Override
-    public Operation findOne(Map<String, Object> params) {
+    public Operation findOne(Operation obj) {
+        Map<String, Object> params = MapAndBeanTransUtils.transBean2Map(obj);
         Operation operation= super.findOne(params, collectionName);
-        operation.handleMongoDateToJava();
         return operation;
     }
 
-    private void handleDateForList(List<Operation> list){
-        for(Operation operation:list){
-            operation.handleMongoDateToJava();
-        }
-    }
     @Override
-    public List<Operation> findAll(Map<String, Object> params) {
+    public List<Operation> findAll(Operation obj) {
+        Map<String, Object> params = MapAndBeanTransUtils.transBean2Map(obj);
         List<Operation> operationList=super.findAll(params, collectionName);
-        handleDateForList(operationList);
         return operationList;
     }
 
     @Override
-    public List<Operation> findByPager(Map<String, Object> params, int start, int pageSize) {
-        List<Operation> operationList=super.findByPager(params, start, pageSize, collectionName);
-        handleDateForList(operationList);
-        return operationList;
+    public List<Operation> findByPager(Operation params, int start, int pageSize) {
+        return null;
     }
 
     @Override
-    public void update(Map<String, Object> queryParams, Map<String, Object> setParams) {
-        super.update(queryParams, setParams, collectionName);
+    public void update(Operation params, Map<String, Object> setParams) {
+        return;
     }
 
     @Override
     public void updateOne(String itemCode, Map<String, Object> setParams) {
-        Map<String, Object> queryParams=new HashedMap();
-        queryParams.put("operationCode",itemCode);
-        super.updateOne(queryParams, setParams, collectionName);
+        return;
     }
 
     @Override
     public void remove(String itemCode) {
-        Map<String, Object> params=new HashedMap();
-        params.put("operationCode",itemCode);
-        super.remove(params, collectionName);
+        return;
     }
 
 
     @Override
-    public long countByParams(Map<String, Object> params) {
-        return super.countByParams(params,collectionName);
+    public long countByParams(Operation params) {
+        return 0;
     }
 
 }

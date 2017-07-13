@@ -6,7 +6,7 @@ import org.loxf.metric.base.utils.IdGenerator;
 import org.loxf.metric.core.mongo.MongoDaoBase;
 import org.loxf.metric.dal.dao.interfaces.ChartDao;
 import org.loxf.metric.dal.po.Chart;
-import org.springframework.stereotype.Component;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,40 +24,36 @@ public class ChartDaoImpl extends MongoDaoBase<Chart> implements ChartDao{
     public String insert(Chart object) {
         String sid = IdGenerator.generate(chart_prefix);
         object.setChartCode(sid);
-        object.handleDateToMongo();
         super.insert(object, collectionName);
         return sid;
     }
 
     @Override
-    public Chart findOne(Map<String, Object> params) {
-        Chart chart= super.findOne(params, collectionName);
-        chart.handleMongoDateToJava();
+    public Chart findOne(Chart params) {
+        Chart chart= super.findOne(getCommonQuery(params), collectionName);
         return chart;
     }
 
-    private void handleDateForList(List<Chart> list){
-        for(Chart chart:list){
-            chart.handleMongoDateToJava();
-        }
-    }
     @Override
-    public List<Chart> findAll(Map<String, Object> params) {
-        List<Chart> chartList=super.findAll(params, collectionName);
-        handleDateForList(chartList);
+    public List<Chart> findAll(Chart params) {
+        List<Chart> chartList=super.findAll(getCommonQuery(params), collectionName);
         return chartList;
     }
 
     @Override
-    public List<Chart> findByPager(Map<String, Object> params, int start, int pageSize) {
-        List<Chart> chartList=super.findByPager(params, start, pageSize, collectionName);
-        handleDateForList(chartList);
+    public List<Chart> findByPager(Chart params, int start, int pageSize) {
+        List<Chart> chartList=super.findByPager(getCommonQuery(params), start, pageSize, collectionName);
         return chartList;
     }
 
     @Override
-    public void update(Map<String, Object> queryParams, Map<String, Object> setParams) {
-        super.update(queryParams, setParams, collectionName);
+    public long countByParams(Chart params) {
+        return super.countByParams(getCommonQuery(params),collectionName);
+    }
+
+    @Override
+    public void update(Chart params, Map<String, Object> setParams) {
+        super.update(getCommonQuery(params), setParams, collectionName);
     }
 
     @Override
@@ -74,10 +70,9 @@ public class ChartDaoImpl extends MongoDaoBase<Chart> implements ChartDao{
         super.remove(params, collectionName);
     }
 
-    @Override
-    public long countByParams(Map<String, Object> params) {
-        return super.countByParams(params,collectionName);
+    private Query getCommonQuery(Chart chart){
+        //TODO 实现各个dao自己的query
+        return null;
     }
-
 }
 

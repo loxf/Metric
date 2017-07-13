@@ -9,15 +9,15 @@ import java.util.Map;
 public interface IBaseDao<T> {
     public String insert(T object) ;
 
-    public T findOne(Map<String, Object> params) ;
+    public T findOne(T object) ;
 
-    public List<T> findAll(Map<String, Object> params) ;
+    public List<T> findAll(T object) ;
 
-    public List<T> findByPager(Map<String, Object> params, int start, int pageSize) ;
+    public List<T> findByPager(T object, int start, int pageSize) ;
 
-    public long countByParams(Map<String, Object> params);
+    public long countByParams(T object);
 
-    public void update(Map<String, Object> queryParams, Map<String, Object> setParams) ;
+    public void update(T object, Map<String, Object> setParams) ;
 
     public void updateOne(String itemCode, Map<String, Object> setParams) ;
 

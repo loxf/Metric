@@ -1,8 +1,7 @@
-package org.loxf.metric.common.utils;
+package org.loxf.metric.base.utils;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
-import org.loxf.metric.common.dto.Pager;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
@@ -51,15 +50,13 @@ public class MapAndBeanTransUtils {
                     // 得到property对应的getter方法
                     Method getter = property.getReadMethod();
                     Object value = getter.invoke(obj);
-                    if(value!=null){//如果值为null就不设置到map中
-                        if(!(value instanceof Pager)){//去除分页相关信息
-                            if(value instanceof Integer){
-                                if((int)value!=0){
-                                    map.put(key, value);
-                                }
-                            } else {
+                    if(value!=null){
+                        if(value instanceof Integer){
+                            if((int)value!=0){
                                 map.put(key, value);
                             }
+                        } else {
+                            map.put(key, value);
                         }
                     }
                 }
@@ -90,14 +87,12 @@ public class MapAndBeanTransUtils {
                     Method getter = property.getReadMethod();
                     Object value = getter.invoke(obj);
                     if(value!=null){//如果值为null就不设置到map中
-                        if(!(value instanceof Pager)){//去除分页相关信息
-                            if(value instanceof Integer){
-                                if((int)value!=0){
-                                    map.put(key, value);
-                                }
-                            } else {
+                        if(value instanceof Integer){
+                            if((int)value!=0){
                                 map.put(key, value);
                             }
+                        } else {
+                            map.put(key, value);
                         }
                     }
                 }

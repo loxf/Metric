@@ -1,12 +1,10 @@
 package org.loxf.metric.service.impl;
 
 
-import com.alibaba.dubbo.common.utils.CollectionUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.loxf.metric.api.ITargetService;
-import org.loxf.metric.base.exception.MetricException;
 import org.loxf.metric.common.dto.*;
-import org.loxf.metric.common.utils.MapAndBeanTransUtils;
+import org.loxf.metric.base.utils.MapAndBeanTransUtils;
 import org.loxf.metric.dal.dao.interfaces.TargetDao;
 import org.loxf.metric.dal.po.Target;
 import org.apache.log4j.Logger;
@@ -15,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -65,8 +62,8 @@ public class TargetServiceImpl implements ITargetService {
 
     @Override
     public BaseResult<TargetDto> queryItemByCode(String itemCode,String handleUserName) {
-        Map<String, Object> qryParams=new HashedMap();
-        qryParams.put("targetCode",itemCode);
+        Target qryParams=new Target();
+        qryParams.setTargetCode(itemCode);
         Target target=targetDao.findOne(qryParams);
         TargetDto targetDto=new TargetDto();
         BeanUtils.copyProperties(target,targetDto);//前者赋值给后者

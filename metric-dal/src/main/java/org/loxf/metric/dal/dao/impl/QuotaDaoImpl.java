@@ -39,41 +39,35 @@ public class QuotaDaoImpl extends MongoDaoBase<Quota> implements QuotaDao{
     public String insert(Quota quota) {
         quota.setCreatedAt(new Date());
         quota.setUpdatedAt(new Date());
-        quota.handleDateToMongo();
         super.insert(quota, collectionName);
         return quota.getQuotaCode();
     }
 
     @Override
-    public Quota findOne(Map<String, Object> params) {
-        Quota quota= super.findOne(params, collectionName);
-        if(quota!=null) {
-            quota.handleMongoDateToJava();
-            return quota;
-        }
-        return null;
+    public Quota findOne(Quota param) {
+        return super.findOne(getCommonQuery(param), collectionName);
     }
-/*
-    private void handleDateForList(List<Quota> list){
-        for(Quota quota:list){
-            quota.handleMongoDateToJava();
-        }
-    }*/
+
     @Override
-    public List<Quota> findAll(Map<String, Object> params) {
-        List<Quota> quotaList=super.findAll(params, collectionName);
+    public List<Quota> findAll(Quota quota) {
+        List<Quota> quotaList=super.findAll(getCommonQuery(quota), collectionName);
         return quotaList;
     }
 
     @Override
-    public List<Quota> findByPager(Map<String, Object> params, int start, int pageSize) {
-        List<Quota> quotaList=super.findByPager(params, start, pageSize, collectionName);
+    public List<Quota> findByPager(Quota quota, int start, int pageSize) {
+        List<Quota> quotaList=super.findByPager(getCommonQuery(quota), start, pageSize, collectionName);
         return quotaList;
     }
 
     @Override
-    public void update(Map<String, Object> queryParams, Map<String, Object> setParams) {
-        super.update(queryParams, setParams, collectionName);
+    public long countByParams(Quota quota) {
+        return super.countByParams(getCommonQuery(quota), collectionName);
+    }
+
+    @Override
+    public void update(Quota quota, Map<String, Object> setParams) {
+        super.update(getCommonQuery(quota), setParams, collectionName);
     }
 
     @Override
@@ -91,12 +85,6 @@ public class QuotaDaoImpl extends MongoDaoBase<Quota> implements QuotaDao{
         super.remove(params, collectionName);
     }
 
-    @Override
-    public long countByParams(Map<String, Object> params) {
-        return super.countByParams(params, collectionName);
-    }
-
-
     private Query getCommonQuery(Quota quota){
         BasicDBObject query = new BasicDBObject();
         if(StringUtils.isNotEmpty(quota.getQuotaCode())){
@@ -105,6 +93,10 @@ public class QuotaDaoImpl extends MongoDaoBase<Quota> implements QuotaDao{
         if(StringUtils.isNotEmpty(quota.getQuotaName())){
             Pattern pattern = Pattern.compile("^.*" + quota.getQuotaName() +".*$", Pattern.CASE_INSENSITIVE);
             query.put("quotaName", pattern);
+        }
+        if(StringUtils.isNotEmpty(quota.getQuotaSource())){
+            Pattern pattern = Pattern.compile("^.*" + quota.getQuotaSource() +".*$", Pattern.CASE_INSENSITIVE);
+            query.put("quotaSource", pattern);
         }
         if(StringUtils.isNotEmpty(quota.getUniqueCode())){
             query.put("uniqueCode", quota.getUniqueCode());
@@ -140,11 +132,5 @@ public class QuotaDaoImpl extends MongoDaoBase<Quota> implements QuotaDao{
             query.put("quotaDim.dimCode", new BasicDBObject("$in", includeDims));
         }
         return new BasicQuery(query);
-    }
-
-    @Override
-    public List<Quota> findAllByQuery(Quota quota) {
-        List<Quota> quotaList = super.findAll(getCommonQuery(quota), collectionName);
-        return quotaList;
     }
 }
