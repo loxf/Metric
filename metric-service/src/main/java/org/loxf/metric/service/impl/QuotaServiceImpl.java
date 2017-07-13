@@ -57,6 +57,8 @@ public class QuotaServiceImpl extends BaseService implements IQuotaService {
                     }
                     quotaDto.setQuotaCode(ids);
                     quotaDto.setQuotaSource("q_d_" + ids.substring(6));
+                    // 创建数据表
+                    quotaDao.createDataCollection(quotaDto.getQuotaSource());
                 } else if (quotaDto.getType().equals(QuotaType.COMPOSITE.getValue())) {
                     // 复合指标
                     // 获取表达式的源

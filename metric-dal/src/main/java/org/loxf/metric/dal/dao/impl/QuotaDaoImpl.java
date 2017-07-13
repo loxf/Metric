@@ -133,4 +133,10 @@ public class QuotaDaoImpl extends MongoDaoBase<Quota> implements QuotaDao{
         }
         return new BasicQuery(query);
     }
+
+    @Override
+    public void createDataCollection(String collectionName) {
+        // 创建数据表&索引
+        mongoTemplate.createCollection(collectionName).createIndex(new BasicDBObject("circleTime", 1));
+    }
 }
