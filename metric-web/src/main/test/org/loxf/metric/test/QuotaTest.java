@@ -100,11 +100,6 @@ public class QuotaTest {
     }
 
     @Test
-    public void checkDependcy(){
-        logger.debug("获取结果：" + JSON.toJSONString(quotaService.checkDependencyQuota("QUOTA001")));
-    }
-
-    @Test
     public void queryList(){
         QuotaDimItem quotaDimItem = new QuotaDimItem();
         quotaDimItem.setDimCode("productName");

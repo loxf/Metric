@@ -10,12 +10,6 @@ import java.util.List;
  */
 public interface IQuotaService extends IBaseService<QuotaDto> {
     /**
-     * 检查指标依赖
-     * @param quotaCode
-     * @return
-     */
-    public BaseResult<String> checkDependencyQuota(String quotaCode);
-    /**
      * 获取全部指标
      * @param quotaDto
      * @return

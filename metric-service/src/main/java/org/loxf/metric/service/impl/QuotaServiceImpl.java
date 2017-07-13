@@ -166,8 +166,7 @@ public class QuotaServiceImpl extends BaseService implements IQuotaService {
         return checkResult;
     }
 
-    @Override
-    public BaseResult<String> checkDependencyQuota(String quotaCode) {
+    BaseResult<String> checkDependencyQuota(String quotaCode) {
         // 如果基础指标被其他指标引用，不能删除。如果被有效目标（当前日期在目标的时间范围）引用，不能删除。
         boolean flag = false;
         // 查询是否被指标依赖
