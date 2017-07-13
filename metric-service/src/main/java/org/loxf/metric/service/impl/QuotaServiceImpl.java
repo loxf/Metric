@@ -36,46 +36,46 @@ public class QuotaServiceImpl extends BaseService implements IQuotaService {
 
     @Override
     public BaseResult<String> insertItem(QuotaDto quotaDto) {
-        if (!validHandlerUser(quotaDto.getHandleUserName())) {
-            return new BaseResult(ResultCodeEnum.NO_PERMISSION.getCode(), "经办人错误");
-        }
-        BaseResult validResult = validQuota(quotaDto);
-        quotaDto.setCreateUserName(quotaDto.getHandleUserName());
-        quotaDto.setUpdateUserName(quotaDto.getHandleUserName());
-        if (ResultCodeEnum.SUCCESS.getCode().equals(validResult.getCode())) {
-            try {
-                if (quotaDto.getType().equals(QuotaType.BASIC.getValue())) {
-                    // 基础指标
-                    String ids = null;
-                    while (true) {
-                        ids = IdGenerator.generate("QUOTA_", 13);
-                        Quota qryParams = new Quota();
-                        qryParams.setQuotaCode(ids);
-                        Quota quota = quotaDao.findOne(qryParams);
-                        if (quota == null) {
-                            break;
+        BaseResult result = validHandlerUser(quotaDto.getHandleUserName(), true);
+        if(result.getCode().equals(ResultCodeEnum.SUCCESS)) {
+            quotaDto.setCreateUserName(quotaDto.getHandleUserName());
+            quotaDto.setUpdateUserName(quotaDto.getHandleUserName());
+            result = validQuota(quotaDto);
+            if (ResultCodeEnum.SUCCESS.getCode().equals(result.getCode())) {
+                try {
+                    if (quotaDto.getType().equals(QuotaType.BASIC.getValue())) {
+                        // 基础指标
+                        String ids = null;
+                        while (true) {
+                            ids = IdGenerator.generate("QUOTA_", 13);
+                            Quota qryParams = new Quota();
+                            qryParams.setQuotaCode(ids);
+                            Quota quota = quotaDao.findOne(qryParams);
+                            if (quota == null) {
+                                break;
+                            }
+                        }
+                        quotaDto.setQuotaCode(ids);
+                        quotaDto.setQuotaSource("q_d_" + ids.substring(6));
+                    } else if (quotaDto.getType().equals(QuotaType.COMPOSITE.getValue())) {
+                        // 复合指标
+                        // 获取表达式的源
+                        String quotaSource = quotaDto.getQuotaSource();
+                        List<String> quotaCodeList = QuotaSqlBuilder.quotaList(quotaSource);
+                        if (CollectionUtils.isEmpty(quotaCodeList)) {
+                            return new BaseResult(ResultCodeEnum.PARAM_ERROR.getCode(), "复合指标必须基于其他指标运算");
                         }
                     }
-                    quotaDto.setQuotaCode(ids);
-                    quotaDto.setQuotaSource("q_d_" + ids.substring(6));
-                } else if (quotaDto.getType().equals(QuotaType.COMPOSITE.getValue())) {
-                    // 复合指标
-                    // 获取表达式的源
-                    String quotaSource = quotaDto.getQuotaSource();
-                    List<String> quotaCodeList = QuotaSqlBuilder.quotaList(quotaSource);
-                    if (CollectionUtils.isEmpty(quotaCodeList)) {
-                        return new BaseResult(ResultCodeEnum.PARAM_ERROR.getCode(), "复合指标必须基于其他指标运算");
-                    }
+                    Quota quota = new Quota();
+                    BeanUtils.copyProperties(quotaDto, quota);
+                    return new BaseResult(quotaDao.insert(quota));
+                } catch (Exception e) {
+                    logger.error("创建指标失败", e);
+                    throw new MetricException("创建指标失败", e);
                 }
-                Quota quota = new Quota();
-                BeanUtils.copyProperties(quotaDto, quota);
-                return new BaseResult(quotaDao.insert(quota));
-            } catch (Exception e) {
-                logger.error("创建指标失败", e);
-                throw new MetricException("创建指标失败", e);
             }
         }
-        return validResult;
+        return result;
     }
 
     private BaseResult validQuota(QuotaDto quotaDto) {
@@ -113,66 +113,70 @@ public class QuotaServiceImpl extends BaseService implements IQuotaService {
 
     @Override
     public BaseResult<PageData> getPageList(QuotaDto obj) {
-        if (!validHandlerUser(obj.getHandleUserName())) {
-            throw new MetricException("经办人错误");
+        BaseResult result = validHandlerUser(obj.getHandleUserName(), true);
+        if(result.getCode().equals(ResultCodeEnum.SUCCESS)) {
+            Pager pager = obj.getPager();
+            if (pager == null) {
+                logger.info("分页信息为空，无法查询!");
+                return null;
+            }
+            Map<String, Object> params = MapAndBeanTransUtils.transBean2Map(obj);
+            return new BaseResult<>(getPageResult(quotaDao, params, pager.getStart(), pager.getRownum()));
         }
-        Pager pager = obj.getPager();
-        if (pager == null) {
-            logger.info("分页信息为空，无法查询!");
-            return null;
-        }
-        Map<String, Object> params = MapAndBeanTransUtils.transBean2Map(obj);
-        return new BaseResult<>(getPageResult(quotaDao, params, pager.getStart(), pager.getRownum()));
+        return result;
     }
 
     @Override
     public BaseResult<QuotaDto> queryItemByCode(String itemCode, String handleUserName) {
-        if (!validHandlerUser(handleUserName)) {
-            return new BaseResult(ResultCodeEnum.NO_PERMISSION.getCode(), "经办人错误");
+        BaseResult result = validHandlerUser(handleUserName, true);
+        if(result.getCode().equals(ResultCodeEnum.SUCCESS)) {
+            Quota qryParams = new Quota();
+            qryParams.setQuotaCode(itemCode);
+            Quota quota = quotaDao.findOne(qryParams);
+            QuotaDto quotaDto = new QuotaDto();
+            BeanUtils.copyProperties(quota, quotaDto);//前者赋值给后者
+            return new BaseResult<>(quotaDto);
         }
-        Quota qryParams = new Quota();
-        qryParams.setQuotaCode(itemCode);
-        Quota quota = quotaDao.findOne(qryParams);
-        QuotaDto quotaDto = new QuotaDto();
-        BeanUtils.copyProperties(quota, quotaDto);//前者赋值给后者
-        return new BaseResult<>(quotaDto);
+        return result;
     }
 
     @Override
     public BaseResult<String> updateItem(QuotaDto obj) {
-        if (!validHandlerUser(obj.getHandleUserName())) {
-            return new BaseResult(ResultCodeEnum.NO_PERMISSION.getCode(), "经办人错误");
+        BaseResult result = validHandlerUser(obj.getHandleUserName(), true);
+        if(result.getCode().equals(ResultCodeEnum.SUCCESS)) {
+            String itemCode = obj.getQuotaCode();
+            if (StringUtils.isEmpty(itemCode)) {
+                return new BaseResult<>("指标code不能为空！");
+            }
+            if (StringUtils.isEmpty(obj.getType())) {
+                return new BaseResult<>("指标类型不能为空！");
+            }
+            Map quotaMap = null;
+            if (obj.getType().equals(QuotaType.BASIC.getValue())) {
+                // 展示类型（数量/金额/比例），展现方式（合计/最大值/最小值/平均值/计数），数据接入方式（SDK/EXCEL）
+                String[] props = {"showOperation", "showType", "dataImportType"};
+                quotaMap = MapAndBeanTransUtils.transBean2Map(obj, Arrays.asList(props));
+            } else {
+                quotaMap = MapAndBeanTransUtils.transBean2Map(obj);
+            }
+            quotaDao.updateOne(itemCode, quotaMap);
+            return new BaseResult<>();
         }
-        String itemCode = obj.getQuotaCode();
-        if (StringUtils.isEmpty(itemCode)) {
-            return new BaseResult<>("指标code不能为空！");
-        }
-        if (StringUtils.isEmpty(obj.getType())) {
-            return new BaseResult<>("指标类型不能为空！");
-        }
-        Map quotaMap = null;
-        if (obj.getType().equals(QuotaType.BASIC.getValue())) {
-            // 展示类型（数量/金额/比例），展现方式（合计/最大值/最小值/平均值/计数），数据接入方式（SDK/EXCEL）
-            String[] props = {"showOperation", "showType", "dataImportType"};
-            quotaMap = MapAndBeanTransUtils.transBean2Map(obj, Arrays.asList(props));
-        } else {
-            quotaMap = MapAndBeanTransUtils.transBean2Map(obj);
-        }
-        quotaDao.updateOne(itemCode, quotaMap);
-        return new BaseResult<>();
+        return result;
     }
 
     @Override
     public BaseResult<String> delItemByCode(String itemCode, String handleUserName) {
-        if (!validHandlerUser(handleUserName)) {
-            return new BaseResult(ResultCodeEnum.NO_PERMISSION.getCode(), "经办人错误");
+        BaseResult result = validHandlerUser(handleUserName, true);
+        if(result.getCode().equals(ResultCodeEnum.SUCCESS)) {
+            BaseResult<String> checkResult = checkDependencyQuota(itemCode);
+            if (checkResult.getCode().equals(ResultCodeEnum.SUCCESS.getCode())) {
+                quotaDao.remove(itemCode);
+                return new BaseResult<>();
+            }
+            return checkResult;
         }
-        BaseResult<String> checkResult = checkDependencyQuota(itemCode);
-        if(checkResult.getCode().equals(ResultCodeEnum.SUCCESS.getCode())) {
-            quotaDao.remove(itemCode);
-            return new BaseResult<>();
-        }
-        return checkResult;
+        return result;
     }
 
     @Override

@@ -2,11 +2,13 @@ package org.loxf.metric.service.impl;
 
 import org.apache.commons.collections.map.HashedMap;
 import org.loxf.metric.api.IBoardService;
+import org.loxf.metric.common.constants.ResultCodeEnum;
 import org.loxf.metric.common.dto.*;
 import org.loxf.metric.base.utils.MapAndBeanTransUtils;
 import org.loxf.metric.dal.dao.interfaces.BoardDao;
 import org.loxf.metric.dal.po.Board;
 import org.apache.log4j.Logger;
+import org.loxf.metric.service.base.BaseService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +21,7 @@ import java.util.Map;
  * Created by caiyang on 2017/5/4.
  */
 @Service("boardService")
-public class BoardServiceImpl implements IBoardService {
+public class BoardServiceImpl extends BaseService implements IBoardService {
     Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
@@ -27,11 +29,15 @@ public class BoardServiceImpl implements IBoardService {
 
     @Override
     public BaseResult<String> insertItem(BoardDto obj) {
-        Board board = new Board();
-        BeanUtils.copyProperties(obj, board);
-        board.setCreatedAt(new Date());
-        board.setUpdatedAt(new Date());
-        return new BaseResult<>(boardDao.insert(board));
+        BaseResult result = validHandlerUser(obj.getHandleUserName(), true);
+        if(result.getCode().equals(ResultCodeEnum.SUCCESS)) {
+            Board board = new Board();
+            BeanUtils.copyProperties(obj, board);
+            board.setCreatedAt(new Date());
+            board.setUpdatedAt(new Date());
+            return new BaseResult<>(boardDao.insert(board));
+        }
+        return result;
     }
 
     @Override
