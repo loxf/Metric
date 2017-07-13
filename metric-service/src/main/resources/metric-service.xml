@@ -12,5 +12,5 @@
     <bean class="org.loxf.metric.service.base.SpringApplicationContextUtil"/>
 
     <!-- 启动对@AspectJ注解的支持 -->
-    <aop:aspectj-autoproxy/>
+    <aop:aspectj-autoproxy proxy-target-class="true"></aop:aspectj-autoproxy>
 </beans>

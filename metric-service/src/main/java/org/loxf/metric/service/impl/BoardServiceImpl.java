@@ -29,15 +29,11 @@ public class BoardServiceImpl extends BaseService implements IBoardService {
 
     @Override
     public BaseResult<String> insertItem(BoardDto obj) {
-        BaseResult result = validHandlerUser(obj.getHandleUserName(), true);
-        if(result.getCode().equals(ResultCodeEnum.SUCCESS)) {
             Board board = new Board();
             BeanUtils.copyProperties(obj, board);
             board.setCreatedAt(new Date());
             board.setUpdatedAt(new Date());
             return new BaseResult<>(boardDao.insert(board));
-        }
-        return result;
     }
 
     @Override

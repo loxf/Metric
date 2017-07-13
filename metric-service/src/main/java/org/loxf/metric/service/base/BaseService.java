@@ -26,8 +26,6 @@ import java.util.Map;
  */
 public class BaseService {
     Logger logger = Logger.getLogger(this.getClass());
-    @Autowired
-    private UserDao userDao;
 
     public PageData getPageResult(Class<? extends Object> daoClazz, Map<String, Object> params,int start,int pageSize) {
         IBaseDao dao = (IBaseDao)SpringApplicationContextUtil.getBean(daoClazz);
@@ -53,37 +51,4 @@ public class BaseService {
         }
     }
 
-    /**
-     * @param userName 经办人
-     * @param checkRoot 是否校验ROOT
-     * @return
-     */
-    public BaseResult<String> validHandlerUser(String userName, boolean checkRoot){
-        BaseResult<String> result = new BaseResult<>();
-        if (StringUtils.isEmpty(userName)) {
-            result.setCode(ResultCodeEnum.PARAM_LACK.getCode());
-            result.setMsg("经办人不能为空!");
-            return result;
-        } else {//判断该用户是否存在
-            User user = new User();
-            user.setUserName(userName);
-            User existsUser = userDao.findOne(user);
-            if (existsUser == null) {
-                result.setCode(ResultCodeEnum.USER_NOT_EXIST.getCode());
-                result.setMsg(ResultCodeEnum.USER_NOT_EXIST.getCodeMsg());
-                return result;
-            } else {
-                if(checkRoot) {
-                    //判断该用户是否为root用户
-                    String type = existsUser.getUserType();
-                    if (!(UserTypeEnum.ROOT.equals(type))) {
-                        result.setCode(ResultCodeEnum.NO_PERMISSION.getCode());
-                        result.setMsg(ResultCodeEnum.NO_PERMISSION.getCodeMsg());
-                        return result;
-                    }
-                }
-            }
-        }
-        return new BaseResult(userName);
-    }
 }

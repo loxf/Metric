@@ -1,11 +1,14 @@
 package org.loxf.metric.dal.dao.impl;
 
+import com.mongodb.BasicDBObject;
 import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.lang.StringUtils;
 import org.loxf.metric.base.constants.CollectionConstants;
 import org.loxf.metric.base.utils.IdGenerator;
 import org.loxf.metric.core.mongo.MongoDaoBase;
 import org.loxf.metric.dal.dao.interfaces.UserDao;
 import org.loxf.metric.dal.po.User;
+import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
@@ -73,7 +76,11 @@ public class UserDaoImpl extends MongoDaoBase<User> implements UserDao {
     }
 
     private Query getCommonQuery(User user){
-        //TODO 实现各个dao自己的query
-        return null;
+        BasicDBObject query = new BasicDBObject();
+        if(StringUtils.isNotEmpty(user.getUserName())){
+            query.put("userName", user.getUserName());
+        }
+        // todo 未完
+        return new BasicQuery(query);
     }
 }

@@ -40,32 +40,31 @@ public class ChartServiceImpl extends BaseService implements IChartService {
 
     @Override
     public BaseResult<String> insertItem(ChartDto obj) {//前端去重，可见范围列表。只有root用户可以添加图
-        BaseResult result = validHandlerUser(obj.getHandleUserName(), true);
-        if(result.getCode().equals(ResultCodeEnum.SUCCESS)) {
-            if (StringUtils.isEmpty(obj.getChartName()) || StringUtils.isEmpty(obj.getType()) ||
-                    StringUtils.isEmpty(obj.getChartDim()) || obj.getQuotaList().size() == 0 || obj.getQuotaList() == null) {
-                result.setCode(ResultCodeEnum.PARAM_LACK.getCode());
-                result.setMsg("图名称、类型、维度、指标都不能为空！操作用户为：" + obj.getCreateUserName());
-                return result;
-            }
+        BaseResult result = new BaseResult();
+        if (StringUtils.isEmpty(obj.getChartName()) || StringUtils.isEmpty(obj.getType()) ||
+                StringUtils.isEmpty(obj.getChartDim()) || obj.getQuotaList().size() == 0 || obj.getQuotaList() == null) {
+            result.setCode(ResultCodeEnum.PARAM_LACK.getCode());
+            result.setMsg("图名称、类型、维度、指标都不能为空！操作用户为：" + obj.getCreateUserName());
+            return result;
+        }
 
-            if (StringUtils.isEmpty(obj.getVisibleType())) {//全局可见，不传
-                obj.setVisibleType(VisibleTypeEnum.ALL.name());
-            } else if (!obj.getVisibleType().equals(VisibleTypeEnum.SPECIFICRANGE.name())) {
-                logger.info("入参visibleType不在可见范围之内,visibleType=" + obj.getVisibleType() + "操作用户为：" + obj.getCreateUserName());
-                result.setCode(ResultCodeEnum.PARAM_ERROR.getCode());
-                result.setMsg(ResultCodeEnum.PARAM_ERROR.getCodeMsg());
-                return result;
-            }
-            if (!StringUtils.isEmpty(obj.getVisibleType()) && (obj.getVisibleList() == null || obj.getVisibleList().size() == 0)) {
-                logger.info("可见范围中没有用户列表，" + obj.getVisibleType() + "操作用户为：" + obj.getCreateUserName());
-                result.setCode(ResultCodeEnum.PARAM_ERROR.getCode());
-                result.setMsg(ResultCodeEnum.PARAM_ERROR.getCodeMsg());
-                return result;
-            }
-            Chart chart = new Chart();
-            BeanUtils.copyProperties(obj, chart);
-            //是否需要校验可见范围内的用户合法性。
+        if (StringUtils.isEmpty(obj.getVisibleType())) {//全局可见，不传
+            obj.setVisibleType(VisibleTypeEnum.ALL.name());
+        } else if (!obj.getVisibleType().equals(VisibleTypeEnum.SPECIFICRANGE.name())) {
+            logger.info("入参visibleType不在可见范围之内,visibleType=" + obj.getVisibleType() + "操作用户为：" + obj.getCreateUserName());
+            result.setCode(ResultCodeEnum.PARAM_ERROR.getCode());
+            result.setMsg(ResultCodeEnum.PARAM_ERROR.getCodeMsg());
+            return result;
+        }
+        if (!StringUtils.isEmpty(obj.getVisibleType()) && (obj.getVisibleList() == null || obj.getVisibleList().size() == 0)) {
+            logger.info("可见范围中没有用户列表，" + obj.getVisibleType() + "操作用户为：" + obj.getCreateUserName());
+            result.setCode(ResultCodeEnum.PARAM_ERROR.getCode());
+            result.setMsg(ResultCodeEnum.PARAM_ERROR.getCodeMsg());
+            return result;
+        }
+        Chart chart = new Chart();
+        BeanUtils.copyProperties(obj, chart);
+        //是否需要校验可见范围内的用户合法性。
 //        Set<String> visibleSet=obj.getVisibleList();//入参指定用户
 //        StringBuilder notExistList=null;
 //        Set<String> findUserSet= findAllUserName(visibleSet);//查询出来的用户
@@ -79,12 +78,11 @@ public class ChartServiceImpl extends BaseService implements IChartService {
 //            result.setMsg("数据库中不存在以下用户："+notExistList.toString()+",无法添加");
 //            return result;
 //        }
-            chart.setState(StandardState.AVAILABLE.getValue());
-            chart.setCreatedAt(new Date());
-            chart.setUpdatedAt(new Date());
-            result.setCode(ResultCodeEnum.SUCCESS.getCode());
-            result.setData(chartDao.insert(chart));
-        }
+        chart.setState(StandardState.AVAILABLE.getValue());
+        chart.setCreatedAt(new Date());
+        chart.setUpdatedAt(new Date());
+        result.setCode(ResultCodeEnum.SUCCESS.getCode());
+        result.setData(chartDao.insert(chart));
         return result;
     }
 
