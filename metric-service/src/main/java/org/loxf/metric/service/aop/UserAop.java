@@ -64,6 +64,14 @@ public class UserAop {
                         if (!(UserTypeEnum.ROOT.name().equals(type))) {
                             throw new MetricException("登录用户无权限!");
                         }
+                    } else if(permissionType.equals(PermissionType.SPECIAL)){
+                        // 指定权限校验
+                        String permissionCode = checkUser.permissionCode();// 所需权限
+                        // 以下代码未实现，以后用户实现权限控制后，可放开
+                        /*List<Permission> permissionList = existsUser.getPermissionList();
+                        if(!permissionList.contains(new Permission(permissionCode))){
+                            throw new MetricException("登录用户无权限!");
+                        }*/
                     }
                 }
             }
