@@ -117,8 +117,7 @@ public class QuotaServiceImpl extends BaseService implements IQuotaService {
     public BaseResult<PageData> getPageList(QuotaDto obj) {
         Pager pager = obj.getPager();
         if (pager == null) {
-            logger.info("分页信息为空，无法查询!");
-            return null;
+            return new BaseResult<>(ResultCodeEnum.PARAM_LACK.getCode(), "分页信息为空");
         }
         Map<String, Object> params = MapAndBeanTransUtils.transBean2Map(obj);
         return new BaseResult<>(getPageResult(quotaDao, params, pager.getStart(), pager.getRownum()));

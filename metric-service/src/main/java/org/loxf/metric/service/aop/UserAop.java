@@ -30,20 +30,23 @@ public class UserAop {
 
     @Before("@annotation(checkUser)")
     public void checkUserRole(JoinPoint point, CheckUser checkUser){
+        // 获取权限类型
         PermissionType permissionType = checkUser.value();
         if(permissionType.equals(PermissionType.NONE)) {
+            // 无需校验权限
             return;
         } else {
-            String nameParam = checkUser.nameParam();
-            String[] nameParamArr = nameParam.split("\\.");
-            String location = nameParamArr[0].substring(1, nameParamArr[0].length()-1);
-            Object args [] = point.getArgs();
-            Object obj = args[Integer.parseInt(location)];
+            // 需校验权限
+            String nameParam = checkUser.nameParam();// 获取权限所需的经办人的取值入参对应的位置及其他配置 形式：{0}.name
+            String[] nameParamArr = nameParam.split("\\.");// 解析
+            String location = nameParamArr[0].substring(1, nameParamArr[0].length()-1);// 先获取参数位置（索引）
+            Object args [] = point.getArgs();//获取当前方法的所有入参参数
+            Object obj = args[Integer.parseInt(location)];// 获取经办人所在的参数
             String userName = "";
             if(nameParamArr.length==1){
-                userName = obj.toString();
+                userName = obj.toString();// 如果长度为1，代表当前入参非对象，toString获取的值就是所需参数
             } else {
-                userName = getUserName(obj, nameParamArr, 1);
+                userName = getUserName(obj, nameParamArr, 1);// 当前入参为对象，递归获取
             }
             // 权限校验
             if (StringUtils.isEmpty(userName)) {

@@ -9,6 +9,8 @@ public enum ResultCodeEnum {
     PARAM_ERROR("502","参数校验失败"),
     DATA_NOT_EXIST("503","数据不存在"),
     USER_NOT_EXIST("504","用户不存在"),
+    DATA_EXIST("505","数据已存在"),
+    NOT_SUPPORT("509","接口弃用"),
     NO_PERMISSION("300","权限不足");
 
     private String code;
