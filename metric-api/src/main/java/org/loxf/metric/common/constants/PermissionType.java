@@ -7,6 +7,7 @@ public enum PermissionType {
     ROOT("ROOT", "主用户权限"),
     CHILD("CHILD", "子用户权限"),
     LOGIN("LOGIN", "登录权限"),
+    SPECIAL("SPECIAL", "指定权限"),
     NONE("NONE", "无权限");
 
     PermissionType(String code, String desc){

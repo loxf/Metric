@@ -94,10 +94,10 @@ public class UserAop {
         }
         return getUserName(object, nameParamArr, ++deep);
     }
+
     public String captureName(String name) {
         char[] cs=name.toCharArray();
         cs[0]-=32;
         return String.valueOf(cs);
-
     }
 }
