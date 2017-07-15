@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
  * Created by hutingting on 2017/7/4.
  */
 @Service("chartDao")
-public class ChartDaoImpl extends MongoDaoBase<Chart> implements ChartDao{
+public class ChartDaoImpl extends MongoDaoBase<Chart> implements ChartDao {
     private final String collectionName = CollectionConstants.CHART.getCollectionName();
     private static String chart_prefix = "CHART_";
 
@@ -46,81 +46,81 @@ public class ChartDaoImpl extends MongoDaoBase<Chart> implements ChartDao{
 
     @Override
     public long countByParams(Map<String, Object> qryParams) {
-        qryParams.put("state",StandardState.AVAILABLE.getValue());
-        return super.countByParams(qryParams,collectionName);
+        qryParams.put("state", StandardState.AVAILABLE.getValue());
+        return super.countByParams(qryParams, collectionName);
     }
 
     @Override
     public long countByParams(Chart object, String handleUserName) {
-        return super.countByParams(getCommonQuery(object,handleUserName),collectionName);
+        return super.countByParams(getCommonQuery(object, handleUserName), collectionName);
     }
 
     @Override
     public void update(Chart params, Map<String, Object> setParams) {
-        super.update(getCommonQuery(params,null), setParams, collectionName);
+        super.update(getCommonQuery(params, null), setParams, collectionName);
     }
 
     @Override
     public void updateOne(String itemCode, Map<String, Object> setParams) {
-        Map<String, Object> queryParams=new HashedMap();
-        queryParams.put("chartCode",itemCode);
-        setParams.put("updatedAt",new Date());
+        Map<String, Object> queryParams = new HashedMap();
+        queryParams.put("chartCode", itemCode);
+        setParams.put("updatedAt", new Date());
         super.updateOne(queryParams, setParams, collectionName);
     }
 
     @Override
     public void remove(String itemCode) {
-        Map<String, Object> params=new HashedMap();
-        params.put("chartCode",itemCode);
+        Map<String, Object> params = new HashedMap();
+        params.put("chartCode", itemCode);
         super.remove(params, collectionName);
     }
 
-    private Query getCommonQuery(Chart chart,String handleUserName){
+    private Query getCommonQuery(Chart chart, String handleUserName) {
         BasicDBObject query = new BasicDBObject();
-        if(StringUtils.isNotEmpty(chart.getChartCode())){
+        if (StringUtils.isNotEmpty(chart.getChartCode())) {
             query.put("chartCode", chart.getChartCode());
         }
-        if(StringUtils.isNotEmpty(chart.getChartName())){//模糊匹配
-            Pattern pattern = Pattern.compile("^.*" + chart.getChartName() +".*$", Pattern.CASE_INSENSITIVE);
+        if (StringUtils.isNotEmpty(chart.getChartName())) {//模糊匹配
+            Pattern pattern = Pattern.compile("^.*" + chart.getChartName() + ".*$", Pattern.CASE_INSENSITIVE);
             query.put("chartName", pattern);
         }
-        if(StringUtils.isNotEmpty(chart.getType())){
+        if (StringUtils.isNotEmpty(chart.getType())) {
             query.put("type", chart.getType());
         }
         //有指定查看人范围
-        if(StringUtils.isNotEmpty(chart.getVisibleType())&& VisibleTypeEnum.SPECIFICRANGE.name().equals(chart.getVisibleType())){
-            if(StringUtils.isNotEmpty(handleUserName)){
-                Map elemMap=new HashedMap();
-                Map userMap=new HashedMap();
-                userMap.put("userName",handleUserName);
-                elemMap.put(ComPareConstants.ELEMMATCH.getDisplayName(),userMap);
-                query.put("visibleList",elemMap);
+        if (StringUtils.isNotEmpty(chart.getVisibleType()) && VisibleTypeEnum.SPECIFICRANGE.name().equals(chart.getVisibleType())) {
+            if (StringUtils.isNotEmpty(handleUserName)) {
+                Map elemMap = new HashedMap();
+                Map userMap = new HashedMap();
+                userMap.put("userName", handleUserName);
+                elemMap.put(ComPareConstants.ELEMMATCH.getDisplayName(), userMap);
+                query.put("visibleList", elemMap);
             }
         }
 
-        if(StringUtils.isNotEmpty(chart.getChartDim())){
+        if (StringUtils.isNotEmpty(chart.getChartDim())) {
             query.put("chartDim", chart.getChartDim());
         }
-        if(StringUtils.isNotEmpty(chart.getUniqueCode())){
+        if (StringUtils.isNotEmpty(chart.getUniqueCode())) {
             query.put("uniqueCode", chart.getUniqueCode());
         }
-        if(StringUtils.isNotEmpty(chart.getType())){
+        if (StringUtils.isNotEmpty(chart.getType())) {
             query.put("type", chart.getType());
         }
 
-        if(StringUtils.isNotEmpty(chart.getCreateUserName())){
+        if (StringUtils.isNotEmpty(chart.getCreateUserName())) {
             query.put("createUserName", chart.getCreateUserName());
         }
 
-        if(chart.getStartDate()!=null||chart.getEndDate()!=null){
+        if (chart.getStartDate() != null || chart.getEndDate() != null) {
             Map<String, Object> createT = new HashMap<>();
-            if(chart.getStartDate()!=null)
+            if (chart.getStartDate() != null)
                 createT.put("$gte", chart.getStartDate());
-            if(chart.getEndDate()!=null)
+            if (chart.getEndDate() != null)
                 createT.put("$lte", chart.getEndDate());
             query.put("createdAt", createT);
         }
-        query.put("state",StandardState.AVAILABLE.getValue());
+        query.put("state", StandardState.AVAILABLE.getValue());
         return new BasicQuery(query);
     }
 
@@ -141,38 +141,38 @@ public class ChartDaoImpl extends MongoDaoBase<Chart> implements ChartDao{
 
     @Override
     public Chart findOne(Chart object, String handleUserName) {
-        Chart chart= super.findOne(getCommonQuery(object,handleUserName), collectionName);
+        Chart chart = super.findOne(getCommonQuery(object, handleUserName), collectionName);
         return chart;
     }
 
     @Override
-    public Chart findByCode(String chartCode,String handleUserName){
-        Map<String,Object> qryMap=new HashedMap();
-        qryMap.put("chartCode",chartCode);
+    public Chart findByCode(String chartCode, String handleUserName) {
+        Map<String, Object> qryMap = new HashedMap();
+        qryMap.put("chartCode", chartCode);
         qryMap.put("state", StandardState.AVAILABLE.getValue());
-        Map<String,Map> elemMap=new HashedMap();
-        Map<String,String> userMap=new HashedMap();
-        userMap.put("code",handleUserName);
-        elemMap.put(ComPareConstants.ELEMMATCH.getDisplayName(),userMap);
-        qryMap.put("visibleList",elemMap);
+        Map<String, Map> elemMap = new HashedMap();
+        Map<String, String> userMap = new HashedMap();
+        userMap.put("code", handleUserName);
+        elemMap.put(ComPareConstants.ELEMMATCH.getDisplayName(), userMap);
+        qryMap.put("visibleList", elemMap);
         return super.findOne(qryMap, collectionName);
     }
     @Override
     public List<Chart> findAll(Chart object, String handleUserName) {
-        List<Chart> chartList=super.findAll(getCommonQuery(object,handleUserName), collectionName);
+        List<Chart> chartList = super.findAll(getCommonQuery(object, handleUserName), collectionName);
         return chartList;
     }
 
     @Override
     public List<Chart> findByPager(Chart object, String handleUserName, int start, int pageSize) {
-        List<Chart> chartList=super.findByPager(getCommonQuery(object,handleUserName), start, pageSize, collectionName);
+        List<Chart> chartList = super.findByPager(getCommonQuery(object, handleUserName), start, pageSize, collectionName);
         return chartList;
     }
 
     @Override
-    public List<Chart> findPagerByParams(Map<String, Object> qryParams,int start, int pageSize){
-        qryParams.put("state",StandardState.AVAILABLE.getValue());
-        return super.findByPager(qryParams,start,pageSize,collectionName);
+    public List<Chart> findPagerByParams(Map<String, Object> qryParams, int start, int pageSize) {
+        qryParams.put("state", StandardState.AVAILABLE.getValue());
+        return super.findByPager(qryParams, start, pageSize, collectionName);
     }
 }
 

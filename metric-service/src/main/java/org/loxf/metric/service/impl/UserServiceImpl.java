@@ -34,6 +34,10 @@ public class UserServiceImpl extends BaseService implements IUserService {
     @Autowired
     private UserDao userDao;
 
+
+
+
+
     @Override
     @CheckUser(nameParam = "{0}.handleUserName")
     public BaseResult<PageData> getPageList(UserDto obj) {

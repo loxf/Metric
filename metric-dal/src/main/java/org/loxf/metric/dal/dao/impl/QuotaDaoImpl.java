@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.loxf.metric.base.ItemList.QuotaDimItem;
 import org.loxf.metric.base.ItemList.TargetItem;
 import org.loxf.metric.base.constants.CollectionConstants;
+import org.loxf.metric.base.constants.StandardState;
 import org.loxf.metric.base.utils.IdGenerator;
 import org.loxf.metric.core.mongo.MongoDaoBase;
 import org.loxf.metric.dal.dao.interfaces.QuotaDao;
@@ -89,6 +90,7 @@ public class QuotaDaoImpl extends MongoDaoBase<Quota> implements QuotaDao{
 
     private Query getCommonQuery(Quota quota){
         BasicDBObject query = new BasicDBObject();
+        query.put("state", StandardState.AVAILABLE.getValue());
         if(StringUtils.isNotEmpty(quota.getQuotaCode())){
             query.put("quotaCode", quota.getQuotaCode());
         }

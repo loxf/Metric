@@ -3,6 +3,7 @@ package org.loxf.metric.service.impl;
 
 import org.apache.commons.collections.map.HashedMap;
 import org.loxf.metric.api.IChartService;
+import org.loxf.metric.base.ItemList.QuotaItem;
 import org.loxf.metric.base.constants.StandardState;
 import org.loxf.metric.base.constants.VisibleTypeEnum;
 import org.loxf.metric.common.constants.*;
@@ -11,8 +12,10 @@ import org.loxf.metric.dal.dao.interfaces.ChartDao;
 import org.loxf.metric.common.dto.BaseResult;
 import org.loxf.metric.common.dto.ChartDto;
 import org.loxf.metric.common.dto.PageData;
+import org.loxf.metric.dal.dao.interfaces.QuotaDao;
 import org.loxf.metric.dal.po.Chart;
 import org.apache.log4j.Logger;
+import org.loxf.metric.dal.po.Quota;
 import org.loxf.metric.service.aop.CheckUser;
 import org.loxf.metric.service.base.BaseService;
 import org.springframework.beans.BeanUtils;
@@ -32,6 +35,9 @@ public class ChartServiceImpl extends BaseService implements IChartService {
 
     @Autowired
     private ChartDao chartDao;
+
+    @Autowired
+    private QuotaDao quotaDao;
 
     @Override
     @CheckUser(value = PermissionType.ROOT, nameParam = "{0}.handleUserName")
@@ -59,6 +65,23 @@ public class ChartServiceImpl extends BaseService implements IChartService {
             result.setMsg(ResultCodeEnum.PARAM_ERROR.getCodeMsg());
             return result;
         }
+        boolean flag=true;
+        Set<QuotaItem> quotaItemList=obj.getQuotaList();
+        Quota baseQuota=new Quota();
+        for(QuotaItem quotaItem:quotaItemList){
+            baseQuota.setQuotaCode(quotaItem.getQuotaCode());
+           if(quotaDao.findOne(baseQuota)==null){
+               logger.info("不存在quotaCode=" + quotaItem.getQuotaCode() + "的指标");
+               flag=false;
+               break;
+           }
+        }
+        if(!flag){
+            result.setCode(ResultCodeEnum.DATA_NOT_EXIST.getCode());
+            result.setMsg(ResultCodeEnum.DATA_NOT_EXIST.getCodeMsg());
+            return result;
+        }
+
         Chart chart = new Chart();
         BeanUtils.copyProperties(obj, chart);
 
