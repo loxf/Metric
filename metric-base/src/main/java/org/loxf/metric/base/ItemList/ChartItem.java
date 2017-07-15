@@ -4,7 +4,7 @@ package org.loxf.metric.base.ItemList;
  * Created by hutingting on 2017/7/6.
  */
 public class ChartItem{
-    private String chartId;
+    private String chartCode;
 
     private String chartName;
 
@@ -12,12 +12,12 @@ public class ChartItem{
 
     private int order;
 
-    public String getChartId() {
-        return chartId;
+    public String getChartCode() {
+        return chartCode;
     }
 
-    public void setChartId(String chartId) {
-        this.chartId = chartId;
+    public void setChartCode(String chartCode) {
+        this.chartCode = chartCode;
     }
 
     public String getChartName() {

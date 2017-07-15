@@ -5,6 +5,7 @@ import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.loxf.metric.base.constants.CollectionConstants;
 import org.loxf.metric.base.constants.ComPareConstants;
+import org.loxf.metric.base.constants.StandardState;
 import org.loxf.metric.base.constants.VisibleTypeEnum;
 import org.loxf.metric.base.utils.IdGenerator;
 import org.loxf.metric.core.mongo.MongoDaoBase;
@@ -14,6 +15,7 @@ import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +33,8 @@ public class ChartDaoImpl extends MongoDaoBase<Chart> implements ChartDao{
     public String insert(Chart object) {
         String sid = IdGenerator.generate(chart_prefix);
         object.setChartCode(sid);
+        object.setCreatedAt(new Date());
+        object.setUpdatedAt(new Date());
         super.insert(object, collectionName);
         return sid;
     }
@@ -38,6 +42,12 @@ public class ChartDaoImpl extends MongoDaoBase<Chart> implements ChartDao{
     @Override
     public long countByParams(Chart params) {
         return 0;
+    }
+
+    @Override
+    public long countByParams(Map<String, Object> qryParams) {
+        qryParams.put("state",StandardState.AVAILABLE.getValue());
+        return super.countByParams(qryParams,collectionName);
     }
 
     @Override
@@ -54,6 +64,7 @@ public class ChartDaoImpl extends MongoDaoBase<Chart> implements ChartDao{
     public void updateOne(String itemCode, Map<String, Object> setParams) {
         Map<String, Object> queryParams=new HashedMap();
         queryParams.put("chartCode",itemCode);
+        setParams.put("updatedAt",new Date());
         super.updateOne(queryParams, setParams, collectionName);
     }
 
@@ -65,8 +76,6 @@ public class ChartDaoImpl extends MongoDaoBase<Chart> implements ChartDao{
     }
 
     private Query getCommonQuery(Chart chart,String handleUserName){
-        /*
-   */
         BasicDBObject query = new BasicDBObject();
         if(StringUtils.isNotEmpty(chart.getChartCode())){
             query.put("chartCode", chart.getChartCode());
@@ -111,6 +120,7 @@ public class ChartDaoImpl extends MongoDaoBase<Chart> implements ChartDao{
                 createT.put("$lte", chart.getEndDate());
             query.put("createdAt", createT);
         }
+        query.put("state",StandardState.AVAILABLE.getValue());
         return new BasicQuery(query);
     }
 
@@ -136,6 +146,18 @@ public class ChartDaoImpl extends MongoDaoBase<Chart> implements ChartDao{
     }
 
     @Override
+    public Chart findByCode(String chartCode,String handleUserName){
+        Map<String,Object> qryMap=new HashedMap();
+        qryMap.put("chartCode",chartCode);
+        qryMap.put("state", StandardState.AVAILABLE.getValue());
+        Map<String,Map> elemMap=new HashedMap();
+        Map<String,String> userMap=new HashedMap();
+        userMap.put("code",handleUserName);
+        elemMap.put(ComPareConstants.ELEMMATCH.getDisplayName(),userMap);
+        qryMap.put("visibleList",elemMap);
+        return super.findOne(qryMap, collectionName);
+    }
+    @Override
     public List<Chart> findAll(Chart object, String handleUserName) {
         List<Chart> chartList=super.findAll(getCommonQuery(object,handleUserName), collectionName);
         return chartList;
@@ -145,6 +167,12 @@ public class ChartDaoImpl extends MongoDaoBase<Chart> implements ChartDao{
     public List<Chart> findByPager(Chart object, String handleUserName, int start, int pageSize) {
         List<Chart> chartList=super.findByPager(getCommonQuery(object,handleUserName), start, pageSize, collectionName);
         return chartList;
+    }
+
+    @Override
+    public List<Chart> findPagerByParams(Map<String, Object> qryParams,int start, int pageSize){
+        qryParams.put("state",StandardState.AVAILABLE.getValue());
+        return super.findByPager(qryParams,start,pageSize,collectionName);
     }
 }
 

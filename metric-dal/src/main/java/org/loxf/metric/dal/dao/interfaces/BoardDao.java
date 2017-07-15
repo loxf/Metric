@@ -5,5 +5,5 @@ import org.loxf.metric.core.mongo.IBaseDao;
 import org.loxf.metric.dal.po.Board;
 
 public interface BoardDao extends IBaseDao<Board> {
-
+    public Board findByBoardCode(String boardCode);
 }

@@ -28,6 +28,8 @@ public class UserDaoImpl extends MongoDaoBase<User> implements UserDao {
     public String insert(User object) {
         String sid = IdGenerator.generate(target_prefix);
         object.setUserCode(sid);
+        object.setCreatedAt(new Date());
+        object.setUpdatedAt(new Date());
         super.insert(object, collectionName);
         return  sid;
     }
@@ -59,6 +61,7 @@ public class UserDaoImpl extends MongoDaoBase<User> implements UserDao {
     public void updateOne(String itemCode, Map<String, Object> setParams) {
         Map<String, Object> queryParams=new HashedMap();
         queryParams.put("userCode",itemCode);
+        setParams.put("updatedAt",new Date());
         super.updateOne(queryParams, setParams, collectionName);
     }
 

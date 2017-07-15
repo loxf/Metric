@@ -1,19 +1,22 @@
 package org.loxf.metric.dal.dao.impl;
 
+import com.mongodb.BasicDBObject;
 import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.lang.StringUtils;
 import org.loxf.metric.base.constants.CollectionConstants;
-import org.loxf.metric.base.utils.DateUtil;
+import org.loxf.metric.base.constants.StandardState;
 import org.loxf.metric.base.utils.IdGenerator;
 import org.loxf.metric.core.mongo.MongoDaoBase;
 import org.loxf.metric.dal.dao.interfaces.BoardDao;
 import org.loxf.metric.dal.po.Board;
-import org.loxf.metric.dal.po.Chart;
+import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Created by hutingting on 2017/7/4.
@@ -58,6 +61,7 @@ public class BoardDaoImpl extends MongoDaoBase<Board> implements BoardDao {
     public void updateOne(String itemCode, Map<String, Object> setParams) {
         Map<String, Object> queryParams=new HashedMap();
         queryParams.put("boardCode",itemCode);
+        setParams.put("updatedAt",new Date());
         super.updateOne(queryParams, setParams, collectionName);
     }
 
@@ -74,7 +78,45 @@ public class BoardDaoImpl extends MongoDaoBase<Board> implements BoardDao {
     }
 
     private Query getCommonQuery(Board board){
-        //TODO 实现各个dao自己的query
-        return null;
+        BasicDBObject query = new BasicDBObject();
+        if(StringUtils.isNotEmpty(board.getBoardCode())){
+            query.put("boardCode", board.getBoardCode());
+        }
+        if(StringUtils.isNotEmpty(board.getBoardName())){//模糊匹配
+            Pattern pattern = Pattern.compile("^.*" + board.getBoardName() +".*$", Pattern.CASE_INSENSITIVE);
+            query.put("boardName", pattern);
+        }
+
+        if(StringUtils.isNotEmpty(board.getUniqueCode())){
+            query.put("uniqueCode", board.getUniqueCode());
+        }
+
+        if(StringUtils.isNotEmpty(board.getCreateUserName())){
+            query.put("createUserName", board.getCreateUserName());
+        }
+
+//        List<ChartItem> chartItemList=board.getChartList();
+//        if(chartItemList!=null&&chartItemList.size()>0){
+//
+//        }
+
+        if(board.getStartDate()!=null||board.getEndDate()!=null){
+            Map<String, Object> createT = new HashMap<>();
+            if(board.getStartDate()!=null)
+                createT.put("$gte", board.getStartDate());
+            if(board.getEndDate()!=null)
+                createT.put("$lte", board.getEndDate());
+            query.put("createdAt", createT);
+        }
+        query.put("state",StandardState.AVAILABLE.getValue());
+        return new BasicQuery(query);
+    }
+
+    @Override
+    public Board findByBoardCode(String boardCode) {
+        Map qryParams=new HashedMap();
+        qryParams.put("boardCode",boardCode);
+        qryParams.put("state", StandardState.AVAILABLE.getValue());
+        return super.findOne(qryParams,collectionName);
     }
 }

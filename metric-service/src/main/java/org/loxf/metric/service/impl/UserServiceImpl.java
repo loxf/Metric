@@ -1,12 +1,13 @@
 package org.loxf.metric.service.impl;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.log4j.Logger;
 import org.loxf.metric.api.IUserService;
 import org.loxf.metric.base.utils.MapAndBeanTransUtils;
 import org.loxf.metric.base.utils.ValideDataUtils;
 import org.loxf.metric.common.constants.PermissionType;
 import org.loxf.metric.common.constants.ResultCodeEnum;
-import org.loxf.metric.common.constants.StandardState;
+import org.loxf.metric.base.constants.StandardState;
 import org.loxf.metric.common.constants.UserTypeEnum;
 import org.loxf.metric.common.dto.BaseResult;
 import org.loxf.metric.common.dto.PageData;
@@ -21,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.Date;
 import java.util.Map;
 
 /**
@@ -49,7 +49,6 @@ public class UserServiceImpl extends BaseService implements IUserService {
             obj.setState(StandardState.AVAILABLE.getValue());
             Map<String, Object> params = MapAndBeanTransUtils.transBean2Map(obj);
             result.setData(getPageResult(userDao, params, pager.getStart(), pager.getRownum()));
-            return result;
         }
         return result;
     }
@@ -83,8 +82,6 @@ public class UserServiceImpl extends BaseService implements IUserService {
         //子用户数量暂时不作限制
         User user = new User();
         BeanUtils.copyProperties(obj, user);
-        user.setCreatedAt(new Date());
-        user.setUpdatedAt(new Date());
         user.setState(StandardState.AVAILABLE.getValue());
         user.setUserType(UserTypeEnum.CHILD.name());
         user.setCreateUserName(obj.getHandleUserName());
@@ -120,23 +117,33 @@ public class UserServiceImpl extends BaseService implements IUserService {
             result.setMsg(ResultCodeEnum.PARAM_LACK.getCodeMsg());
             return result;
         }
-        obj.setUpdateUserName(obj.getHandleUserName());
-        obj.setUpdatedAt(new Date());
-        Map userMap = MapAndBeanTransUtils.transBean2Map(obj);
-        userDao.updateOne(itemCode, userMap);
+        User paramUser=new User();
+        BeanUtils.copyProperties(obj, paramUser);
+        paramUser.setUpdateUserName(obj.getHandleUserName());
+        Map<String,Object> boardMap = MapAndBeanTransUtils.transBean2Map(paramUser);
+        StringBuilder updateParams=new StringBuilder();
+        for (Map.Entry<String,Object> entry : boardMap.entrySet()) {
+            updateParams.append( entry.getKey()+":"+entry.getValue()+";");
+        }
+        logger.info(obj.getHandleUserName()+"将更新userCode="+itemCode+"的数据为"+updateParams);
+        userDao.updateOne(itemCode, boardMap);
         return result;
     }
 
     @Override
     @CheckUser(value = PermissionType.ROOT, nameParam = "{1}")
     public BaseResult<String> delItemByCode(String itemCode, String handleUserName) {
-        BaseResult<String> result=new BaseResult<>();
+        logger.info("客户:" + handleUserName + "将要删除子用户,userCode" + itemCode);
+        BaseResult<String> result = new BaseResult<>();
         if (StringUtils.isEmpty(itemCode)) {
             result.setCode(ResultCodeEnum.PARAM_LACK.getCode());
-            result.setMsg(ResultCodeEnum.PARAM_LACK.getCodeMsg());
+            result.setMsg("userCode不能为空!");
             return result;
         }
-        userDao.remove(itemCode);
+        Map chartMap = new HashedMap();
+        chartMap.put("state", StandardState.DISABLED.getValue());
+        chartMap.put("updateUserName", handleUserName);
+        userDao.updateOne(itemCode, chartMap);
         return result;
     }
 

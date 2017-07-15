@@ -3,19 +3,16 @@ package org.loxf.metric.service.impl;
 
 import org.apache.commons.collections.map.HashedMap;
 import org.loxf.metric.api.IChartService;
+import org.loxf.metric.base.constants.StandardState;
 import org.loxf.metric.base.constants.VisibleTypeEnum;
 import org.loxf.metric.common.constants.*;
 import org.loxf.metric.common.dto.Pager;
-import org.loxf.metric.base.utils.MapAndBeanTransUtils;
-import org.loxf.metric.core.mongo.IBaseDao;
 import org.loxf.metric.dal.dao.interfaces.ChartDao;
 import org.loxf.metric.common.dto.BaseResult;
 import org.loxf.metric.common.dto.ChartDto;
 import org.loxf.metric.common.dto.PageData;
-import org.loxf.metric.dal.dao.interfaces.UserDao;
 import org.loxf.metric.dal.po.Chart;
 import org.apache.log4j.Logger;
-import org.loxf.metric.dal.po.User;
 import org.loxf.metric.service.aop.CheckUser;
 import org.loxf.metric.service.base.BaseService;
 import org.springframework.beans.BeanUtils;
@@ -82,7 +79,7 @@ public class ChartServiceImpl extends BaseService implements IChartService {
             Chart chart=new Chart();
             BeanUtils.copyProperties(obj, chart);
             PageData pageData=getPermissionPageResult(chart,obj.getHandleUserName(), pager.getStart(), pager.getRownum());
-            return new BaseResult<>(pageData);
+            validPagerResult.setData(pageData);
         }
         return validPagerResult;
     }
@@ -134,21 +131,22 @@ public class ChartServiceImpl extends BaseService implements IChartService {
     @Override
     @CheckUser(nameParam = "{0}.handleUserName")
     public BaseResult<String> updateItem(ChartDto obj) {
-        BaseResult<String> result = new BaseResult<>();
-        String itemCode = obj.getChartCode();
-        if (StringUtils.isEmpty(itemCode) || StringUtils.isEmpty(obj.getCreateUserName())) {
-            result.setCode(ResultCodeEnum.PARAM_LACK.getCode());
-            result.setMsg(ResultCodeEnum.PARAM_LACK.getCodeMsg());
-            return result;
-        }
-        Map chartMap = MapAndBeanTransUtils.transBean2Map(obj);
-        chartDao.updateOne(itemCode, chartMap);
-        result.setCode(ResultCodeEnum.SUCCESS.getCode());
-        return result;
+//        BaseResult<String> result = new BaseResult<>();
+//        String itemCode = obj.getChartCode();
+//        if (StringUtils.isEmpty(itemCode) || StringUtils.isEmpty(obj.getCreateUserName())) {
+//            result.setCode(ResultCodeEnum.PARAM_LACK.getCode());
+//            result.setMsg(ResultCodeEnum.PARAM_LACK.getCodeMsg());
+//            return result;
+//        }
+//        Map chartMap = MapAndBeanTransUtils.transBean2Map(obj);
+//        chartDao.updateOne(itemCode, chartMap);
+//        result.setCode(ResultCodeEnum.SUCCESS.getCode());
+//        return result;
+        return  new BaseResult<>();
     }
 
     @Override
-    @CheckUser(nameParam = "{1}")
+    @CheckUser(value = PermissionType.ROOT,nameParam = "{1}")
     public BaseResult<String> delItemByCode(String itemCode, String handleUserName) {
         logger.info("客户:" + handleUserName + "将要删除图,itemCode" + itemCode);
         BaseResult<String> result = new BaseResult<>();
@@ -165,35 +163,4 @@ public class ChartServiceImpl extends BaseService implements IChartService {
         return result;
     }
 
-
-    //是否需要校验可见范围内的用户合法性。
-//        Set<String> visibleSet=obj.getVisibleList();//入参指定用户
-//        StringBuilder notExistList=null;
-//        Set<String> findUserSet= findAllUserName(visibleSet);//查询出来的用户
-//        for(String userName:visibleSet){
-//            if(!(findUserSet.contains(userName))){
-//                notExistList.append("userName,");
-//            }
-//        }
-//        if(notExistList!=null){
-//            result.setCode(ResultCodeEnum.DATA_NOT_EXIST.getCode());
-//            result.setMsg("数据库中不存在以下用户："+notExistList.toString()+",无法添加");
-//            return result;
-//        }
-
-
-//    private  Set<String> findAllUserName(Set<String> visibleSet){
-//        //db.test.find({"name":{"$in":["stephen","stephen1"]}})
-//        Map userMap=new HashedMap();
-//        Map userValueMap=new HashedMap();
-//        userValueMap.put(ComPareConstants.IN.getDisplayName(),visibleSet);
-//        userMap.put("userName",userValueMap);
-//        List<User> userRangeList=userDao.findAll(userMap);
-//
-//        Set<String> findUserSet= new HashSet();//查询出来的用户
-//        for (User user:userRangeList) {
-//            findUserSet.add(user.getUserName());
-//        }
-//        return findUserSet;
-//    }
 }
