@@ -21,4 +21,10 @@ public @interface CheckUser {
      * @return
      */
     String nameParam() default "{0}";
+
+    /**
+     * 权限编码，配合PermissionType.SPECIAL使用
+     * @return
+     */
+    String permissionCode() default "";
 }
