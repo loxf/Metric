@@ -27,6 +27,8 @@ public class Quota extends BasePO {
 
     private String uniqueCode;
 
+    private String defaultCondition;
+
     public String getQuotaCode() {
         return quotaCode;
     }
@@ -113,5 +115,13 @@ public class Quota extends BasePO {
 
     public void setUniqueCode(String uniqueCode) {
         this.uniqueCode = uniqueCode;
+    }
+
+    public String getDefaultCondition() {
+        return defaultCondition;
+    }
+
+    public void setDefaultCondition(String defaultCondition) {
+        this.defaultCondition = defaultCondition;
     }
 }

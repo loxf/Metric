@@ -30,9 +30,11 @@ public class QuotaDimensionDaoImpl extends MongoDaoBase<QuotaDimension> implemen
 
     @Override
     public String insert(QuotaDimension object) {
-        super.insert(object, collectionName);
+        String sid = IdGenerator.generate(quota_dim_prefix);
+        object.setDimCode(sid);
         object.setCreatedAt(new Date());
         object.setUpdatedAt(new Date());
+        super.insert(object, collectionName);
         return object.getDimCode();
     }
 

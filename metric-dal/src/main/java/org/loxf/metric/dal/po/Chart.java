@@ -18,7 +18,9 @@ public class Chart extends BasePO{
 
     private List<String> visibleList;
 
-    private String chartDim;
+    private String defaultCondition;
+
+    private String chartDimension;
 
     private String state;
 
@@ -56,14 +58,6 @@ public class Chart extends BasePO{
         this.type = type;
     }
 
-    public String getChartDim() {
-        return chartDim;
-    }
-
-    public void setChartDim(String chartDim) {
-        this.chartDim = chartDim;
-    }
-
     public String getState() {
         return state;
     }
@@ -94,5 +88,21 @@ public class Chart extends BasePO{
 
     public void setVisibleList(List<String> visibleList) {
         this.visibleList = visibleList;
+    }
+
+    public String getDefaultCondition() {
+        return defaultCondition;
+    }
+
+    public void setDefaultCondition(String defaultCondition) {
+        this.defaultCondition = defaultCondition;
+    }
+
+    public String getChartDimension() {
+        return chartDimension;
+    }
+
+    public void setChartDimension(String chartDimension) {
+        this.chartDimension = chartDimension;
     }
 }

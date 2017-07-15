@@ -9,6 +9,7 @@ import org.loxf.metric.common.constants.PermissionType;
 import org.loxf.metric.common.constants.UserTypeEnum;
 import org.loxf.metric.dal.dao.interfaces.UserDao;
 import org.loxf.metric.dal.po.User;
+import org.loxf.metric.service.session.UserSessionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,13 +52,11 @@ public class UserAop {
             }
             // 权限校验
             if (ObjectUtils.isEmpty(userName)) {
-                throw new MetricException("登录用户为空!");
+                throw new MetricException("用户为空!");
             } else {//判断该用户是否存在
-                User user = new User();
-                user.setUserName(userName.toString());
-                User existsUser = userDao.findOne(user);
+                User existsUser = UserSessionManager.getSession().getUserSession(userName.toString());
                 if (existsUser == null) {
-                    throw new MetricException("登录用户错误!");
+                    throw new MetricException("用户未登录!");
                 } else {
                     if (permissionType.equals(PermissionType.ROOT)) {
                         //判断该用户是否为root用户

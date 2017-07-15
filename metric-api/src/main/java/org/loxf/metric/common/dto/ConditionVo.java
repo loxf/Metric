@@ -1,7 +1,12 @@
 package org.loxf.metric.common.dto;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 查询条件
@@ -15,6 +20,7 @@ public class ConditionVo implements Serializable {
     private String endCircleTime;
     private String relation;
     private List<Condition> condition;
+    private Map<String, ConditionVo> defaultCondition = new HashMap<>();
     private List<GroupBy> groupBy;
 
     public ConditionVo(){}
@@ -83,4 +89,22 @@ public class ConditionVo implements Serializable {
         this.groupBy = groupBy;
     }
 
+    public Map<String, ConditionVo> getDefaultCondition() {
+        return defaultCondition;
+    }
+
+    public void setDefaultCondition(Map<String, ConditionVo> defaultCondition) {
+        this.defaultCondition = defaultCondition;
+    }
+
+    public String toPlainString(){
+        StringBuilder sb = new StringBuilder();
+        if(CollectionUtils.isNotEmpty(condition)){
+            for(Condition cond : condition){
+                sb.append(this.relation).append(" "+cond.getDesc()).append(" " + cond.getOper() + " ").
+                        append(StringUtils.join(cond.getValue(), " ,")).append("\n");
+            }
+        }
+        return sb.toString();
+    }
 }

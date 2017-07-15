@@ -41,13 +41,6 @@ public class QuotaDimensionServiceImpl extends BaseService implements IQuotaDime
     @Override
     @CheckUser(value = PermissionType.ROOT, nameParam = "{0}.handleUserName")
     public BaseResult<String> insertItem(QuotaDimensionDto obj) {
-        // 校验dimCode和uniqueCode的联合唯一性
-        String [] props = new String[]{"dimCode", "uniqueCode"};
-        Map<String, Object> params = MapAndBeanTransUtils.transBean2Map(obj, Arrays.asList(props));
-        QuotaDimension exists = quotaDimensionDao.findOne(params);
-        if(exists!=null){
-            return new BaseResult<>(ResultCodeEnum.DATA_EXIST.getCode(), "当前维度CODE已存在");
-        }
         QuotaDimension quotaDimension = new QuotaDimension();
         BeanUtils.copyProperties(obj, quotaDimension);
         quotaDimension.setCreateUserName(obj.getHandleUserName());

@@ -15,9 +15,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -30,11 +28,8 @@ public class QuotaDimensionValueDaoImpl extends MongoDaoBase<QuotaDimensionValue
 
     @Override
     public String insert(QuotaDimensionValue object) {
-        String sid = IdGenerator.generate(quota_dim_value_prefix);
-        object.setDimValueCode(sid);
-        object.setCreatedAt(new Date());
-        super.insert(object, collectionName);
-        return sid;
+        Assert.error("不支持单个维度值的插入");
+        return null;
     }
 
     @Override
@@ -90,4 +85,11 @@ public class QuotaDimensionValueDaoImpl extends MongoDaoBase<QuotaDimensionValue
         return new BasicQuery(query);
     }
 
+    @Override
+    public void saveDimensionValue(Date circleTime, String key, Set<String> values) {
+        Map map = new HashMap();
+        for(String val : values){
+            map.put("dimValue", val);
+        }
+    }
 }

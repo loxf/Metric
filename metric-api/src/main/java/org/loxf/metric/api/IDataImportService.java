@@ -1,6 +1,8 @@
 package org.loxf.metric.api;
 
 import org.loxf.metric.common.dto.BaseResult;
+import org.loxf.metric.common.dto.ChartData;
+import org.loxf.metric.common.dto.ConditionVo;
 import org.loxf.metric.common.dto.QuotaDto;
 
 import java.util.Date;
@@ -10,7 +12,7 @@ import java.util.Map;
 /**
  * Created by luohj on 2017/7/13.
  */
-public interface IDataService {
+public interface IDataImportService {
     /**
      * 数据导入接口
      * @param handleUserName
@@ -34,4 +36,5 @@ public interface IDataService {
      * @return
      */
     public BaseResult<QuotaDto> dropAllData(String handleUserName, String quotaCode);
+
 }

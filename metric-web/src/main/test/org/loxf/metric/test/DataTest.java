@@ -3,7 +3,7 @@ package org.loxf.metric.test;
 import com.alibaba.fastjson.JSON;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.loxf.metric.api.IDataService;
+import org.loxf.metric.api.IDataImportService;
 import org.loxf.metric.base.utils.RandomUtils;
 import org.loxf.metric.test.core.JUnit4ClassRunner;
 import org.slf4j.Logger;
@@ -25,7 +25,7 @@ import java.util.*;
 public class DataTest {
     private static Logger logger = LoggerFactory.getLogger(QuotaTest.class);
     @Autowired
-    private IDataService dataService;
+    private IDataImportService dataService;
     @Test
     public void importData() throws ParseException {
         List<Map> data = new ArrayList<>();

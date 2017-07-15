@@ -2,6 +2,7 @@ package org.loxf.metric.common.dto;
 
 import org.loxf.metric.base.ItemList.QuotaItem;
 
+import java.util.List;
 import java.util.Set;
 
 public class ChartDto extends BaseDto{
@@ -10,9 +11,13 @@ public class ChartDto extends BaseDto{
 
     private String chartName;
 
-    private Set<QuotaItem> quotaList;
+    private List<QuotaItem> quotaList;
 
     private String type;
+
+    private String defaultCondition;
+
+    private String chartDimension;
 
     private String visibleType;
 
@@ -80,11 +85,27 @@ public class ChartDto extends BaseDto{
         this.visibleType = visibleType;
     }
 
-    public Set<QuotaItem> getQuotaList() {
+    public String getDefaultCondition() {
+        return defaultCondition;
+    }
+
+    public void setDefaultCondition(String defaultCondition) {
+        this.defaultCondition = defaultCondition;
+    }
+
+    public String getChartDimension() {
+        return chartDimension;
+    }
+
+    public void setChartDimension(String chartDimension) {
+        this.chartDimension = chartDimension;
+    }
+
+    public List<QuotaItem> getQuotaList() {
         return quotaList;
     }
 
-    public void setQuotaList(Set<QuotaItem> quotaList) {
+    public void setQuotaList(List<QuotaItem> quotaList) {
         this.quotaList = quotaList;
     }
 
