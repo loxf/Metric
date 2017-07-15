@@ -5,9 +5,9 @@ package org.loxf.metric.common.constants;
  */
 public enum ResultCodeEnum {
     SUCCESS("200","SUCCESS"),
-    PARAM_LACK("501","参数不全"),
+    PARAM_LACK("501","参数不能为空"),
     PARAM_ERROR("502","参数校验失败"),
-    DATA_NOT_EXIST("503","数据不存在"),
+    DATA_NOT_EXIST("503","没有数据"),
     USER_NOT_EXIST("504","用户不存在"),
     DATA_EXIST("505","数据已存在"),
     NOT_SUPPORT("509","接口弃用"),

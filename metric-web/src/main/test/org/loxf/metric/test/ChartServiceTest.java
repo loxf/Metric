@@ -2,6 +2,8 @@ package org.loxf.metric.test;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.loxf.metric.base.constants.VisibleTypeEnum;
+import org.loxf.metric.common.dto.BaseResult;
 import org.loxf.metric.common.dto.ChartDto;
 import org.loxf.metric.common.dto.PageData;
 import org.loxf.metric.common.dto.Pager;
@@ -36,7 +38,9 @@ public class ChartServiceTest {
         pager.setRownum(10);
         obj.setPager(pager);
         obj.setHandleUserName("admin");
-        PageData pageData=chartService.getPageList2(obj);
+        obj.setVisibleType(VisibleTypeEnum.SPECIFICRANGE.name());
+        //obj.set
+        BaseResult<PageData> i=chartService.getPageList(obj);
         int a=0;
     }
 }

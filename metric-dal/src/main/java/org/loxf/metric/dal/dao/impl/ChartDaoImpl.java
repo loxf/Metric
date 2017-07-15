@@ -1,16 +1,23 @@
 package org.loxf.metric.dal.dao.impl;
 
+import com.mongodb.BasicDBObject;
 import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.lang.StringUtils;
 import org.loxf.metric.base.constants.CollectionConstants;
+import org.loxf.metric.base.constants.ComPareConstants;
+import org.loxf.metric.base.constants.VisibleTypeEnum;
 import org.loxf.metric.base.utils.IdGenerator;
 import org.loxf.metric.core.mongo.MongoDaoBase;
 import org.loxf.metric.dal.dao.interfaces.ChartDao;
 import org.loxf.metric.dal.po.Chart;
+import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Created by hutingting on 2017/7/4.
@@ -29,31 +36,18 @@ public class ChartDaoImpl extends MongoDaoBase<Chart> implements ChartDao{
     }
 
     @Override
-    public Chart findOne(Chart params) {
-        Chart chart= super.findOne(getCommonQuery(params), collectionName);
-        return chart;
-    }
-
-    @Override
-    public List<Chart> findAll(Chart params) {
-        List<Chart> chartList=super.findAll(getCommonQuery(params), collectionName);
-        return chartList;
-    }
-
-    @Override
-    public List<Chart> findByPager(Chart params, int start, int pageSize) {
-        List<Chart> chartList=super.findByPager(getCommonQuery(params), start, pageSize, collectionName);
-        return chartList;
-    }
-
-    @Override
     public long countByParams(Chart params) {
-        return super.countByParams(getCommonQuery(params),collectionName);
+        return 0;
+    }
+
+    @Override
+    public long countByParams(Chart object, String handleUserName) {
+        return super.countByParams(getCommonQuery(object,handleUserName),collectionName);
     }
 
     @Override
     public void update(Chart params, Map<String, Object> setParams) {
-        super.update(getCommonQuery(params), setParams, collectionName);
+        super.update(getCommonQuery(params,null), setParams, collectionName);
     }
 
     @Override
@@ -70,9 +64,87 @@ public class ChartDaoImpl extends MongoDaoBase<Chart> implements ChartDao{
         super.remove(params, collectionName);
     }
 
-    private Query getCommonQuery(Chart chart){
-        //TODO 实现各个dao自己的query
+    private Query getCommonQuery(Chart chart,String handleUserName){
+        /*
+   */
+        BasicDBObject query = new BasicDBObject();
+        if(StringUtils.isNotEmpty(chart.getChartCode())){
+            query.put("chartCode", chart.getChartCode());
+        }
+        if(StringUtils.isNotEmpty(chart.getChartName())){//模糊匹配
+            Pattern pattern = Pattern.compile("^.*" + chart.getChartName() +".*$", Pattern.CASE_INSENSITIVE);
+            query.put("chartName", pattern);
+        }
+        if(StringUtils.isNotEmpty(chart.getType())){
+            query.put("type", chart.getType());
+        }
+        //有指定查看人范围
+        if(StringUtils.isNotEmpty(chart.getVisibleType())&& VisibleTypeEnum.SPECIFICRANGE.name().equals(chart.getVisibleType())){
+            if(StringUtils.isNotEmpty(handleUserName)){
+                Map elemMap=new HashedMap();
+                Map userMap=new HashedMap();
+                userMap.put("userName",handleUserName);
+                elemMap.put(ComPareConstants.ELEMMATCH.getDisplayName(),userMap);
+                query.put("visibleList",elemMap);
+            }
+        }
+
+        if(StringUtils.isNotEmpty(chart.getChartDim())){
+            query.put("chartDim", chart.getChartDim());
+        }
+        if(StringUtils.isNotEmpty(chart.getUniqueCode())){
+            query.put("uniqueCode", chart.getUniqueCode());
+        }
+        if(StringUtils.isNotEmpty(chart.getType())){
+            query.put("type", chart.getType());
+        }
+
+        if(StringUtils.isNotEmpty(chart.getCreateUserName())){
+            query.put("createUserName", chart.getCreateUserName());
+        }
+
+        if(chart.getStartDate()!=null||chart.getEndDate()!=null){
+            Map<String, Object> createT = new HashMap<>();
+            if(chart.getStartDate()!=null)
+                createT.put("$gte", chart.getStartDate());
+            if(chart.getEndDate()!=null)
+                createT.put("$lte", chart.getEndDate());
+            query.put("createdAt", createT);
+        }
+        return new BasicQuery(query);
+    }
+
+    @Override
+    public Chart findOne(Chart params) {
         return null;
+    }
+
+    @Override
+    public List<Chart> findAll(Chart params) {
+        return null;
+    }
+
+    @Override
+    public List<Chart> findByPager(Chart params, int start, int pageSize) {
+        return null;
+    }
+
+    @Override
+    public Chart findOne(Chart object, String handleUserName) {
+        Chart chart= super.findOne(getCommonQuery(object,handleUserName), collectionName);
+        return chart;
+    }
+
+    @Override
+    public List<Chart> findAll(Chart object, String handleUserName) {
+        List<Chart> chartList=super.findAll(getCommonQuery(object,handleUserName), collectionName);
+        return chartList;
+    }
+
+    @Override
+    public List<Chart> findByPager(Chart object, String handleUserName, int start, int pageSize) {
+        List<Chart> chartList=super.findByPager(getCommonQuery(object,handleUserName), start, pageSize, collectionName);
+        return chartList;
     }
 }
 

@@ -51,7 +51,11 @@ public class PageData<T> {
         this.totalRecords = totalRecords;
     }
 
-    public int getTotalPage() {
+    public void setTotalPage(int totalPage) {
+        this.totalPage = totalPage;
+    }
+
+    public int calculateTotalPage() {
         if(rownum==0){
             return 0;
         }

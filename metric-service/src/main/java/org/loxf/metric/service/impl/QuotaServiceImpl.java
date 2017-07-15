@@ -115,9 +115,10 @@ public class QuotaServiceImpl extends BaseService implements IQuotaService {
     @Override
     @CheckUser(nameParam = "{0}.handleUserName")
     public BaseResult<PageData> getPageList(QuotaDto obj) {
-        Pager pager = obj.getPager();
-        if (pager == null) {
-            return new BaseResult<>(ResultCodeEnum.PARAM_LACK.getCode(), "分页信息为空");
+        Pager pager=obj.getPager();
+        String validPagerResult=super.validPager(obj.getPager());
+        if(!"SUCCESS".equals(validPagerResult)){
+            return new BaseResult<>(ResultCodeEnum.PARAM_ERROR.getCode(), validPagerResult);
         }
         Map<String, Object> params = MapAndBeanTransUtils.transBean2Map(obj);
         return new BaseResult<>(getPageResult(quotaDao, params, pager.getStart(), pager.getRownum()));

@@ -5,5 +5,5 @@ package org.loxf.metric.common.constants;
  */
 public enum UserTypeEnum {
     ROOT,
-    Child;
+    CHILD;
 }

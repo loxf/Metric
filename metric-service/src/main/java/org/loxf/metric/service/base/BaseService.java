@@ -1,6 +1,7 @@
 package org.loxf.metric.service.base;
 
 import com.github.pagehelper.PageHelper;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.loxf.metric.api.IBaseService;
@@ -9,6 +10,7 @@ import org.loxf.metric.common.constants.ResultCodeEnum;
 import org.loxf.metric.common.constants.UserTypeEnum;
 import org.loxf.metric.common.dto.BaseResult;
 import org.loxf.metric.common.dto.PageData;
+import org.loxf.metric.common.dto.Pager;
 import org.loxf.metric.core.mongo.IBaseDao;
 import org.loxf.metric.core.mongo.MongoDaoBase;
 import org.loxf.metric.dal.dao.interfaces.UserDao;
@@ -32,6 +34,24 @@ public class BaseService {
         return getPageResult(dao, params, start, pageSize);
     }
 
+
+    public String validPager(Pager pager){
+        String result;
+        if(pager==null){
+            result="分页信息为空";
+        }else{
+            int pageSize=pager.getRownum();
+            int currentPage=pager.getCurrentPage();
+            if(pageSize<0||currentPage<0){
+                result="分页信息参数错误！";
+            }else{
+                result="SUCCESS";
+            }
+        }
+        return result;
+    }
+
+
     public PageData getPageResult(IBaseDao dao, Map<String, Object> params, int start, int pageSize) {
         try {
             long totalCount = (long) dao.countByParams(params);
@@ -44,6 +64,7 @@ public class BaseService {
             pageData.setTotalRecords(totalCount);
             pageData.setCurrentPage(start/pageSize+1);
             pageData.setRownum(pageSize);
+            pageData.setTotalPage(pageData.calculateTotalPage());
             return pageData;
         }catch (Exception e){
             logger.error("查询分页异常！",e);
