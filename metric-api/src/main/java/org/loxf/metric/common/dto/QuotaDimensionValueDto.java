@@ -20,6 +20,8 @@ public class QuotaDimensionValueDto extends BaseDto{
 
     private String uniqueCode;
 
+    private Date circleTime;
+
     public String getDimValueCode() {
         return dimValueCode;
     }
@@ -66,5 +68,13 @@ public class QuotaDimensionValueDto extends BaseDto{
 
     public void setUniqueCode(String uniqueCode) {
         this.uniqueCode = uniqueCode;
+    }
+
+    public Date getCircleTime() {
+        return circleTime;
+    }
+
+    public void setCircleTime(Date circleTime) {
+        this.circleTime = circleTime;
     }
 }

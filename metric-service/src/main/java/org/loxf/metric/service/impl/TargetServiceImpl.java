@@ -41,8 +41,8 @@ public class TargetServiceImpl extends BaseService implements ITargetService {
         if (validResult.getCode().equals(ResultCodeEnum.SUCCESS.getCode())) {
             Target target = new Target();
             BeanUtils.copyProperties(obj, target);
-            target.setCreatedAt(new Date());
-            target.setUpdatedAt(new Date());
+            target.setCreateUserName(obj.getHandleUserName());
+            target.setUpdateUserName(obj.getHandleUserName());
             return new BaseResult<>(targetDao.insert(target));
         }
         return validResult;

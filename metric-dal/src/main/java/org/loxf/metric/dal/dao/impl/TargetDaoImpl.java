@@ -27,10 +27,12 @@ public class TargetDaoImpl extends MongoDaoBase<Target> implements TargetDao{
     private static String target_prefix = "TG_";
 
     @Override
-    public String insert(Target object) {
+    public String insert(Target target) {
         String sid = IdGenerator.generate(target_prefix);
-        object.setTargetCode(sid);
-        super.insert(object, collectionName);
+        target.setTargetCode(sid);
+        target.setCreatedAt(new Date());
+        target.setUpdatedAt(new Date());
+        super.insert(target, collectionName);
         return  sid;
     }
 

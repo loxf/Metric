@@ -29,8 +29,7 @@ public class QuotaDimenValueServiceImpl implements IQuotaDimenValueService {
     public BaseResult<String> insertItem(QuotaDimensionValueDto obj) {
         QuotaDimensionValue quotaDimensionValue = new QuotaDimensionValue();
         BeanUtils.copyProperties(obj, quotaDimensionValue);
-        quotaDimensionValue.setCreatedAt(new Date());
-        quotaDimensionValue.setUpdatedAt(new Date());
+        quotaDimensionValue.setCreateUserName(obj.getHandleUserName());
         return new BaseResult<>(quotaDimensionValueDao.insert(quotaDimensionValue));
     }
 

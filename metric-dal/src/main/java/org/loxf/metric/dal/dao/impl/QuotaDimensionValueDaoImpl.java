@@ -1,24 +1,30 @@
 package org.loxf.metric.dal.dao.impl;
 
+import com.mongodb.BasicDBObject;
+import com.sun.tools.javac.util.Assert;
 import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.lang.StringUtils;
 import org.loxf.metric.base.constants.CollectionConstants;
 import org.loxf.metric.base.utils.IdGenerator;
 import org.loxf.metric.core.mongo.MongoDaoBase;
 import org.loxf.metric.dal.dao.interfaces.QuotaDimensionValueDao;
 import org.loxf.metric.dal.po.QuotaDimensionValue;
 import org.loxf.metric.dal.po.QuotaDimensionValue;
+import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Created by hutingting on 2017/7/4.
  */
 @Service("quotaDimensionValue")
-public class QuotaDimensionValueImpl extends MongoDaoBase<QuotaDimensionValue> implements QuotaDimensionValueDao{
+public class QuotaDimensionValueDaoImpl extends MongoDaoBase<QuotaDimensionValue> implements QuotaDimensionValueDao{
     private final String collectionName = CollectionConstants.QUOTA_DIMENSION_VALUE.getCollectionName();
     private static String quota_dim_value_prefix = "DIM_V_";
 
@@ -26,6 +32,7 @@ public class QuotaDimensionValueImpl extends MongoDaoBase<QuotaDimensionValue> i
     public String insert(QuotaDimensionValue object) {
         String sid = IdGenerator.generate(quota_dim_value_prefix);
         object.setDimValueCode(sid);
+        object.setCreatedAt(new Date());
         super.insert(object, collectionName);
         return sid;
     }
@@ -50,21 +57,17 @@ public class QuotaDimensionValueImpl extends MongoDaoBase<QuotaDimensionValue> i
 
     @Override
     public void update(QuotaDimensionValue object, Map<String, Object> setParams) {
-        super.update(getCommonQuery(object), setParams, collectionName);
+        Assert.error("不支持维度值更新");
     }
 
     @Override
     public void updateOne(String itemCode, Map<String, Object> setParams) {
-        Map<String, Object> queryParams=new HashedMap();
-        queryParams.put("quotaDimValueCode",itemCode);
-        super.updateOne(queryParams, setParams, collectionName);
+        Assert.error("不支持维度值更新");
     }
 
     @Override
     public void remove(String itemCode) {
-        Map<String, Object> params=new HashedMap();
-        params.put("quotaDimValueCode",itemCode);
-        super.remove(params, collectionName);
+        Assert.error("不支持维度值根据CODE删除");
     }
 
     @Override
@@ -73,8 +76,18 @@ public class QuotaDimensionValueImpl extends MongoDaoBase<QuotaDimensionValue> i
     }
 
     private Query getCommonQuery(QuotaDimensionValue quotaDimensionValue){
-        //TODO 实现各个dao自己的query
-        return null;
+        BasicDBObject query = new BasicDBObject();
+        if (StringUtils.isNotEmpty(quotaDimensionValue.getDimCode())) {
+            query.put("dimCode", quotaDimensionValue.getDimCode());
+        }
+        if (StringUtils.isNotEmpty(quotaDimensionValue.getDimName())) {
+            Pattern pattern = Pattern.compile("^.*" + quotaDimensionValue.getDimName() + ".*$", Pattern.CASE_INSENSITIVE);
+            query.put("dimName", pattern);
+        }
+        if (StringUtils.isNotEmpty(quotaDimensionValue.getUniqueCode())) {
+            query.put("uniqueCode", quotaDimensionValue.getUniqueCode());
+        }
+        return new BasicQuery(query);
     }
 
 }

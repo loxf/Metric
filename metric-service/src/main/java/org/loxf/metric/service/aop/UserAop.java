@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -42,18 +43,18 @@ public class UserAop {
             String location = nameParamArr[0].substring(1, nameParamArr[0].length()-1);// 先获取参数位置（索引）
             Object args [] = point.getArgs();//获取当前方法的所有入参参数
             Object obj = args[Integer.parseInt(location)];// 获取经办人所在的参数
-            String userName = "";
+            Object userName = "";
             if(nameParamArr.length==1){
                 userName = obj.toString();// 如果长度为1，代表当前入参非对象，toString获取的值就是所需参数
             } else {
                 userName = getUserName(obj, nameParamArr, 1);// 当前入参为对象，递归获取
             }
             // 权限校验
-            if (StringUtils.isEmpty(userName)) {
+            if (ObjectUtils.isEmpty(userName)) {
                 throw new MetricException("登录用户为空!");
             } else {//判断该用户是否存在
                 User user = new User();
-                user.setUserName(userName);
+                user.setUserName(userName.toString());
                 User existsUser = userDao.findOne(user);
                 if (existsUser == null) {
                     throw new MetricException("登录用户错误!");
@@ -78,7 +79,7 @@ public class UserAop {
         }
     }
 
-    private String getUserName(Object obj, String[] nameParamArr, int deep){
+    private Object getUserName(Object obj, String[] nameParamArr, int deep){
         Object object = null;
         if(obj instanceof Map){
             object = ((Map) obj).get(nameParamArr[deep]);
@@ -98,7 +99,7 @@ public class UserAop {
             }
         }
         if(deep==nameParamArr.length-1){
-            return object.toString();
+            return object;
         }
         return getUserName(object, nameParamArr, ++deep);
     }

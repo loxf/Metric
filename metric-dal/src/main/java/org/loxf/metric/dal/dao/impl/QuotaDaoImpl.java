@@ -67,11 +67,13 @@ public class QuotaDaoImpl extends MongoDaoBase<Quota> implements QuotaDao{
 
     @Override
     public void update(Quota quota, Map<String, Object> setParams) {
+        setParams.put("updatedAt", new Date());
         super.update(getCommonQuery(quota), setParams, collectionName);
     }
 
     @Override
     public void updateOne(String itemCode, Map<String, Object> setParams) {
+        setParams.put("updatedAt", new Date());
         Map<String, Object> queryParams=new HashedMap();
         queryParams.put("quotaCode",itemCode);
         super.updateOne(queryParams, setParams, collectionName);

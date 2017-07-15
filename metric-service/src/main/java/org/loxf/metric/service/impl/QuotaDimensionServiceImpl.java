@@ -50,6 +50,8 @@ public class QuotaDimensionServiceImpl extends BaseService implements IQuotaDime
         }
         QuotaDimension quotaDimension = new QuotaDimension();
         BeanUtils.copyProperties(obj, quotaDimension);
+        quotaDimension.setCreateUserName(obj.getHandleUserName());
+        quotaDimension.setUpdateUserName(obj.getHandleUserName());
         return new BaseResult(quotaDimensionDao.insert(quotaDimension));
     }
 

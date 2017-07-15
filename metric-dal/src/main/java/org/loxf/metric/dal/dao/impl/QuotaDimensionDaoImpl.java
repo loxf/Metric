@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,8 @@ public class QuotaDimensionDaoImpl extends MongoDaoBase<QuotaDimension> implemen
     @Override
     public String insert(QuotaDimension object) {
         super.insert(object, collectionName);
+        object.setCreatedAt(new Date());
+        object.setUpdatedAt(new Date());
         return object.getDimCode();
     }
 
@@ -53,11 +56,13 @@ public class QuotaDimensionDaoImpl extends MongoDaoBase<QuotaDimension> implemen
 
     @Override
     public void update(QuotaDimension object, Map<String, Object> setParams) {
+        setParams.put("updatedAt", new Date());
         super.update(getCommonQuery(object), setParams, collectionName);
     }
 
     @Override
     public void updateOne(String itemCode, Map<String, Object> setParams) {
+        setParams.put("updatedAt", new Date());
         Map<String, Object> queryParams = new HashedMap();
         queryParams.put("dimCode", itemCode);
         super.updateOne(queryParams, setParams, collectionName);
@@ -97,6 +102,7 @@ public class QuotaDimensionDaoImpl extends MongoDaoBase<QuotaDimension> implemen
 
     @Override
     public void updateOne(Map params, String dimName) {
+        params.put("updatedAt", new Date());
         Map setMap = new HashMap();
         setMap.put("dimName", dimName);
         super.updateOne(params, setMap, collectionName);
