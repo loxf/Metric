@@ -1,23 +1,19 @@
 package org.loxf.metric.filter;
 
-import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang.StringUtils;
-import org.loxf.metric.user.dto.UserDto;
-import org.springframework.context.ApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.loxf.metric.common.dto.UserDto;
 
 import javax.servlet.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * 会话管理拦截器
  * <filter>
  * <filter-name>LoginFilter</filter-name>
- * <filter-class>com.ywwl.uac.filter.LoginFilter</filter-class>
+ * <filter-class>org.loxf.metric.filter.LoginFilter</filter-class>
  * <init-param>
  * <param-name>SECURITY_URI</param-name>
  * <param-value>/admin/*,/security/*</param-value>
@@ -36,9 +32,7 @@ public class LoginFilter implements Filter {
     private String LOGIN_PAGE = "/tologin.html";
 
     public LoginFilter() {
-
     }
-
 
     public void destroy() {
     }
@@ -178,24 +172,5 @@ public class LoginFilter implements Filter {
         UserDto value = (UserDto)request.getSession().getAttribute(sessionId);
         return value;
     }
-/*
-    public static boolean hasPermission(HttpServletRequest request, String permissionIds) {
-       UserDto userDto = getUser(request);
 
-        if (userDto == null) {
-            return false;
-        }
-
-        String[] permissionArray = permissionIds.split(",");
-        List userPermissList = userDto.getPermissionList();
-        if(userPermissList==null){
-            return false;
-        }
-        for (String permissionId : permissionArray) {
-            if (userPermissList.contains(permissionId)) {
-                return true;
-            }
-        }
-        return false;
-    }*/
 }

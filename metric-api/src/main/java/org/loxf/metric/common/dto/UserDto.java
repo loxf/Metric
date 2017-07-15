@@ -14,6 +14,10 @@ public class UserDto extends BaseDto{
     private String userType;
     private String state;
 
+    /**
+     * 浏览器信息
+     */
+    private String userAgent;
 
     public String getUserCode() {
         return userCode;
@@ -85,6 +89,14 @@ public class UserDto extends BaseDto{
 
     public void setState(String state) {
         this.state = state;
+    }
+
+    public String getUserAgent() {
+        return userAgent;
+    }
+
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
     }
 }
 

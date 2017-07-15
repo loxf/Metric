@@ -2,7 +2,6 @@ package org.loxf.metric.service.impl;
 
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.map.HashedMap;
 import org.loxf.metric.api.ITargetService;
 import org.loxf.metric.base.ItemList.TargetItem;
 import org.loxf.metric.common.constants.PermissionType;
@@ -12,14 +11,13 @@ import org.loxf.metric.base.utils.MapAndBeanTransUtils;
 import org.loxf.metric.dal.dao.interfaces.TargetDao;
 import org.loxf.metric.dal.po.Target;
 import org.apache.log4j.Logger;
-import org.loxf.metric.service.aop.CheckUser;
+import org.loxf.metric.permission.CheckUser;
 import org.loxf.metric.service.base.BaseService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 

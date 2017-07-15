@@ -2,7 +2,6 @@ package org.loxf.metric.service.impl;
 
 import org.loxf.metric.api.IQuotaDimensionService;
 import org.loxf.metric.base.utils.MapAndBeanTransUtils;
-import org.loxf.metric.common.constants.PermissionType;
 import org.loxf.metric.common.constants.ResultCodeEnum;
 import org.loxf.metric.common.dto.BaseResult;
 import org.loxf.metric.common.dto.PageData;
@@ -10,7 +9,6 @@ import org.loxf.metric.common.dto.Pager;
 import org.loxf.metric.common.dto.QuotaDimensionDto;
 import org.loxf.metric.dal.dao.interfaces.QuotaDimensionDao;
 import org.loxf.metric.dal.po.QuotaDimension;
-import org.loxf.metric.service.aop.CheckUser;
 import org.loxf.metric.service.base.BaseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +26,6 @@ public class QuotaDimensionServiceImpl extends BaseService implements IQuotaDime
     @Autowired
     private QuotaDimensionDao quotaDimensionDao;
     @Override
-    @CheckUser(value = PermissionType.LOGIN, nameParam = "{0}.handleUserName")
     public BaseResult<PageData> getPageList(QuotaDimensionDto obj) {
         Pager pager = obj.getPager();
         if (pager == null) {
@@ -39,7 +36,6 @@ public class QuotaDimensionServiceImpl extends BaseService implements IQuotaDime
     }
 
     @Override
-    @CheckUser(value = PermissionType.ROOT, nameParam = "{0}.handleUserName")
     public BaseResult<String> insertItem(QuotaDimensionDto obj) {
         QuotaDimension quotaDimension = new QuotaDimension();
         BeanUtils.copyProperties(obj, quotaDimension);
@@ -49,13 +45,11 @@ public class QuotaDimensionServiceImpl extends BaseService implements IQuotaDime
     }
 
     @Override
-    @CheckUser(nameParam = "{1}")
     public BaseResult<QuotaDimensionDto> queryItemByCode(String itemCode, String handleUserName) {
         return new BaseResult(ResultCodeEnum.NOT_SUPPORT.getCode(), "接口弃用");
     }
 
     @Override
-    @CheckUser(value = PermissionType.ROOT, nameParam = "{0}.handleUserName")
     public BaseResult<String> updateItem(QuotaDimensionDto obj) {
         String [] props = new String[]{"dimCode", "uniqueCode"};
         Map<String, Object> params = MapAndBeanTransUtils.transBean2Map(obj, Arrays.asList(props));
@@ -64,14 +58,12 @@ public class QuotaDimensionServiceImpl extends BaseService implements IQuotaDime
     }
 
     @Override
-    @CheckUser(value = PermissionType.ROOT, nameParam = "{1}")
     public BaseResult<String> delItemByCode(String itemCode, String handleUserName) {
         // 删除维度，如果维度未被指标关联，可以删除，否则不能删除。
         return new BaseResult(ResultCodeEnum.NOT_SUPPORT.getCode(), "接口弃用");
     }
 
     @Override
-    @CheckUser(value = PermissionType.ROOT, nameParam = "{2}")
     public BaseResult<String> delItemByCode(String itemCode, String uniqueCode, String handleUserName) {
         // 删除维度，如果维度未被指标关联，可以删除，否则不能删除。
         quotaDimensionDao.remove(itemCode, uniqueCode);

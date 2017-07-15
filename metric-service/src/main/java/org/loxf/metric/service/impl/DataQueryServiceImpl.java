@@ -21,6 +21,7 @@ import org.loxf.metric.service.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -32,6 +33,7 @@ import java.util.concurrent.Future;
 /**
  * Created by luohj on 2017/7/15.
  */
+@Service
 public class DataQueryServiceImpl implements IDataQueryService {
     private static Logger logger = LoggerFactory.getLogger(DataQueryServiceImpl.class);
     @Autowired

@@ -98,8 +98,8 @@ public class ChartDaoImpl extends MongoDaoBase<Chart> implements ChartDao {
             }
         }
 
-        if (StringUtils.isNotEmpty(chart.getChartDim())) {
-            query.put("chartDim", chart.getChartDim());
+        if (StringUtils.isNotEmpty(chart.getChartDimension())) {
+            query.put("chartDim", chart.getChartDimension());
         }
         if (StringUtils.isNotEmpty(chart.getUniqueCode())) {
             query.put("uniqueCode", chart.getUniqueCode());

@@ -1,6 +1,5 @@
 package org.loxf.metric.service.impl;
 
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.log4j.Logger;
 import org.loxf.metric.api.IQuotaDimenValueService;
 import org.loxf.metric.common.dto.*;

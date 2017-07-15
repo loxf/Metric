@@ -16,7 +16,7 @@ import org.loxf.metric.dal.dao.interfaces.QuotaDao;
 import org.loxf.metric.dal.po.Chart;
 import org.apache.log4j.Logger;
 import org.loxf.metric.dal.po.Quota;
-import org.loxf.metric.service.aop.CheckUser;
+import org.loxf.metric.permission.CheckUser;
 import org.loxf.metric.service.base.BaseService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +66,7 @@ public class ChartServiceImpl extends BaseService implements IChartService {
             return result;
         }
         boolean flag=true;
-        Set<QuotaItem> quotaItemList=obj.getQuotaList();
+        List<QuotaItem> quotaItemList=obj.getQuotaList();
         Quota baseQuota=new Quota();
         for(QuotaItem quotaItem:quotaItemList){
             baseQuota.setQuotaCode(quotaItem.getQuotaCode());

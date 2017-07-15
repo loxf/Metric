@@ -13,7 +13,7 @@ import org.loxf.metric.dal.dao.interfaces.DataDao;
 import org.loxf.metric.dal.dao.interfaces.QuotaDao;
 import org.loxf.metric.dal.dao.interfaces.QuotaDimensionValueDao;
 import org.loxf.metric.dal.po.Quota;
-import org.loxf.metric.service.aop.CheckUser;
+import org.loxf.metric.permission.CheckUser;
 import org.loxf.metric.service.callable.SaveDataCallable;
 import org.loxf.metric.service.utils.PoolUtil;
 import org.slf4j.Logger;

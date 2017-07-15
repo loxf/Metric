@@ -15,7 +15,7 @@ import org.loxf.metric.common.dto.Pager;
 import org.loxf.metric.common.dto.UserDto;
 import org.loxf.metric.dal.dao.interfaces.UserDao;
 import org.loxf.metric.dal.po.User;
-import org.loxf.metric.service.aop.CheckUser;
+import org.loxf.metric.permission.CheckUser;
 import org.loxf.metric.service.base.BaseService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

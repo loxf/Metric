@@ -14,7 +14,7 @@ import org.loxf.metric.dal.dao.interfaces.BoardDao;
 import org.loxf.metric.dal.dao.interfaces.ChartDao;
 import org.loxf.metric.dal.po.Board;
 import org.apache.log4j.Logger;
-import org.loxf.metric.service.aop.CheckUser;
+import org.loxf.metric.permission.CheckUser;
 import org.loxf.metric.service.base.BaseService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

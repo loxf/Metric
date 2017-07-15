@@ -14,7 +14,6 @@ import org.loxf.metric.base.utils.MapAndBeanTransUtils;
 import org.loxf.metric.dal.dao.interfaces.QuotaDao;
 import org.loxf.metric.dal.dao.interfaces.TargetDao;
 import org.loxf.metric.dal.po.*;
-import org.loxf.metric.service.aop.CheckUser;
 import org.loxf.metric.service.base.BaseService;
 import org.loxf.metric.common.dto.*;
 import org.loxf.metric.service.utils.QuotaSqlBuilder;
@@ -36,7 +35,6 @@ public class QuotaServiceImpl extends BaseService implements IQuotaService {
     private TargetDao targetDao;
 
     @Override
-    @CheckUser(value = PermissionType.ROOT, nameParam = "{0}.handleUserName")
     public BaseResult<String> insertItem(QuotaDto quotaDto) {
         quotaDto.setCreateUserName(quotaDto.getHandleUserName());
         quotaDto.setUpdateUserName(quotaDto.getHandleUserName());
@@ -113,7 +111,6 @@ public class QuotaServiceImpl extends BaseService implements IQuotaService {
     }
 
     @Override
-    @CheckUser(nameParam = "{0}.handleUserName")
     public BaseResult<PageData> getPageList(QuotaDto obj) {
         Pager pager=obj.getPager();
         BaseResult validPagerResult = super.validPager(obj.getPager());
@@ -125,7 +122,6 @@ public class QuotaServiceImpl extends BaseService implements IQuotaService {
     }
 
     @Override
-    @CheckUser(nameParam = "{1}")
     public BaseResult<QuotaDto> queryItemByCode(String itemCode, String handleUserName) {
         Quota qryParams = new Quota();
         qryParams.setQuotaCode(itemCode);
@@ -136,7 +132,6 @@ public class QuotaServiceImpl extends BaseService implements IQuotaService {
     }
 
     @Override
-    @CheckUser(value = PermissionType.ROOT, nameParam = "{0}.handleUserName")
     public BaseResult<String> updateItem(QuotaDto obj) {
         String itemCode = obj.getQuotaCode();
         if (StringUtils.isEmpty(itemCode)) {
@@ -158,7 +153,6 @@ public class QuotaServiceImpl extends BaseService implements IQuotaService {
     }
 
     @Override
-    @CheckUser(value = PermissionType.ROOT, nameParam = "{1}")
     public BaseResult<String> delItemByCode(String itemCode, String handleUserName) {
         BaseResult<String> checkResult = checkDependencyQuota(itemCode);
         if (checkResult.getCode().equals(ResultCodeEnum.SUCCESS.getCode())) {
@@ -217,7 +211,6 @@ public class QuotaServiceImpl extends BaseService implements IQuotaService {
     }
 
     @Override
-    @CheckUser(nameParam = "{0}.handleUserName")
     public BaseResult<List<QuotaDto>> queryQuotaList(QuotaDto quotaDto) {
         Quota quota = new Quota();
         BeanUtils.copyProperties(quotaDto, quota);
