@@ -77,14 +77,14 @@ public class ChartServiceImpl extends BaseService implements IChartService {
     @CheckUser(nameParam = "{0}.handleUserName")
     public BaseResult<PageData> getPageList(ChartDto obj) {
         Pager pager=obj.getPager();
-        String validPagerResult=super.validPager(obj.getPager());
-        if(!"SUCCESS".equals(validPagerResult)){
-            return new BaseResult<>(ResultCodeEnum.PARAM_ERROR.getCode(), validPagerResult);
+        BaseResult validPagerResult = super.validPager(obj.getPager());
+        if (ResultCodeEnum.SUCCESS.getCode().equals(validPagerResult.getCode())) {
+            Chart chart=new Chart();
+            BeanUtils.copyProperties(obj, chart);
+            PageData pageData=getPermissionPageResult(chart,obj.getHandleUserName(), pager.getStart(), pager.getRownum());
+            return new BaseResult<>(pageData);
         }
-        Chart chart=new Chart();
-        BeanUtils.copyProperties(obj, chart);
-        PageData pageData=getPermissionPageResult(chart,obj.getHandleUserName(), pager.getStart(), pager.getRownum());
-        return new BaseResult<>(pageData);
+        return validPagerResult;
     }
 
     private PageData getPermissionPageResult(Chart obj, String handleUserName, int start, int pageSize) {

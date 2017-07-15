@@ -44,15 +44,13 @@ public class UserServiceImpl extends BaseService implements IUserService {
             return result;
         }
         Pager pager=obj.getPager();
-        String validPagerResult=super.validPager(obj.getPager());
-        if(!"SUCCESS".equals(validPagerResult)){
-            result.setCode(ResultCodeEnum.PARAM_ERROR.getCode());
-            result.setMsg(validPagerResult);
+        result = super.validPager(obj.getPager());
+        if (ResultCodeEnum.SUCCESS.getCode().equals(result.getCode())) {
+            obj.setState(StandardState.AVAILABLE.getValue());
+            Map<String, Object> params = MapAndBeanTransUtils.transBean2Map(obj);
+            result.setData(getPageResult(userDao, params, pager.getStart(), pager.getRownum()));
             return result;
         }
-        obj.setState(StandardState.AVAILABLE.getValue());
-        Map<String, Object> params = MapAndBeanTransUtils.transBean2Map(obj);
-        result.setData(getPageResult(userDao, params, pager.getStart(), pager.getRownum()));
         return result;
     }
 
