@@ -41,8 +41,7 @@
     </bean>
 
     <context:component-scan base-package="org.loxf.metric.test"/>
-<!--
     <mvc:interceptors>
-        <bean class="com.ywwl.oper.base.interceptor.BaseInterceptor" />
-    </mvc:interceptors>-->
+        <bean class="org.loxf.metric.interceptor.PermissionInterceptor" />
+    </mvc:interceptors>
 </beans>

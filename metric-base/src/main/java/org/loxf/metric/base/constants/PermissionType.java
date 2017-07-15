@@ -1,4 +1,4 @@
-package org.loxf.metric.common.constants;
+package org.loxf.metric.base.constants;
 
 /**
  * Created by hutingting on 2017/7/11.

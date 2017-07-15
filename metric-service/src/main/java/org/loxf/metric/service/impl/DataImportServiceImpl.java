@@ -5,7 +5,6 @@ import org.apache.commons.lang.StringUtils;
 import org.loxf.metric.api.IChartService;
 import org.loxf.metric.api.IDataImportService;
 import org.loxf.metric.base.ItemList.QuotaDimItem;
-import org.loxf.metric.common.constants.PermissionType;
 import org.loxf.metric.common.constants.QuotaType;
 import org.loxf.metric.common.constants.ResultCodeEnum;
 import org.loxf.metric.common.dto.*;

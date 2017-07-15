@@ -7,7 +7,6 @@ import org.loxf.metric.api.IQuotaService;
 import org.loxf.metric.base.ItemList.TargetItem;
 import org.loxf.metric.base.exception.MetricException;
 import org.loxf.metric.base.utils.IdGenerator;
-import org.loxf.metric.common.constants.PermissionType;
 import org.loxf.metric.common.constants.QuotaType;
 import org.loxf.metric.common.constants.ResultCodeEnum;
 import org.loxf.metric.base.utils.MapAndBeanTransUtils;

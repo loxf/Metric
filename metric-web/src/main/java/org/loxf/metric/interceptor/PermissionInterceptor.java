@@ -1,34 +1,36 @@
-package org.loxf.metric.permission;
+package org.loxf.metric.interceptor;
 
-import org.loxf.metric.api.IUserService;
+import org.loxf.metric.base.annotations.Permission;
 import org.loxf.metric.base.exception.MetricException;
-import org.loxf.metric.common.constants.PermissionType;
+import org.loxf.metric.base.constants.PermissionType;
 import org.loxf.metric.common.constants.UserTypeEnum;
 import org.loxf.metric.common.dto.UserDto;
 import org.loxf.metric.filter.LoginFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.lang.annotation.Annotation;
 
 /**
  * Created by luohj on 2017/7/13.
  */
 public class PermissionInterceptor extends HandlerInterceptorAdapter {
     private static Logger logger = LoggerFactory.getLogger(PermissionInterceptor.class);
-    @Autowired
-    private IUserService userService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         Class<?> clazz = handler.getClass();
-        if (clazz.isAnnotationPresent(Permission.class)) {
-            Permission permission = (Permission)clazz.getAnnotation(Permission.class);
-            checkUserRole(request, permission);
+        if(handler.getClass().isAssignableFrom(HandlerMethod.class)) {
+            if (clazz.isAnnotationPresent(Permission.class)) {
+                Permission permission = ((HandlerMethod) handler).getMethodAnnotation(Permission.class);
+                if(permission==null){
+                    return true;
+                }
+                return checkUserRole(request, permission);
+            }
         }
         return true;
     }
