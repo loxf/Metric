@@ -20,6 +20,8 @@ public class Target extends BasePO{
 
     private String uniqueCode;
 
+    private String visibleType;
+
     private List<TargetItem> itemList;
 
     public String getTargetCode() {
@@ -76,6 +78,14 @@ public class Target extends BasePO{
 
     public void setUniqueCode(String uniqueCode) {
         this.uniqueCode = uniqueCode;
+    }
+
+    public String getVisibleType() {
+        return visibleType;
+    }
+
+    public void setVisibleType(String visibleType) {
+        this.visibleType = visibleType;
     }
 
     public List<TargetItem> getItemList() {

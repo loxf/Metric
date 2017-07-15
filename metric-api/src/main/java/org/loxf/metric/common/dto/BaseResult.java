@@ -6,9 +6,6 @@ import org.loxf.metric.common.constants.ResultCodeEnum;
 import java.io.Serializable;
 
 
-/**
- * Created by wugang on 2017/2/23.
- */
 public class BaseResult<T> implements Serializable {
 
     /**

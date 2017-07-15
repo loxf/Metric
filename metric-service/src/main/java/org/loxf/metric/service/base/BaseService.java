@@ -35,20 +35,17 @@ public class BaseService {
     }
 
 
-    public String validPager(Pager pager){
-        String result;
+    public BaseResult validPager(Pager pager){
         if(pager==null){
-            result="分页信息为空";
+            return new BaseResult(ResultCodeEnum.PARAM_LACK.getCode(), "分页信息为空");
         }else{
             int pageSize=pager.getRownum();
             int currentPage=pager.getCurrentPage();
-            if(pageSize<0||currentPage<0){
-                result="分页信息参数错误！";
-            }else{
-                result="SUCCESS";
+            if(pageSize<=0||currentPage<=0){
+                return new BaseResult(ResultCodeEnum.PARAM_ERROR.getCode(), "分页参数错误");
             }
         }
-        return result;
+        return new BaseResult();
     }
 
 

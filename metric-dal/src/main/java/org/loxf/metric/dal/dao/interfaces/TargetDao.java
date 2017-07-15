@@ -6,5 +6,4 @@ import org.loxf.metric.dal.po.Target;
 import java.util.List;
 
 public interface TargetDao extends IBaseDao<Target> {
-    public List<Target> findAllByQuery(Target target) ;
 }

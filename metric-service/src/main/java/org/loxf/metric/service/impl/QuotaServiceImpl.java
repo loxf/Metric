@@ -116,12 +116,12 @@ public class QuotaServiceImpl extends BaseService implements IQuotaService {
     @CheckUser(nameParam = "{0}.handleUserName")
     public BaseResult<PageData> getPageList(QuotaDto obj) {
         Pager pager=obj.getPager();
-        String validPagerResult=super.validPager(obj.getPager());
-        if(!"SUCCESS".equals(validPagerResult)){
-            return new BaseResult<>(ResultCodeEnum.PARAM_ERROR.getCode(), validPagerResult);
+        BaseResult validPagerResult = super.validPager(obj.getPager());
+        if(ResultCodeEnum.SUCCESS.getCode().equals(validPagerResult.getCode())){
+            Map<String, Object> params = MapAndBeanTransUtils.transBean2Map(obj);
+            return new BaseResult<>(getPageResult(quotaDao, params, pager.getStart(), pager.getRownum()));
         }
-        Map<String, Object> params = MapAndBeanTransUtils.transBean2Map(obj);
-        return new BaseResult<>(getPageResult(quotaDao, params, pager.getStart(), pager.getRownum()));
+        return validPagerResult;
     }
 
     @Override
@@ -196,7 +196,7 @@ public class QuotaServiceImpl extends BaseService implements IQuotaService {
         Date now = new Date();
         target.setTargetStartTime(now);
         target.setTargetEndTime(now);
-        List<Target> targetList = targetDao.findAllByQuery(target);
+        List<Target> targetList = targetDao.findAll(target);
         if (CollectionUtils.isNotEmpty(targetList)) {
             flag = true;
             int i = 0;

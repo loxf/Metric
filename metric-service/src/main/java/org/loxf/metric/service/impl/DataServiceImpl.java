@@ -5,6 +5,7 @@ import org.apache.commons.lang.StringUtils;
 import org.loxf.metric.api.IDataService;
 import org.loxf.metric.base.ItemList.QuotaDimItem;
 import org.loxf.metric.base.utils.RandomUtils;
+import org.loxf.metric.common.constants.PermissionType;
 import org.loxf.metric.common.constants.QuotaType;
 import org.loxf.metric.common.constants.ResultCodeEnum;
 import org.loxf.metric.common.dto.BaseResult;
@@ -30,7 +31,7 @@ public class DataServiceImpl implements IDataService {
     @Autowired
     private DataDao dataDao;
     @Override
-    @CheckUser
+    @CheckUser(PermissionType.ROOT)
     public BaseResult<QuotaDto> importData(String handleUserName, String quotaCode, List<Map> data) {
         if(CollectionUtils.isEmpty(data)){
             return new BaseResult(ResultCodeEnum.PARAM_ERROR.getCode(), "导入数据为空");
@@ -48,7 +49,7 @@ public class DataServiceImpl implements IDataService {
     }
 
     @Override
-    @CheckUser
+    @CheckUser(PermissionType.ROOT)
     public BaseResult<QuotaDto> rmDataByCircleTime(String handleUserName, String quotaCode, Date circleTime) {
         BaseResult<QuotaDto> validQuota = validBasic(quotaCode);
         if(validQuota.getCode().equals(ResultCodeEnum.SUCCESS.getCode())) {
@@ -58,7 +59,7 @@ public class DataServiceImpl implements IDataService {
     }
 
     @Override
-    @CheckUser
+    @CheckUser(PermissionType.ROOT)
     public BaseResult<QuotaDto> dropAllData(String handleUserName, String quotaCode) {
         BaseResult<QuotaDto> validQuota = validBasic(quotaCode);
         if(validQuota.getCode().equals(ResultCodeEnum.SUCCESS.getCode())) {

@@ -21,6 +21,8 @@ public class TargetDto extends BaseDto{
 
     private String uniqueCode;
 
+    private String visibleType;
+
     private String createUserName;
 
     private String updatedUserName;
@@ -89,6 +91,14 @@ public class TargetDto extends BaseDto{
 
     public void setUniqueCode(String uniqueCode) {
         this.uniqueCode = uniqueCode;
+    }
+
+    public String getVisibleType() {
+        return visibleType;
+    }
+
+    public void setVisibleType(String visibleType) {
+        this.visibleType = visibleType;
     }
 
     public String getUpdatedUserName() {

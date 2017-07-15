@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 @Service("targetDao")
 public class TargetDaoImpl extends MongoDaoBase<Target> implements TargetDao{
     private final String collectionName = CollectionConstants.TARGET.getCollectionName();
-    private static String target_prefix = "TARGET_";
+    private static String target_prefix = "TG_";
 
     @Override
     public String insert(Target object) {
@@ -40,21 +40,15 @@ public class TargetDaoImpl extends MongoDaoBase<Target> implements TargetDao{
         return target;
     }
 
-    private void handleDateForList(List<Target> list){
-        for(Target target:list){
-        }
-    }
     @Override
     public List<Target> findAll(Target object) {
         List<Target> targetList=super.findAll(getCommonQuery(object), collectionName);
-        handleDateForList(targetList);
         return targetList;
     }
 
     @Override
     public List<Target> findByPager(Target object, int start, int pageSize) {
         List<Target> targetList=super.findByPager(getCommonQuery(object), start, pageSize, collectionName);
-        handleDateForList(targetList);
         return targetList;
     }
 
@@ -80,13 +74,6 @@ public class TargetDaoImpl extends MongoDaoBase<Target> implements TargetDao{
     @Override
     public long countByParams(Target object) {
         return super.countByParams(getCommonQuery(object),collectionName);
-    }
-
-    @Override
-    public List<Target> findAllByQuery(Target target) {
-        List<Target> targetList=super.findAll(getCommonQuery(target), collectionName);
-        handleDateForList(targetList);
-        return targetList;
     }
 
     private Query getCommonQuery(Target target){
