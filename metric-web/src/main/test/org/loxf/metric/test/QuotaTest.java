@@ -8,16 +8,12 @@ import org.loxf.metric.base.ItemList.QuotaDimItem;
 import org.loxf.metric.base.constants.StandardState;
 import org.loxf.metric.common.constants.*;
 import org.loxf.metric.common.dto.*;
-import org.loxf.metric.dal.po.Quota;
-import org.loxf.metric.dal.po.QuotaDimension;
 import org.loxf.metric.test.core.JUnit4ClassRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

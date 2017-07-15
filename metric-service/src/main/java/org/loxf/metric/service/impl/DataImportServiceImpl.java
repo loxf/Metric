@@ -13,7 +13,6 @@ import org.loxf.metric.dal.dao.interfaces.DataDao;
 import org.loxf.metric.dal.dao.interfaces.QuotaDao;
 import org.loxf.metric.dal.dao.interfaces.QuotaDimensionValueDao;
 import org.loxf.metric.dal.po.Quota;
-import org.loxf.metric.permission.CheckUser;
 import org.loxf.metric.service.callable.SaveDataCallable;
 import org.loxf.metric.service.utils.PoolUtil;
 import org.slf4j.Logger;
@@ -40,7 +39,6 @@ public class DataImportServiceImpl implements IDataImportService {
     private QuotaDimensionValueDao quotaDimensionValueDao;
 
     @Override
-    @CheckUser(PermissionType.ROOT)
     public BaseResult<QuotaDto> importData(String handleUserName, String quotaCode, List<Map> data) {
         if (CollectionUtils.isEmpty(data)) {
             return new BaseResult(ResultCodeEnum.PARAM_ERROR.getCode(), "导入数据为空");
@@ -67,7 +65,6 @@ public class DataImportServiceImpl implements IDataImportService {
     }
 
     @Override
-    @CheckUser(PermissionType.ROOT)
     public BaseResult<QuotaDto> rmDataByCircleTime(String handleUserName, String quotaCode, Date circleTime) {
         BaseResult<QuotaDto> validQuota = validBasic(quotaCode);
         if (validQuota.getCode().equals(ResultCodeEnum.SUCCESS.getCode())) {
@@ -77,7 +74,6 @@ public class DataImportServiceImpl implements IDataImportService {
     }
 
     @Override
-    @CheckUser(PermissionType.ROOT)
     public BaseResult<QuotaDto> dropAllData(String handleUserName, String quotaCode) {
         BaseResult<QuotaDto> validQuota = validBasic(quotaCode);
         if (validQuota.getCode().equals(ResultCodeEnum.SUCCESS.getCode())) {

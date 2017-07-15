@@ -14,7 +14,6 @@ import org.loxf.metric.dal.dao.interfaces.BoardDao;
 import org.loxf.metric.dal.dao.interfaces.ChartDao;
 import org.loxf.metric.dal.po.Board;
 import org.apache.log4j.Logger;
-import org.loxf.metric.permission.CheckUser;
 import org.loxf.metric.service.base.BaseService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +39,6 @@ public class BoardServiceImpl extends BaseService implements IBoardService {
 
 
     @Override
-    @CheckUser(value = PermissionType.ROOT, nameParam = "{0}.handleUserName")
     public BaseResult<String> insertItem(BoardDto obj) {
         BaseResult result = new BaseResult();
         if (StringUtils.isEmpty(obj.getBoardName()) || StringUtils.isEmpty(obj.getUniqueCode()) ||
@@ -58,7 +56,6 @@ public class BoardServiceImpl extends BaseService implements IBoardService {
     }
 
     @Override
-    @CheckUser(nameParam = "{0}.handleUserName")
     public BaseResult<PageData> getPageList(BoardDto obj) {
 
         Pager pager=obj.getPager();
@@ -79,7 +76,6 @@ public class BoardServiceImpl extends BaseService implements IBoardService {
 
 
     @Override
-    @CheckUser(nameParam = "{1}")
     public BaseResult<BoardDto> queryItemByCode(String itemCode, String handleUserName) {
         BaseResult<BoardDto> result = new BaseResult<>();
         if (StringUtils.isEmpty(itemCode)) {
@@ -97,7 +93,6 @@ public class BoardServiceImpl extends BaseService implements IBoardService {
     }
 
     @Override
-    @CheckUser(value = PermissionType.ROOT,nameParam = "{0}.handleUserName")
     public BaseResult<String> updateItem(BoardDto obj) {
         BaseResult<String> result = new BaseResult<>();
         String itemCode = obj.getBoardCode();
@@ -121,7 +116,6 @@ public class BoardServiceImpl extends BaseService implements IBoardService {
     }
 
     @Override
-    @CheckUser(value = PermissionType.ROOT,nameParam = "{1}")
     public BaseResult<String> delItemByCode(String itemCode, String handleUserName) {
         logger.info("客户:" + handleUserName + "将要删除看板,itemCode" + itemCode);
         BaseResult<String> result = new BaseResult<>();
@@ -138,7 +132,6 @@ public class BoardServiceImpl extends BaseService implements IBoardService {
     }
 
     @Override
-    @CheckUser(value = PermissionType.ROOT,nameParam = "{1}")
     public BaseResult<String> addChart(String boardCode,String handleUserName,List<ChartItem> chartItemList) {
         BaseResult<String> result=new BaseResult<>();
         if(StringUtils.isBlank(boardCode)){
@@ -188,7 +181,6 @@ public class BoardServiceImpl extends BaseService implements IBoardService {
     }
 
     @Override
-    @CheckUser(value = PermissionType.ROOT,nameParam = "{1}")
     public BaseResult<String> delChart(String boardCode,String chartCode, String handleUserName) {
         BaseResult<String> result=new BaseResult<>();
         if(StringUtils.isBlank(chartCode)||StringUtils.isBlank(boardCode)){
@@ -224,7 +216,6 @@ public class BoardServiceImpl extends BaseService implements IBoardService {
     }
 
     @Override
-    @CheckUser(nameParam = "{1}")//看图时不分页
     public BaseResult<List<ChartItem>> getOwnChartList(String boardCode, String handleUserName) {
         BaseResult<List<ChartItem>> result=new BaseResult<List<ChartItem>>();
         if(StringUtils.isBlank(boardCode)){
@@ -243,7 +234,6 @@ public class BoardServiceImpl extends BaseService implements IBoardService {
     }
 
     @Override
-    @CheckUser(value = PermissionType.ROOT,nameParam = "{0}.handleUserName")//选择图要分页
     public BaseResult<List<ChartItem>> getOtherChartListByPage(BoardDto boardDto) {
         Pager pager=boardDto.getPager();
         BaseResult result=super.validPager(pager);

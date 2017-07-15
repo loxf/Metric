@@ -11,7 +11,6 @@ import org.loxf.metric.base.utils.MapAndBeanTransUtils;
 import org.loxf.metric.dal.dao.interfaces.TargetDao;
 import org.loxf.metric.dal.po.Target;
 import org.apache.log4j.Logger;
-import org.loxf.metric.permission.CheckUser;
 import org.loxf.metric.service.base.BaseService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +32,6 @@ public class TargetServiceImpl extends BaseService implements ITargetService {
     private TargetDao targetDao;
 
     @Override
-    @CheckUser(value = PermissionType.ROOT, nameParam = "{0}.handleUserName")
     public BaseResult<String> insertItem(TargetDto obj) {
         BaseResult validResult = validTarget(obj);
         if (validResult.getCode().equals(ResultCodeEnum.SUCCESS.getCode())) {
@@ -75,7 +73,6 @@ public class TargetServiceImpl extends BaseService implements ITargetService {
     }
 
     @Override
-    @CheckUser(nameParam = "{0}.handleUserName")
     public BaseResult<PageData> getPageList(TargetDto obj) {
         Pager pager = obj.getPager();
         BaseResult validPagerResult = super.validPager(obj.getPager());
@@ -87,7 +84,6 @@ public class TargetServiceImpl extends BaseService implements ITargetService {
     }
 
     @Override
-    @CheckUser(nameParam = "{1}")
     public BaseResult<TargetDto> queryItemByCode(String itemCode, String handleUserName) {
         Target qryParams = new Target();
         qryParams.setTargetCode(itemCode);
@@ -98,7 +94,6 @@ public class TargetServiceImpl extends BaseService implements ITargetService {
     }
 
     @Override
-    @CheckUser(value = PermissionType.ROOT, nameParam = "{0}.handleUserName")
     public BaseResult<String> updateItem(TargetDto obj) {
         String itemCode = obj.getTargetCode();
         if (StringUtils.isEmpty(itemCode)) {
@@ -110,14 +105,12 @@ public class TargetServiceImpl extends BaseService implements ITargetService {
     }
 
     @Override
-    @CheckUser(value = PermissionType.ROOT, nameParam = "{1}")
     public BaseResult<String> delItemByCode(String itemCode, String handleUserName) {
         targetDao.remove(itemCode);
         return new BaseResult<>();
     }
 
     @Override
-    @CheckUser(nameParam = "{0}.handleUserName")
     public BaseResult<List<TargetDto>> queryTarget(TargetDto targetDto) {
         Target target = new Target();
         BeanUtils.copyProperties(targetDto, target);

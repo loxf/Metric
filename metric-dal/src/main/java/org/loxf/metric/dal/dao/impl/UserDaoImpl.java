@@ -22,12 +22,11 @@ import java.util.Map;
 @Service("user")
 public class UserDaoImpl extends MongoDaoBase<User> implements UserDao {
     private final String collectionName = CollectionConstants.USER.getCollectionName();
-    private static String target_prefix = "USER_";
 
     @Override
     public String insert(User object) {
-        String sid = IdGenerator.generate(target_prefix);
-        object.setUserCode(sid);
+        String sid = IdGenerator.generate("",32);
+        object.setUserName(sid);
         object.setCreatedAt(new Date());
         object.setUpdatedAt(new Date());
         super.insert(object, collectionName);
@@ -60,7 +59,7 @@ public class UserDaoImpl extends MongoDaoBase<User> implements UserDao {
     @Override
     public void updateOne(String itemCode, Map<String, Object> setParams) {
         Map<String, Object> queryParams=new HashedMap();
-        queryParams.put("userCode",itemCode);
+        queryParams.put("userName",itemCode);
         setParams.put("updatedAt",new Date());
         super.updateOne(queryParams, setParams, collectionName);
     }
@@ -68,7 +67,7 @@ public class UserDaoImpl extends MongoDaoBase<User> implements UserDao {
     @Override
     public void remove(String itemCode) {
         Map<String, Object> params=new HashedMap();
-        params.put("userCode",itemCode);
+        params.put("userName",itemCode);
         super.remove(params, collectionName);
     }
 

@@ -12,6 +12,7 @@ import org.loxf.metric.test.core.JUnit4ClassRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 /**
  * Created by hutingting on 2017/7/12.
@@ -22,16 +23,18 @@ import org.springframework.test.context.ContextConfiguration;
 public class ChartServiceTest {
     @Autowired
     private ChartServiceImpl chartService;
+
+    @Test
+    public  void testAddChart(){
+        ChartDto chartDto=new ChartDto();
+        BaseResult<String> result=chartService.insertItem(chartDto);
+        System.out.println("resultCode:"+result.getCode());
+        System.out.println("resultMsg:"+result.getMsg());
+        System.out.println("resultData:"+result.getData());
+    }
+
     @Test
     public void testgetPageList(){
-
-        /*QuotaDto quotaDto = new QuotaDto();
-        quotaDto.setHandleUserName("admin");
-        quotaDto.setType(QuotaType.BASIC.getValue());
-        Pager pager = new Pager();
-        pager.setRownum(10);
-        pager.setCurrentPage(1);
-        quotaDto.setPager(pager);*/
         ChartDto obj=new ChartDto();
         Pager pager=new Pager();
         pager.setCurrentPage(1);
@@ -43,4 +46,6 @@ public class ChartServiceTest {
         BaseResult<PageData> i=chartService.getPageList(obj);
         int a=0;
     }
+
+
 }

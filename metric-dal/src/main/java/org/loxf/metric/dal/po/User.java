@@ -5,7 +5,6 @@ package org.loxf.metric.dal.po;
  */
 public class User extends BasePO {
     //序列化
-    private String userCode;
     private String userName;
     private String uniqueCode;
     private String pwd;
@@ -14,14 +13,6 @@ public class User extends BasePO {
     private String email;
     private String userType;
     private String state;
-
-    public String getUserCode() {
-        return userCode;
-    }
-
-    public void setUserCode(String userCode) {
-        this.userCode = userCode;
-    }
 
     public String getUserName() {
         return userName;

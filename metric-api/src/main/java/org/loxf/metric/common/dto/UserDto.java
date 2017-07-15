@@ -4,7 +4,6 @@ package org.loxf.metric.common.dto;
  * Created by hutingting on 2017/7/6.
  */
 public class UserDto extends BaseDto{
-    private String userCode;
     private String userName;
     private String uniqueCode;
     private String pwd;
@@ -13,19 +12,10 @@ public class UserDto extends BaseDto{
     private String email;
     private String userType;
     private String state;
-
     /**
      * 浏览器信息
      */
     private String userAgent;
-
-    public String getUserCode() {
-        return userCode;
-    }
-
-    public void setUserCode(String userCode) {
-        this.userCode = userCode;
-    }
 
     public String getUserName() {
         return userName;

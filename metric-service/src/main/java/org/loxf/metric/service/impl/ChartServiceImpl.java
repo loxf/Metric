@@ -16,7 +16,6 @@ import org.loxf.metric.dal.dao.interfaces.QuotaDao;
 import org.loxf.metric.dal.po.Chart;
 import org.apache.log4j.Logger;
 import org.loxf.metric.dal.po.Quota;
-import org.loxf.metric.permission.CheckUser;
 import org.loxf.metric.service.base.BaseService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +39,6 @@ public class ChartServiceImpl extends BaseService implements IChartService {
     private QuotaDao quotaDao;
 
     @Override
-    @CheckUser(value = PermissionType.ROOT, nameParam = "{0}.handleUserName")
     public BaseResult<String> insertItem(ChartDto obj) {//前端去重，可见范围列表。只有root用户可以添加图
         BaseResult result = new BaseResult();
         if (StringUtils.isEmpty(obj.getChartName()) || StringUtils.isEmpty(obj.getType()) ||
@@ -94,7 +92,6 @@ public class ChartServiceImpl extends BaseService implements IChartService {
     }
 
     @Override
-    @CheckUser(nameParam = "{0}.handleUserName")
     public BaseResult<PageData> getPageList(ChartDto obj) {
         Pager pager=obj.getPager();
         BaseResult validPagerResult = super.validPager(obj.getPager());
@@ -128,7 +125,6 @@ public class ChartServiceImpl extends BaseService implements IChartService {
     }
 
     @Override
-    @CheckUser(nameParam = "{1}")
     public BaseResult<ChartDto> queryItemByCode(String itemCode, String handleUserName) {//是否要查询已失效的图
         BaseResult<ChartDto> result = new BaseResult<>();
         if (StringUtils.isEmpty(itemCode)) {
@@ -152,7 +148,6 @@ public class ChartServiceImpl extends BaseService implements IChartService {
     }
 
     @Override
-    @CheckUser(nameParam = "{0}.handleUserName")
     public BaseResult<String> updateItem(ChartDto obj) {
 //        BaseResult<String> result = new BaseResult<>();
 //        String itemCode = obj.getChartCode();
@@ -169,7 +164,6 @@ public class ChartServiceImpl extends BaseService implements IChartService {
     }
 
     @Override
-    @CheckUser(value = PermissionType.ROOT,nameParam = "{1}")
     public BaseResult<String> delItemByCode(String itemCode, String handleUserName) {
         logger.info("客户:" + handleUserName + "将要删除图,itemCode" + itemCode);
         BaseResult<String> result = new BaseResult<>();
