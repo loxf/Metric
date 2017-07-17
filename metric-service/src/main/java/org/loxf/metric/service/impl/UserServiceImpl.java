@@ -150,15 +150,17 @@ public class UserServiceImpl extends BaseService implements IUserService {
      * @param userName
      * @return
      */
-    public BaseResult<String> disableChildUser(String userName,String rootName){
+    public BaseResult<String> disableChildUser(String userName,String rootName,String teamCode){
         BaseResult<String> result=new BaseResult<String>();
-        if (StringUtils.isEmpty(userName)||StringUtils.isEmpty(rootName)) {
+        if (StringUtils.isEmpty(userName)||StringUtils.isEmpty(rootName)||StringUtils.isEmpty(teamCode)) {
             result.setCode(ResultCodeEnum.PARAM_LACK.getCode());
             result.setMsg("必填参数缺失!");
             return result;
         }
         User qryUser=new User();
         qryUser.setUserName(userName);
+        qryUser.setUniqueCode(teamCode);
+        qryUser.setUserType(UserTypeEnum.CHILD.name());
         User existUser = userDao.findOne(qryUser);
         if(existUser==null){
             result.setCode(ResultCodeEnum.DATA_NOT_EXIST.getCode());
@@ -174,30 +176,28 @@ public class UserServiceImpl extends BaseService implements IUserService {
 
     /**
      * 修改密码
-     * @param userName
+     * @param userDto
      * @param oldPwd
      * @param newPwd
      * @return
      */
-    public  BaseResult<String> modifyPwd(String userName,String oldPwd,String newPwd){
+    public  BaseResult<String> modifyPwd(UserDto userDto,String oldPwd,String newPwd){
         BaseResult<String> result=new BaseResult<>();
-        if(StringUtils.isBlank(userName)||StringUtils.isBlank(oldPwd)||StringUtils.isBlank(newPwd)){
+        if(userDto==null||StringUtils.isBlank(oldPwd)||StringUtils.isBlank(newPwd)){
             result.setCode(ResultCodeEnum.PARAM_LACK.getCode());
             result.setMsg("必填参数缺失!");
             return result;
         }
-        User qryUser=new User();
-        qryUser.setUserName(userName);
-        qryUser.setPwd(oldPwd);
-        User existUser = userDao.findOne(qryUser);
-        if(existUser==null){
+        if(!userDto.getPwd().equals(oldPwd)){
             result.setCode(ResultCodeEnum.DATA_NOT_EXIST.getCode());
-            result.setMsg("用户和密码不匹配!");
+            result.setMsg("用户名和旧密码不匹配!");
             return result;
         }
-        qryUser.setPwd(newPwd);
-        Map setMap=MapAndBeanTransUtils.transBean2Map(qryUser);
-        userDao.updateOne(userName,setMap);
+        User user=new User();
+        BeanUtils.copyProperties(userDto,user);
+        user.setPwd(newPwd);
+        Map setMap=MapAndBeanTransUtils.transBean2Map(user);
+        userDao.updateOne(user.getUserName(),setMap);
         return result;
     }
 

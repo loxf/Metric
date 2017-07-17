@@ -4,6 +4,7 @@ import com.mongodb.BasicDBObject;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.loxf.metric.base.constants.CollectionConstants;
+import org.loxf.metric.base.constants.StandardState;
 import org.loxf.metric.base.utils.IdGenerator;
 import org.loxf.metric.core.mongo.MongoDaoBase;
 import org.loxf.metric.dal.dao.interfaces.UserDao;
@@ -82,6 +83,24 @@ public class UserDaoImpl extends MongoDaoBase<User> implements UserDao {
         if(StringUtils.isNotEmpty(user.getUserName())){
             query.put("userName", user.getUserName());
         }
+        if(StringUtils.isNotEmpty(user.getUniqueCode())){
+            query.put("uniqueCode", user.getUniqueCode());
+        }
+        if(StringUtils.isNotEmpty(user.getPwd())){
+            query.put("pwd", user.getPwd());
+        }
+        if(StringUtils.isNotEmpty(user.getRealName())){
+            query.put("realName", user.getRealName());
+        }
+        if(StringUtils.isNotEmpty(user.getPhone())){
+            query.put("phone", user.getPhone());
+        }
+        if(StringUtils.isNotEmpty(user.getUserType())){
+            query.put("userType", user.getUserType());
+        }
+
+        query.put("state", StandardState.AVAILABLE.getValue());
+
         // todo 未完
         return new BasicQuery(query);
     }

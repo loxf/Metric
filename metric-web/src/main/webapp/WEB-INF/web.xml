@@ -64,7 +64,7 @@
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <init-param>
             <param-name>contextConfigLocation</param-name>
-            <param-value></param-value>
+            <param-value>/WEB-INF/spring/spring-servlet.xml</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
         <async-supported>true</async-supported>
@@ -72,7 +72,7 @@
 
     <servlet-mapping>
         <servlet-name>api</servlet-name>
-        <url-pattern>*.html</url-pattern>
+        <url-pattern>/</url-pattern>
     </servlet-mapping>
 
     <!-- Disables Servlet Container welcome file handling. Needed for compatibility with Servlet 3.0 and Tomcat 7.0 -->

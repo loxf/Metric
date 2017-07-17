@@ -7,6 +7,7 @@ import javax.servlet.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
@@ -118,6 +119,11 @@ public class LoginFilter implements Filter {
             }
         }
         return false;
+    }
+
+    public static void setUser(HttpServletRequest request,String sessionId,UserDto user){
+        HttpSession session = request.getSession();
+        session.setAttribute(sessionId, user);
     }
 
     /**

@@ -33,14 +33,14 @@ public class QuotaControl {
     public String createQuota(QuotaDto quotaDto, HttpServletRequest request, HttpServletResponse response){
         return JSON.toJSONString(quotaService.insertItem(quotaDto));
     }
-    /**
-     * 删除指标
-     * @return
-     */
-    @RequestMapping("/testChartPage")
-    @ResponseBody
-    public String createQuota(String quotaCode, HttpServletRequest request, HttpServletResponse response){
-        UserDto userDto = LoginFilter.getUser(request);
-        return JSON.toJSONString(quotaService.delItemByCode(quotaCode, userDto.getUserName()));
-    }
+//    /**
+//     * 删除指标
+//     * @return
+//     */
+//    @RequestMapping("/testChartPage")
+//    @ResponseBody
+//    public String createQuota(String quotaCode, HttpServletRequest request, HttpServletResponse response){
+//        UserDto userDto = LoginFilter.getUser(request);
+//        return JSON.toJSONString(quotaService.delItemByCode(quotaCode, userDto.getUserName()));
+//    }
 }
