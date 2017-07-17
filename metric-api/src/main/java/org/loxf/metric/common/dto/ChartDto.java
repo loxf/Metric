@@ -1,6 +1,7 @@
 package org.loxf.metric.common.dto;
 
 import org.loxf.metric.base.ItemList.QuotaItem;
+import org.loxf.metric.base.ItemList.VisibleItem;
 
 import java.util.List;
 import java.util.Set;
@@ -21,7 +22,7 @@ public class ChartDto extends BaseDto{
 
     private String visibleType;
 
-    private Set<String> visibleList;
+    private List<VisibleItem> visibleList;
 
     private String chartDim;
 
@@ -109,11 +110,11 @@ public class ChartDto extends BaseDto{
         this.quotaList = quotaList;
     }
 
-    public Set<String> getVisibleList() {
+    public List<VisibleItem> getVisibleList() {
         return visibleList;
     }
 
-    public void setVisibleList(Set<String> visibleList) {
+    public void setVisibleList(List<VisibleItem> visibleList) {
         this.visibleList = visibleList;
     }
 }

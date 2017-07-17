@@ -34,7 +34,7 @@ public class UserServiceImpl extends BaseService implements IUserService {
     private UserDao userDao;
     //ctrl+shif+f：格式化
     //ctrl+b：全项目编译
-
+    @Override
     public BaseResult<UserDto> login(String phone, String pwd, String teamCode, String type) {//手机号码登录
         BaseResult<UserDto> result = new BaseResult<>();
         if (StringUtils.isBlank(phone) || StringUtils.isBlank(pwd) || StringUtils.isBlank(type)) {
@@ -79,6 +79,7 @@ public class UserServiceImpl extends BaseService implements IUserService {
      * @param pwd
      * @return
      */
+    @Override
     public BaseResult<String> register(String phone, String pwd, String realName) {//主用户注册，自动生成userName，团队码
         BaseResult<String> result = new BaseResult<>();
         if (StringUtils.isBlank(phone) || StringUtils.isBlank(pwd) || StringUtils.isBlank(realName)) {//校验参数是否为空
@@ -110,6 +111,7 @@ public class UserServiceImpl extends BaseService implements IUserService {
         return result;
     }
 
+    @Override
     public BaseResult<String> addChildUser(UserDto obj) {
         BaseResult<String> result = new BaseResult<String>();
         if (StringUtils.isEmpty(obj.getUniqueCode()) ||StringUtils.isEmpty(obj.getEmail()) || StringUtils.isEmpty(obj.getRealName()) || StringUtils.isEmpty(obj.getPhone())) {
@@ -150,6 +152,7 @@ public class UserServiceImpl extends BaseService implements IUserService {
      * @param userName
      * @return
      */
+    @Override
     public BaseResult<String> disableChildUser(String userName,String rootName,String teamCode){
         BaseResult<String> result=new BaseResult<String>();
         if (StringUtils.isEmpty(userName)||StringUtils.isEmpty(rootName)||StringUtils.isEmpty(teamCode)) {
@@ -181,6 +184,8 @@ public class UserServiceImpl extends BaseService implements IUserService {
      * @param newPwd
      * @return
      */
+
+    @Override
     public  BaseResult<String> modifyPwd(UserDto userDto,String oldPwd,String newPwd){
         BaseResult<String> result=new BaseResult<>();
         if(userDto==null||StringUtils.isBlank(oldPwd)||StringUtils.isBlank(newPwd)){

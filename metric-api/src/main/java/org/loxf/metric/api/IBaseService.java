@@ -9,7 +9,7 @@ import org.loxf.metric.common.dto.PageData;
 public interface IBaseService<T> {
     public BaseResult<PageData> getPageList(T obj);
     public BaseResult<String> insertItem(T obj);
-    public BaseResult<T> queryItemByCode(String itemCode,String handleUserName);
+    public BaseResult<T> queryItemByCode(String itemCode, String handleUserName);
     public BaseResult<String> updateItem(T obj);
-    public BaseResult<String> delItemByCode(String itemCode,String handleUserName);
+    public BaseResult<String> delItemByCode(String itemCode, String handleUserName);
 }

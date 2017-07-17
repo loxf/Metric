@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -21,6 +22,7 @@ import java.util.Map;
 /**
  * Created by luohj on 2017/7/13.
  */
+@Service
 public class QuotaDimensionServiceImpl extends BaseService implements IQuotaDimensionService {
     private static Logger logger = LoggerFactory.getLogger(QuotaDimensionServiceImpl.class);
     @Autowired

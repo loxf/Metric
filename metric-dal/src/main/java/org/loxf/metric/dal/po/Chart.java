@@ -1,6 +1,7 @@
 package org.loxf.metric.dal.po;
 
 import org.loxf.metric.base.ItemList.QuotaItem;
+import org.loxf.metric.base.ItemList.VisibleItem;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class Chart extends BasePO{
 
     private String visibleType;
 
-    private List<String> visibleList;
+    private List<VisibleItem> visibleList;
 
     private String defaultCondition;
 
@@ -82,11 +83,11 @@ public class Chart extends BasePO{
         this.visibleType = visibleType;
     }
 
-    public List<String> getVisibleList() {
+    public List<VisibleItem> getVisibleList() {
         return visibleList;
     }
 
-    public void setVisibleList(List<String> visibleList) {
+    public void setVisibleList(List<VisibleItem> visibleList) {
         this.visibleList = visibleList;
     }
 

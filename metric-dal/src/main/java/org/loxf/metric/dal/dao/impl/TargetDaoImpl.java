@@ -6,7 +6,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.loxf.metric.base.ItemList.TargetItem;
+import org.loxf.metric.base.ItemList.VisibleItem;
 import org.loxf.metric.base.constants.CollectionConstants;
+import org.loxf.metric.base.constants.VisibleTypeEnum;
 import org.loxf.metric.base.utils.IdGenerator;
 import org.loxf.metric.core.mongo.MongoDaoBase;
 import org.loxf.metric.dal.dao.interfaces.TargetDao;
@@ -106,6 +108,16 @@ public class TargetDaoImpl extends MongoDaoBase<Target> implements TargetDao{
                 includeQuotaCodes.add(item.getQuotaCode());
             }
             query.put("itemList.quotaCode", new BasicDBObject("$in", includeQuotaCodes));
+        }
+        if(target.getVisibleType().equals(VisibleTypeEnum.SPECIFICRANGE.name()) &&
+                CollectionUtils.isNotEmpty(target.getVisibleList())){
+            BasicDBList includeUser = new BasicDBList();
+            for(VisibleItem visibleItem : target.getVisibleList()){
+                includeUser.add(visibleItem.getCode());
+            }
+            query.put("visibleList.type", "user");// 目前只有用户
+            query.put("visibleList.code", new BasicDBObject("$in", includeUser));
+            query.put("visibleType", VisibleTypeEnum.SPECIFICRANGE.name());
         }
         return new BasicQuery(query);
     }

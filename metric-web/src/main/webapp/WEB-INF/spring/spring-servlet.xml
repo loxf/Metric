@@ -10,7 +10,9 @@
     <context:annotation-config />
     <context:component-scan base-package="org.loxf.metric.controller"></context:component-scan>
 
- <!--    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" /> -->
+
+    <mvc:resources mapping="/swagger/**" location="/WEB-INF/swagger/"/>
+
     <mvc:annotation-driven>
         <mvc:message-converters register-defaults="true">
             <!-- 避免IE执行AJAX时,返回JSON出现下载文件 -->

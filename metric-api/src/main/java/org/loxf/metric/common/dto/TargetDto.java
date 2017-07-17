@@ -1,6 +1,7 @@
 package org.loxf.metric.common.dto;
 
 import org.loxf.metric.base.ItemList.TargetItem;
+import org.loxf.metric.base.ItemList.VisibleItem;
 
 import java.util.Date;
 import java.util.List;
@@ -22,6 +23,8 @@ public class TargetDto extends BaseDto{
     private String uniqueCode;
 
     private String visibleType;
+
+    private List<VisibleItem> visibleList;
 
     private String createUserName;
 
@@ -115,5 +118,13 @@ public class TargetDto extends BaseDto{
 
     public void setItemList(List<TargetItem> itemList) {
         this.itemList = itemList;
+    }
+
+    public List<VisibleItem> getVisibleList() {
+        return visibleList;
+    }
+
+    public void setVisibleList(List<VisibleItem> visibleList) {
+        this.visibleList = visibleList;
     }
 }

@@ -1,11 +1,14 @@
 package org.loxf.metric.service.impl;
 
 
+import com.sun.tools.javac.util.Assert;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.loxf.metric.api.IChartService;
 import org.loxf.metric.base.ItemList.QuotaItem;
 import org.loxf.metric.base.constants.StandardState;
 import org.loxf.metric.base.constants.VisibleTypeEnum;
+import org.loxf.metric.base.utils.MapAndBeanTransUtils;
 import org.loxf.metric.common.constants.*;
 import org.loxf.metric.common.dto.Pager;
 import org.loxf.metric.dal.dao.interfaces.ChartDao;
@@ -13,9 +16,11 @@ import org.loxf.metric.common.dto.BaseResult;
 import org.loxf.metric.common.dto.ChartDto;
 import org.loxf.metric.common.dto.PageData;
 import org.loxf.metric.dal.dao.interfaces.QuotaDao;
+import org.loxf.metric.dal.dao.interfaces.UserDao;
 import org.loxf.metric.dal.po.Chart;
 import org.apache.log4j.Logger;
 import org.loxf.metric.dal.po.Quota;
+import org.loxf.metric.dal.po.User;
 import org.loxf.metric.service.base.BaseService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +38,9 @@ public class ChartServiceImpl extends BaseService implements IChartService {
     Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
+    private UserDao userDao;
+    @Autowired
     private ChartDao chartDao;
-
     @Autowired
     private QuotaDao quotaDao;
 
@@ -51,13 +57,14 @@ public class ChartServiceImpl extends BaseService implements IChartService {
 
         if (StringUtils.isEmpty(obj.getVisibleType())) {//全局可见，不传
             obj.setVisibleType(VisibleTypeEnum.ALL.name());
-        } else if (!obj.getVisibleType().equals(VisibleTypeEnum.SPECIFICRANGE.name())) {
+        } else if (!obj.getVisibleType().equals(VisibleTypeEnum.SPECIFICRANGE.name())
+                && !obj.getVisibleType().equals(VisibleTypeEnum.ALL.name())) {
             logger.info("入参visibleType不在可见范围之内,visibleType=" + obj.getVisibleType() + "操作用户为：" + obj.getCreateUserName());
             result.setCode(ResultCodeEnum.PARAM_ERROR.getCode());
             result.setMsg(ResultCodeEnum.PARAM_ERROR.getCodeMsg());
             return result;
         }
-        if (!StringUtils.isEmpty(obj.getVisibleType()) && (obj.getVisibleList() == null || obj.getVisibleList().size() == 0)) {
+        if (!StringUtils.isEmpty(obj.getVisibleType()) && (CollectionUtils.isEmpty(obj.getVisibleList()))) {
             logger.info("可见范围中没有用户列表，" + obj.getVisibleType() + "操作用户为：" + obj.getCreateUserName());
             result.setCode(ResultCodeEnum.PARAM_ERROR.getCode());
             result.setMsg(ResultCodeEnum.PARAM_ERROR.getCodeMsg());
@@ -98,8 +105,15 @@ public class ChartServiceImpl extends BaseService implements IChartService {
         if (ResultCodeEnum.SUCCESS.getCode().equals(validPagerResult.getCode())) {
             Chart chart=new Chart();
             BeanUtils.copyProperties(obj, chart);
-            PageData pageData=getPermissionPageResult(chart,obj.getHandleUserName(), pager.getStart(), pager.getRownum());
-            validPagerResult.setData(pageData);
+            User user = new User();
+            user.setUserName(obj.getHandleUserName());
+            user = userDao.findOne(user);
+            if(user!=null) {
+                if (UserTypeEnum.CHILD.name().equals(user.getUserType())) {
+                    chart.setVisibleType(VisibleTypeEnum.SPECIFICRANGE.name());
+                }
+                validPagerResult.setData(getPermissionPageResult(chart,obj.getHandleUserName(), pager.getStart(), pager.getRownum()));
+            }
         }
         return validPagerResult;
     }
@@ -123,7 +137,6 @@ public class ChartServiceImpl extends BaseService implements IChartService {
             return null;
         }
     }
-
     @Override
     public BaseResult<ChartDto> queryItemByCode(String itemCode, String handleUserName) {//是否要查询已失效的图
         BaseResult<ChartDto> result = new BaseResult<>();
@@ -132,35 +145,34 @@ public class ChartServiceImpl extends BaseService implements IChartService {
             result.setMsg(ResultCodeEnum.PARAM_LACK.getCodeMsg());
             return result;
         }
-        Chart chart = new Chart();
-        chart.setChartCode(itemCode);
-        //获取该用户可见范围内的图
-        Chart visibleChart = chartDao.findOne(chart, handleUserName);
-        ChartDto chartDto = null;
-        if (visibleChart != null) {
-            chartDto = new ChartDto();
-            BeanUtils.copyProperties(visibleChart, chartDto);
+        User user = new User();
+        user.setUserName(handleUserName);
+        user = userDao.findOne(user);
+        if(user!=null) {
+            Chart chart = new Chart();
+            if(UserTypeEnum.CHILD.name().equals(user.getUserType())){
+                chart.setVisibleType(VisibleTypeEnum.SPECIFICRANGE.name());
+            }
+            chart.setChartCode(itemCode);
+            //获取该用户可见范围内的图
+            Chart visibleChart = chartDao.findOne(chart, handleUserName);
+            ChartDto chartDto = null;
+            if (visibleChart != null) {
+                chartDto = new ChartDto();
+                BeanUtils.copyProperties(visibleChart, chartDto);
+            }
+            //前者赋值给后者
+        } else {
+            result.setCode(ResultCodeEnum.USER_NOT_EXIST.getCode());
+            result.setMsg(ResultCodeEnum.USER_NOT_EXIST.getCodeMsg());
         }
-        //前者赋值给后者
-        result.setCode(ResultCodeEnum.DATA_NOT_EXIST.getCode());
-        result.setMsg(ResultCodeEnum.DATA_NOT_EXIST.getCodeMsg());
         return result;
     }
 
     @Override
     public BaseResult<String> updateItem(ChartDto obj) {
-//        BaseResult<String> result = new BaseResult<>();
-//        String itemCode = obj.getChartCode();
-//        if (StringUtils.isEmpty(itemCode) || StringUtils.isEmpty(obj.getCreateUserName())) {
-//            result.setCode(ResultCodeEnum.PARAM_LACK.getCode());
-//            result.setMsg(ResultCodeEnum.PARAM_LACK.getCodeMsg());
-//            return result;
-//        }
-//        Map chartMap = MapAndBeanTransUtils.transBean2Map(obj);
-//        chartDao.updateOne(itemCode, chartMap);
-//        result.setCode(ResultCodeEnum.SUCCESS.getCode());
-//        return result;
-        return  new BaseResult<>();
+        Assert.error("不支持图更新方法");
+        return null;
     }
 
     @Override

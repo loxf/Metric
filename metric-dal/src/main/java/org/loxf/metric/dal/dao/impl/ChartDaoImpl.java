@@ -84,17 +84,12 @@ public class ChartDaoImpl extends MongoDaoBase<Chart> implements ChartDao {
             Pattern pattern = Pattern.compile("^.*" + chart.getChartName() + ".*$", Pattern.CASE_INSENSITIVE);
             query.put("chartName", pattern);
         }
-        if (StringUtils.isNotEmpty(chart.getType())) {
-            query.put("type", chart.getType());
-        }
         //有指定查看人范围
-        if (StringUtils.isNotEmpty(chart.getVisibleType()) && VisibleTypeEnum.SPECIFICRANGE.name().equals(chart.getVisibleType())) {
+        if (VisibleTypeEnum.SPECIFICRANGE.name().equals(chart.getVisibleType())) {
             if (StringUtils.isNotEmpty(handleUserName)) {
-                Map elemMap = new HashedMap();
-                Map userMap = new HashedMap();
-                userMap.put("userName", handleUserName);
-                elemMap.put(ComPareConstants.ELEMMATCH.getDisplayName(), userMap);
-                query.put("visibleList", elemMap);
+                query.put("visibleType", VisibleTypeEnum.SPECIFICRANGE.name());
+                query.put("visibleList.type", "user");
+                query.put("visibleList.code", handleUserName);
             }
         }
 
@@ -107,7 +102,6 @@ public class ChartDaoImpl extends MongoDaoBase<Chart> implements ChartDao {
         if (StringUtils.isNotEmpty(chart.getType())) {
             query.put("type", chart.getType());
         }
-
         if (StringUtils.isNotEmpty(chart.getCreateUserName())) {
             query.put("createUserName", chart.getCreateUserName());
         }

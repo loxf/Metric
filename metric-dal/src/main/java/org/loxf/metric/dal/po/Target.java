@@ -1,6 +1,7 @@
 package org.loxf.metric.dal.po;
 
 import org.loxf.metric.base.ItemList.TargetItem;
+import org.loxf.metric.base.ItemList.VisibleItem;
 
 import java.util.Date;
 import java.util.List;
@@ -21,6 +22,8 @@ public class Target extends BasePO{
     private String uniqueCode;
 
     private String visibleType;
+
+    private List<VisibleItem> visibleList;
 
     private List<TargetItem> itemList;
 
@@ -86,6 +89,14 @@ public class Target extends BasePO{
 
     public void setVisibleType(String visibleType) {
         this.visibleType = visibleType;
+    }
+
+    public List<VisibleItem> getVisibleList() {
+        return visibleList;
+    }
+
+    public void setVisibleList(List<VisibleItem> visibleList) {
+        this.visibleList = visibleList;
     }
 
     public List<TargetItem> getItemList() {

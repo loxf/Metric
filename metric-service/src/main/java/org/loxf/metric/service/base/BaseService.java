@@ -65,7 +65,7 @@ public class BaseService {
             return pageData;
         }catch (Exception e){
             logger.error("查询分页异常！",e);
-            return null;
+            throw new MetricException("查询分页异常！", e);
         }
     }
 

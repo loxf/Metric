@@ -41,22 +41,22 @@ public class PermissionInterceptor extends HandlerInterceptorAdapter {
         // 权限校验
         UserDto existsUser = LoginFilter.getUser(request);
         if (existsUser == null) {
-            throw new MetricException("用户未登录!");
+            return false;
         } else {
             if (permissionType.equals(PermissionType.ROOT)) {
                 //判断该用户是否为root用户
                 String type = existsUser.getUserType();
                 if (!(UserTypeEnum.ROOT.name().equals(type))) {
-                    throw new MetricException("登录用户无权限!");
+                    return false;
                 }
             } else if (permissionType.equals(PermissionType.SPECIAL)) {
                 // 指定权限校验
                 String permissionCode = permission.permissionCode();// 所需权限
                 // 以下代码未实现，以后用户实现权限控制后，可放开
-                        /*List<Permission> permissionList = existsUser.getPermissionList();
-                        if(!permissionList.contains(new Permission(permissionCode))){
-                            throw new MetricException("登录用户无权限!");
-                        }*/
+                /*List<Permission> permissionList = existsUser.getPermissionList();
+                if(!permissionList.contains(new Permission(permissionCode))){
+                    throw new MetricException("登录用户无权限!");
+                }*/
             }
         }
         return true;
