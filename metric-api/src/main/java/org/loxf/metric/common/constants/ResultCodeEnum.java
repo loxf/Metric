@@ -1,5 +1,8 @@
 package org.loxf.metric.common.constants;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * Created by hutingting on 2017/7/10.
  */

@@ -1,30 +1,39 @@
 package org.loxf.metric.common.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.List;
 
 /**
  * Created by luohj on 2017/6/20.
  */
+@ApiModel("分页数据")
 public class PageData<T> {
     /**
      * 数据
      */
+    @ApiModelProperty("数据")
     private List<T> rows;
     /**
      * 总记录数
      */
+    @ApiModelProperty("数据")
     private long totalRecords;
     /**
      * 总页数
      */
+    @ApiModelProperty("总页数")
     private int totalPage;
     /**
      * 当前页数
      */
+    @ApiModelProperty("当前页数")
     private int currentPage;
     /**
      * 每页行数
      */
+    @ApiModelProperty("每页行数")
     private int rownum;
 
     public PageData() {
