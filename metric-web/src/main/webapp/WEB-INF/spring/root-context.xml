@@ -38,8 +38,23 @@
         <property name="defaultEncoding"><value>UTF-8</value></property>
     </bean>
 
+    <context:component-scan base-package="org.loxf.metric.test"/>
     <mvc:interceptors>
-        <bean class="org.loxf.metric.interceptor.PermissionInterceptor" />
-    </mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/user/*"/> <!-- 拦截范围 -->
+            <mvc:exclude-mapping path="/user/register"/> <!--不被拦截范围（路径）-->
+            <mvc:exclude-mapping path="/user/login"/>
+            <bean class="org.loxf.metric.interceptor.PermissionInterceptor" />
+            <!-- <mvc:mapping path="/**"/>
+<bean class="com.hz.sunday.portalvip.interceptor.PermissionInterceptor">
+<property name="uncheckUrls">
+             <list>
+                <value>/login</value>
+                  <value>/doLogin</value>
 
+              </list>
+   </property>
+</bean>  -->
+        </mvc:interceptor>
+    </mvc:interceptors>
 </beans>

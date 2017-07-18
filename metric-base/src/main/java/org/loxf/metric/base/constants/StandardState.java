@@ -5,7 +5,7 @@ package org.loxf.metric.base.constants;
  */
 public enum StandardState {
     AVAILABLE("AVAILABLE", "生效"),
-    DISABLED("AVAILABLE", "失效");
+    DISABLED("DISABLED", "失效");
     StandardState(String value, String desc){
         this.value = value;
         this.desc = desc;

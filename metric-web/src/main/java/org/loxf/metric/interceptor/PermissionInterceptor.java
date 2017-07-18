@@ -23,11 +23,11 @@ public class PermissionInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         Class<?> clazz = handler.getClass();
-        if(handler.getClass().isAssignableFrom(HandlerMethod.class)) {
+        if (handler.getClass().isAssignableFrom(HandlerMethod.class)) {
             if (clazz.isAnnotationPresent(Permission.class)) {
                 Permission permission = ((HandlerMethod) handler).getMethodAnnotation(Permission.class);
-                if(permission==null){
-                    return true;
+                if (permission == null) {
+
                 }
                 return checkUserRole(request, permission);
             }
@@ -41,22 +41,24 @@ public class PermissionInterceptor extends HandlerInterceptorAdapter {
         // 权限校验
         UserDto existsUser = LoginFilter.getUser(request);
         if (existsUser == null) {
+            logger.info("用户未登录" + request.getQueryString());
             return false;
         } else {
             if (permissionType.equals(PermissionType.ROOT)) {
                 //判断该用户是否为root用户
                 String type = existsUser.getUserType();
                 if (!(UserTypeEnum.ROOT.name().equals(type))) {
+                    logger.info("登录用户无权限!" + existsUser.getUserName() + ":" + existsUser.getRealName());
                     return false;
                 }
             } else if (permissionType.equals(PermissionType.SPECIAL)) {
                 // 指定权限校验
                 String permissionCode = permission.permissionCode();// 所需权限
                 // 以下代码未实现，以后用户实现权限控制后，可放开
-                /*List<Permission> permissionList = existsUser.getPermissionList();
-                if(!permissionList.contains(new Permission(permissionCode))){
-                    throw new MetricException("登录用户无权限!");
-                }*/
+                        /*List<Permission> permissionList = existsUser.getPermissionList();
+                        if(!permissionList.contains(new Permission(permissionCode))){
+                            throw new MetricException("登录用户无权限!");
+                        }*/
             }
         }
         return true;

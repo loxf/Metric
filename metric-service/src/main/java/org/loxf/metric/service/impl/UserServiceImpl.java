@@ -112,7 +112,7 @@ public class UserServiceImpl extends BaseService implements IUserService {
     }
 
     @Override
-    public BaseResult<String> addChildUser(UserDto obj) {
+    public BaseResult<String> addChildUser(UserDto obj) {//校验email
         BaseResult<String> result = new BaseResult<String>();
         if (StringUtils.isEmpty(obj.getUniqueCode()) ||StringUtils.isEmpty(obj.getEmail()) || StringUtils.isEmpty(obj.getRealName()) || StringUtils.isEmpty(obj.getPhone())) {
             result.setCode(ResultCodeEnum.PARAM_LACK.getCode());

@@ -61,7 +61,7 @@ public class UserController {
         userDtoData.setUserAgent(userDto.getUserAgent());
         String sessionId=userDtoData.getUserName();
         LoginFilter.setUser(request,sessionId,userDtoData);//添加用户信息到session中
-        return null;
+        return new BaseResult<>();
     }
 
     /**
