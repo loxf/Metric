@@ -1,33 +1,47 @@
 package org.loxf.metric.common.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import org.loxf.metric.base.ItemList.QuotaItem;
 import org.loxf.metric.base.ItemList.VisibleItem;
 
 import java.util.List;
 import java.util.Set;
 
-public class ChartDto extends BaseDto{
+@ApiModel("图")
+public class ChartDto extends BaseDto {
 
+    @ApiModelProperty(value = "图编码", example = "KSDU92WEJGYU34IFI9", position = 1)
     private String chartCode;
 
+    @ApiModelProperty(value = "图名称", example = "收入折线图", position = 2)
     private String chartName;
 
+    @ApiModelProperty(value = "指标列表", position = 3)
     private List<QuotaItem> quotaList;
 
+    @ApiModelProperty(value = "图类型", example = "brokenLine", position = 4)
     private String type;
 
+    @ApiModelProperty(value = "默认查询条件", position = 5)
     private String defaultCondition;
 
+    @ApiModelProperty(value = "图类型", example = "brokenLine", position = 6)
     private String chartDimension;
 
+    @ApiModelProperty(value = "可见范围", example = "SPECIFICRANGE", position = 7)
     private String visibleType;
 
+    @ApiModelProperty(value = "可见列表", position = 8)
     private List<VisibleItem> visibleList;
 
+    @ApiModelProperty(value = "图维度", example = "circleTime", position = 9)
     private String chartDim;
 
+    @ApiModelProperty(value = "状态", example = "AVAILABLE", position = 10)
     private String state;
 
+    @ApiModelProperty(value = "团队码", example = "KX45Khdfk95k", position = 11)
     private String uniqueCode;
 
     public String getChartCode() {
