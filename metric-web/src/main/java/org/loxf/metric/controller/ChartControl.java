@@ -54,10 +54,10 @@ public class ChartControl {
      * 删除图
      * @return
      */
-    @RequestMapping(value = "/remove", method = RequestMethod.POST)
+    @RequestMapping(value = "/remove", method = RequestMethod.GET)
     @ResponseBody
     @Permission(PermissionType.ROOT)
-    @ApiOperation(value = "删除图", notes = "删除一个图，需要ROOT权限", response = BaseResult.class)
+    @ApiOperation(value = "删除图", notes = "删除一个图，需要ROOT权限", httpMethod = "GET", response = BaseResult.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
     public BaseResult rmChart(@RequestBody @ApiParam(value = "图编码") String chartCode, HttpServletRequest request, HttpServletResponse response){
         UserDto userDto = LoginFilter.getUser(request);
@@ -67,9 +67,9 @@ public class ChartControl {
      * 获取单个图
      * @return
      */
-    @RequestMapping("/getChart")
+    @RequestMapping(value = "/getChart", method = RequestMethod.GET)
     @ResponseBody
-    @ApiOperation(value = "获取图的信息", notes = "获取图的信息", response = BaseResult.class)
+    @ApiOperation(value = "获取图的信息", notes = "获取图的信息", httpMethod = "GET", response = BaseResult.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
     public BaseResult<ChartDto> getChart(@RequestBody @ApiParam(value = "图编码") String chartCode, HttpServletRequest request, HttpServletResponse response){
         UserDto userDto = LoginFilter.getUser(request);
@@ -79,9 +79,9 @@ public class ChartControl {
      * 获取图（分页）
      * @return
      */
-    @RequestMapping("/pager")
+    @RequestMapping(value = "/pager", method = RequestMethod.GET)
     @ResponseBody
-    @ApiOperation(value = "获取图列表", notes = "分页获取", response = BaseResult.class)
+    @ApiOperation(value = "获取图列表", notes = "分页获取", httpMethod = "GET", response = BaseResult.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
     public BaseResult<PageData> pager(@RequestBody @ApiParam(value = "图实体") ChartDto chartDto, HttpServletRequest request, HttpServletResponse response){
         UserDto userDto = LoginFilter.getUser(request);

@@ -52,7 +52,7 @@ public class QuotaControl {
         return quotaService.insertItem(quotaDto);
     }
     /**
-     * 创建指标
+     * 更新指标
      * @param quotaDto
      * @return
      */
@@ -72,11 +72,11 @@ public class QuotaControl {
      * 删除指标
      * @return
      */
-    @RequestMapping(value = "/remove", method = RequestMethod.POST)
+    @RequestMapping(value = "/remove", method = RequestMethod.GET)
     @ResponseBody
     @Permission(PermissionType.ROOT)
     @ApiOperation(value = "删除指标", notes = "如果指标被其他指标引用，不能删除。如果被有效目标（当前日期在目标的时间范围）引用，不能删除。需要ROOT权限",
-            httpMethod = "POST", response = BaseResult.class)
+            httpMethod = "GET", response = BaseResult.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
     public BaseResult rmQuota(@RequestBody String quotaCode, HttpServletRequest request, HttpServletResponse response){
         UserDto userDto = LoginFilter.getUser(request);
@@ -86,9 +86,9 @@ public class QuotaControl {
      * 获取单个指标
      * @return
      */
-    @RequestMapping("/getQuota")
+    @RequestMapping(value = "/getQuota", method = RequestMethod.GET)
     @ResponseBody
-    @ApiOperation(value = "获取指标", notes = "获取一个指标", response = BaseResult.class)
+    @ApiOperation(value = "获取指标", notes = "获取一个指标", httpMethod = "GET", response = BaseResult.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
     public BaseResult getQuota(@RequestBody String quotaCode, HttpServletRequest request, HttpServletResponse response){
         UserDto userDto = LoginFilter.getUser(request);
@@ -98,9 +98,9 @@ public class QuotaControl {
      * 获取指标（分页）
      * @return
      */
-    @RequestMapping("/pager")
+    @RequestMapping(value = "/pager", method = RequestMethod.GET)
     @ResponseBody
-    @ApiOperation(value = "获取指标（分页）", notes = "获取分页指标列表", response = BaseResult.class)
+    @ApiOperation(value = "获取指标（分页）", notes = "获取分页指标列表", httpMethod = "GET", response = BaseResult.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
     public BaseResult<PageData> pager(@RequestBody QuotaDto quotaDto, HttpServletRequest request, HttpServletResponse response){
         UserDto userDto = LoginFilter.getUser(request);
@@ -112,9 +112,9 @@ public class QuotaControl {
      * 获取指标
      * @return
      */
-    @RequestMapping("/query")
+    @RequestMapping(value = "/query", method = RequestMethod.GET)
     @ResponseBody
-    @ApiOperation(value = "获取指标列表", notes = "获取指标列表", response = BaseResult.class)
+    @ApiOperation(value = "获取指标列表", notes = "获取指标列表", httpMethod = "GET", response = BaseResult.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
     public BaseResult<List<QuotaDto>> queryAllQuota(@RequestBody QuotaDto quotaDto,
                                                     HttpServletRequest request, HttpServletResponse response){

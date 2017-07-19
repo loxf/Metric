@@ -17,4 +17,6 @@ public interface IUserService extends IBaseService<UserDto> {
     public BaseResult<String> disableChildUser(String userName,String rootName,String teamCode);
 
     public  BaseResult<String> modifyPwd(UserDto userDto,String oldPwd,String newPwd);
+
+    public BaseResult<UserDto> queryUser(String phone, String teamCode, String userType);
 }

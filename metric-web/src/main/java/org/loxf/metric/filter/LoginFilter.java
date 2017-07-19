@@ -108,11 +108,11 @@ public class LoginFilter implements Filter {
             return false;
         }
         //从redis中获取sessionId对应的信息
-        UserDto value = (UserDto)req.getSession().getAttribute(sessionId);
-        if (value!=null) {
+        UserDto value = (UserDto) req.getSession().getAttribute(sessionId);
+        if (value != null) {
             String currentUserAgent = req.getHeader("User-Agent");
             String loginUserAgent = value.getUserAgent();
-            if(loginUserAgent.equals(currentUserAgent)){
+            if (loginUserAgent.equals(currentUserAgent)) {
                 return true;
             } else {
                 return false;
@@ -121,7 +121,7 @@ public class LoginFilter implements Filter {
         return false;
     }
 
-    public static void setUser(HttpServletRequest request,String sessionId,UserDto user){
+    public static void setUser(HttpServletRequest request, String sessionId, UserDto user) {
         HttpSession session = request.getSession();
         session.setAttribute(sessionId, user);
     }
@@ -141,6 +141,7 @@ public class LoginFilter implements Filter {
 
     /**
      * 退出登陆
+     *
      * @param response
      */
     public static void removeSessionId(HttpServletResponse response) {
@@ -175,7 +176,7 @@ public class LoginFilter implements Filter {
             return null;
         }
 
-        UserDto value = (UserDto)request.getSession().getAttribute(sessionId);
+        UserDto value = (UserDto) request.getSession().getAttribute(sessionId);
         return value;
     }
 

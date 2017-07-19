@@ -290,4 +290,36 @@ public class UserServiceImpl extends BaseService implements IUserService {
         return result;
     }
 
+    @Override
+    public BaseResult<UserDto> queryUser(String phone, String teamCode, String userType) {
+        BaseResult<UserDto> result = new BaseResult<>();
+        if (StringUtils.isBlank(phone) || StringUtils.isBlank(userType)) {
+            result.setCode(ResultCodeEnum.PARAM_LACK.getCode());
+            result.setMsg(ResultCodeEnum.PARAM_LACK.getCodeMsg());
+            return result;
+        }
+        if (UserTypeEnum.CHILD.name().equals(userType)) {
+            if (StringUtils.isBlank(teamCode)) {
+                result.setCode(ResultCodeEnum.PARAM_LACK.getCode());
+                result.setMsg("获取子用户必须填写团队码!");
+                return result;
+            }
+        }
+        User qryUser = new User();
+        qryUser.setUniqueCode(teamCode);
+        qryUser.setUserType(userType);
+        qryUser.setPhone(phone);
+        qryUser.setState(StandardState.AVAILABLE.getValue());
+        User existUser = userDao.findOne(qryUser);
+        if (existUser == null) {
+            result.setCode(ResultCodeEnum.DATA_NOT_EXIST.getCode());
+            result.setMsg("用户不存在");
+            return result;
+        }
+        UserDto userDto = new UserDto();
+        BeanUtils.copyProperties(existUser, userDto);
+        result.setData(userDto);
+        return result;
+    }
+
 }

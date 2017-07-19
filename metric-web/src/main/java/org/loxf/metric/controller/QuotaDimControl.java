@@ -56,10 +56,10 @@ public class QuotaDimControl {
         return quotaDimensionService.updateItem(dimensionDto);
     }
 
-    @RequestMapping(value = "/remove", method = RequestMethod.POST)
+    @RequestMapping(value = "/remove", method = RequestMethod.GET)
     @ResponseBody
     @Permission(PermissionType.ROOT)
-    @ApiOperation(value = "删除维度", notes = "只能删除未使用的维度，需要ROOT权限", httpMethod = "POST", response = BaseResult.class)
+    @ApiOperation(value = "删除维度", notes = "只能删除未使用的维度，需要ROOT权限", httpMethod = "GET", response = BaseResult.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
     public BaseResult rmDim(@RequestBody String dimCode, HttpServletRequest request, HttpServletResponse response){
         UserDto user = (UserDto)LoginFilter.getUser(request);
