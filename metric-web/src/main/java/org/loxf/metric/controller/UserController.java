@@ -30,6 +30,20 @@ public class UserController {
     @Autowired
     private IUserService userService;
 
+
+    /**
+     * 获取短信验证码
+     *
+     * @return
+     */
+
+    @RequestMapping(value = "/getValidateCode", method = RequestMethod.GET, consumes = "application/json;charset=UTF-8")
+    @ResponseBody
+    @ApiOperation(value = "获取验证码", notes = "获取验证码", httpMethod = "GET", response = BaseResult.class)
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
+    public BaseResult<String> getValidateCode(@ApiParam(value = "用户手机号", name = "phone", required = true) String phone) {
+        return new BaseResult<>("1234");
+    }
     /**
      * 主用户注册
      *
@@ -43,9 +57,15 @@ public class UserController {
     public BaseResult<String> registerRoot(@ApiParam(value = "用户手机号", name = "phone", required = true) String phone,
                                            @ApiParam(value = "用户密码", name = "pwd", required = true) String pwd,
                                            @ApiParam(value = "真实姓名", name = "realName", required = true) String realName,
-                                           @ApiParam(value = "真实姓名", name = "verifyCode", required = true) String verifyCode) {
-        return userService.register(phone, pwd, realName);
+                                           @ApiParam(value = "验证码", name = "verifyCode", required = true) String verifyCode) {
+        if("1234".equals(verifyCode)){
+            return userService.register(phone, pwd, realName);
+        }else{
+            return new BaseResult<String>(ResultCodeEnum.PARAM_ERROR.getCode(),"验证码不匹配");
+        }
     }
+
+
 
     /**
      * 登录
