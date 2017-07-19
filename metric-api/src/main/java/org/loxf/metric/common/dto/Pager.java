@@ -1,26 +1,34 @@
 package org.loxf.metric.common.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 
 /**
  * Created by luohj on 2017/3/21.
  */
+@ApiModel("分页")
 public class Pager implements Serializable {
     /**
      * 开始
      */
+    @ApiModelProperty("开始")
     private int start;
     /**
      * 结束
      */
+    @ApiModelProperty("结束")
     private int end;
     /**
      * 每页数量
      */
+    @ApiModelProperty("每页数量")
     private int rownum;
     /**
      * 当前页
      */
+    @ApiModelProperty("当前页")
     private int currentPage;
 
     public int getStart() {

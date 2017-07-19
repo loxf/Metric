@@ -1,5 +1,7 @@
 package org.loxf.metric.common.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.Serializable;
@@ -11,14 +13,17 @@ import java.util.List;
  * 指标数据
  * Created by luohj on 2017/6/22.
  */
+@ApiModel("指标数据")
 public class QuotaData implements Serializable {
     /**
      * 指标维度
      */
+    @ApiModelProperty("指标维度")
     private List<QuotaDim> dims = new ArrayList<>();
     /**
      * 指标值
      */
+    @ApiModelProperty("指标值")
     private BigDecimal value;
 
     private String compareStr;

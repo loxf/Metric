@@ -1,18 +1,27 @@
 package org.loxf.metric.service.impl;
 
+import com.alibaba.druid.sql.visitor.functions.Char;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.loxf.metric.api.IBoardService;
 import org.loxf.metric.base.ItemList.ChartItem;
+import org.loxf.metric.base.ItemList.VisibleItem;
 import org.loxf.metric.base.constants.ComPareConstants;
+import org.loxf.metric.base.constants.VisibleTypeEnum;
 import org.loxf.metric.common.constants.ResultCodeEnum;
 import org.loxf.metric.base.constants.StandardState;
+import org.loxf.metric.common.constants.UserTypeEnum;
 import org.loxf.metric.common.dto.*;
 import org.loxf.metric.base.utils.MapAndBeanTransUtils;
 import org.loxf.metric.dal.dao.interfaces.BoardDao;
 import org.loxf.metric.dal.dao.interfaces.ChartDao;
+import org.loxf.metric.dal.dao.interfaces.UserDao;
 import org.loxf.metric.dal.po.Board;
 import org.apache.log4j.Logger;
+import org.loxf.metric.dal.po.Chart;
+import org.loxf.metric.dal.po.Target;
+import org.loxf.metric.dal.po.User;
 import org.loxf.metric.service.base.BaseService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +45,8 @@ public class BoardServiceImpl extends BaseService implements IBoardService {
     @Autowired
     private ChartDao chartDao;
 
+    @Autowired
+    private UserDao userDao;
 
     @Override
     public BaseResult<String> insertItem(BoardDto obj) {
@@ -82,12 +93,37 @@ public class BoardServiceImpl extends BaseService implements IBoardService {
             result.setMsg(ResultCodeEnum.PARAM_LACK.getCodeMsg());
             return result;
         }
-        Board qryParams = new Board();
-        qryParams.setBoardCode(itemCode);
-        Board board = boardDao.findOne(qryParams);
-        BoardDto boardDto = new BoardDto();
-        BeanUtils.copyProperties(board, boardDto);//前者赋值给后者
-        result.setData(boardDto);
+        User user = new User();
+        user.setUserName(handleUserName);
+        user = userDao.findOne(user);
+        if(user!=null) {
+            Board qryParams = new Board();
+            qryParams.setBoardCode(itemCode);
+            Board board = boardDao.findOne(qryParams);
+            if(UserTypeEnum.CHILD.name().equals(user.getUserType())){
+                //获取该用户可见范围内的图
+                List<ChartItem> hasPermissionChart = board.getChartList();
+                List<ChartItem> chartItemList = board.getChartList();
+                if(CollectionUtils.isNotEmpty(chartItemList)) {
+                    Chart chart = new Chart();
+                    chart.setUniqueCode(user.getUniqueCode());
+                    for(ChartItem chartItem : chartItemList) {
+                        chart.setChartCode(chartItem.getChartCode());
+                        long count = chartDao.countByParams(chart, handleUserName);
+                        if (count>0) {
+                            hasPermissionChart.add(chartItem);
+                        }
+                    }
+                }
+                board.setChartList(hasPermissionChart);
+            }
+            BoardDto boardDto = new BoardDto();
+            BeanUtils.copyProperties(board, boardDto);//前者赋值给后者
+            result.setData(boardDto);
+        } else {
+            result.setCode(ResultCodeEnum.USER_NOT_EXIST.getCode());
+            result.setMsg(ResultCodeEnum.USER_NOT_EXIST.getCodeMsg());
+        }
         return result;
     }
 
@@ -213,7 +249,7 @@ public class BoardServiceImpl extends BaseService implements IBoardService {
         }
         return result;
     }
-
+/*
     @Override
     public BaseResult<List<ChartItem>> getOwnChartList(String boardCode, String handleUserName) {
         BaseResult<List<ChartItem>> result=new BaseResult<List<ChartItem>>();
@@ -230,7 +266,7 @@ public class BoardServiceImpl extends BaseService implements IBoardService {
         }
         result.setData(board.getChartList());
         return  result;
-    }
+    }*/
 
     @Override
     public BaseResult<List<ChartItem>> getOtherChartListByPage(BoardDto boardDto) {

@@ -1,5 +1,6 @@
 package org.loxf.metric.swagger;
 
+import io.swagger.models.Contact;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -27,11 +28,11 @@ public class CustomJavaPluginConfig extends WebMvcConfigurerAdapter {
 
     ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("LOXF API")
-                .description("This is to show api description")
+                .title("LOXF METRIC API")
+                .description("指标系统API —— LOXF TEAM")
                 .license("Apache 2.0")
                 .licenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html")
-                .termsOfServiceUrl("")
+                .termsOfServiceUrl("https://github.com/loxf/Metric")
                 .version(VERSION)
                 .contact("loxfteam@163.com")
                 .build();

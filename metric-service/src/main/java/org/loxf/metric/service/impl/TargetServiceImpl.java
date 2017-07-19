@@ -4,18 +4,25 @@ package org.loxf.metric.service.impl;
 import org.apache.commons.collections.CollectionUtils;
 import org.loxf.metric.api.ITargetService;
 import org.loxf.metric.base.ItemList.TargetItem;
+import org.loxf.metric.base.ItemList.VisibleItem;
+import org.loxf.metric.base.constants.VisibleTypeEnum;
 import org.loxf.metric.common.constants.ResultCodeEnum;
+import org.loxf.metric.common.constants.UserTypeEnum;
 import org.loxf.metric.common.dto.*;
 import org.loxf.metric.base.utils.MapAndBeanTransUtils;
 import org.loxf.metric.dal.dao.interfaces.TargetDao;
+import org.loxf.metric.dal.dao.interfaces.UserDao;
+import org.loxf.metric.dal.po.Chart;
 import org.loxf.metric.dal.po.Target;
 import org.apache.log4j.Logger;
+import org.loxf.metric.dal.po.User;
 import org.loxf.metric.service.base.BaseService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +36,8 @@ public class TargetServiceImpl extends BaseService implements ITargetService {
 
     @Autowired
     private TargetDao targetDao;
+    @Autowired
+    private UserDao userDao;
 
     @Override
     public BaseResult<String> insertItem(TargetDto obj) {
@@ -77,6 +86,17 @@ public class TargetServiceImpl extends BaseService implements ITargetService {
         BaseResult validPagerResult = super.validPager(obj.getPager());
         if (ResultCodeEnum.SUCCESS.getCode().equals(validPagerResult.getCode())) {
             Map<String, Object> params = MapAndBeanTransUtils.transBean2Map(obj);
+            User user = new User();
+            user.setUserName(obj.getHandleUserName());
+            user = userDao.findOne(user);
+            if(UserTypeEnum.CHILD.name().equals(user.getUserType())){
+                obj.setVisibleType(VisibleTypeEnum.SPECIFICRANGE.name());
+                VisibleItem visibleItem = new VisibleItem();
+                visibleItem.setCode(obj.getHandleUserName());
+                List<VisibleItem> list = new ArrayList<>();
+                list.add(visibleItem);
+                obj.setVisibleList(list);
+            }
             return new BaseResult<>(getPageResult(targetDao, params, pager.getStart(), pager.getRownum()));
         }
         return validPagerResult;
@@ -84,12 +104,34 @@ public class TargetServiceImpl extends BaseService implements ITargetService {
 
     @Override
     public BaseResult<TargetDto> queryItemByCode(String itemCode, String handleUserName) {
-        Target qryParams = new Target();
-        qryParams.setTargetCode(itemCode);
-        Target target = targetDao.findOne(qryParams);
-        TargetDto targetDto = new TargetDto();
-        BeanUtils.copyProperties(target, targetDto);//前者赋值给后者
-        return new BaseResult<>(targetDto);
+        BaseResult result = new BaseResult();
+        User user = new User();
+        user.setUserName(handleUserName);
+        user = userDao.findOne(user);
+        if(user!=null) {
+            Target qryParams = new Target();
+            if(UserTypeEnum.CHILD.name().equals(user.getUserType())){
+                qryParams.setVisibleType(VisibleTypeEnum.SPECIFICRANGE.name());
+                VisibleItem visibleItem = new VisibleItem();
+                visibleItem.setCode(handleUserName);
+                List<VisibleItem> list = new ArrayList<>();
+                list.add(visibleItem);
+                qryParams.setVisibleList(list);
+            }
+            //获取该用户可见范围内的图
+            qryParams.setTargetCode(itemCode);
+            Target target = targetDao.findOne(qryParams);
+            if(target!=null) {
+                TargetDto targetDto = new TargetDto();
+                BeanUtils.copyProperties(target, targetDto);
+                result.setData(targetDto);
+            }
+            return result;
+        } else {
+            result.setCode(ResultCodeEnum.USER_NOT_EXIST.getCode());
+            result.setMsg(ResultCodeEnum.USER_NOT_EXIST.getCodeMsg());
+        }
+        return result;
     }
 
     @Override

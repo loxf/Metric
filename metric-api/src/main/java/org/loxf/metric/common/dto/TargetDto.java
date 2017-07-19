@@ -1,35 +1,42 @@
 package org.loxf.metric.common.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import org.loxf.metric.base.ItemList.TargetItem;
 import org.loxf.metric.base.ItemList.VisibleItem;
 
 import java.util.Date;
 import java.util.List;
-
+@ApiModel("目标")
 public class TargetDto extends BaseDto{
-
+    @ApiModelProperty("目标编码")
     private String targetCode;
 
+    @ApiModelProperty("目标名称")
     private String targetName;
 
+    @ApiModelProperty("目标描述")
     private String targetDesc;
 
+    @ApiModelProperty("状态:AVAILABLE(生效)/DISABLED(失效)")
     private String state;
 
+    @ApiModelProperty("目标开始时间")
     private Date targetStartTime;
 
+    @ApiModelProperty("目标结束时间")
     private Date targetEndTime;
 
+    @ApiModelProperty("团队码")
     private String uniqueCode;
 
+    @ApiModelProperty("可见范围:SPECIFICRANGE/ALL")
     private String visibleType;
 
+    @ApiModelProperty("可见列表")
     private List<VisibleItem> visibleList;
 
-    private String createUserName;
-
-    private String updatedUserName;
-
+    @ApiModelProperty("目标项")
     private List<TargetItem> itemList;
 
     public String getTargetCode() {
@@ -80,14 +87,6 @@ public class TargetDto extends BaseDto{
         this.targetEndTime = targetEndTime;
     }
 
-    public String getCreateUserName() {
-        return createUserName;
-    }
-
-    public void setCreateUserName(String createUserName) {
-        this.createUserName = createUserName;
-    }
-
     public String getUniqueCode() {
         return uniqueCode;
     }
@@ -102,14 +101,6 @@ public class TargetDto extends BaseDto{
 
     public void setVisibleType(String visibleType) {
         this.visibleType = visibleType;
-    }
-
-    public String getUpdatedUserName() {
-        return updatedUserName;
-    }
-
-    public void setUpdatedUserName(String updatedUserName) {
-        this.updatedUserName = updatedUserName;
     }
 
     public List<TargetItem> getItemList() {

@@ -11,6 +11,14 @@ import java.util.List;
 public interface IDataQueryService {
 
     /**
+     * 获取首页数据
+     * @param handleUserName
+     * @param uniqueCode
+     * @param condition
+     * @return
+     */
+    public List<ChartData> getIndexData(String handleUserName, String uniqueCode, ConditionVo condition);
+    /**
      * 获取看板数据
      * @param handleUserName
      * @param boardCode

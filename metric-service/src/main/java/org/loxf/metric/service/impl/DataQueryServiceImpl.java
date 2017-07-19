@@ -52,6 +52,39 @@ public class DataQueryServiceImpl implements IDataQueryService {
     private ValidConditionUtil valid;
 
     @Override
+    public List<ChartData> getIndexData(String handleUserName, String boardCode, ConditionVo condition) {
+        Board param = new Board();
+        param.setBoardCode(boardCode);
+        Board board = boardDao.findOne(param);
+        if(CollectionUtils.isNotEmpty(board.getChartList())){
+            List<ChartData> chartDataList = new ArrayList<>();
+            List<ChartItem> chartList = board.getChartList();
+            List<Future<ChartData>> futureList = new ArrayList<>();
+            for(ChartItem chartItem : chartList){
+                // Future
+                QueryChartDataCallable callable = new QueryChartDataCallable(handleUserName,
+                        chartItem.getChartCode(), condition, this);
+                Future<ChartData> future = PoolUtil.getPool().submit(callable);
+                futureList.add(future);
+            }
+            for(Future future : futureList){
+                try {
+                    ChartData chartData = (ChartData)future.get();
+                    if(chartData!=null){
+                        chartDataList.add(chartData);
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
+            return chartDataList;
+        }
+        return null;
+    }
+
+    @Override
     public List<ChartData> getBoardData(String handleUserName, String boardCode, ConditionVo condition) {
         Board param = new Board();
         param.setBoardCode(boardCode);
@@ -83,6 +116,7 @@ public class DataQueryServiceImpl implements IDataQueryService {
         }
         return null;
     }
+
     @Override
     public ChartData getChartData(String handleUserName, String chartCode, ConditionVo condition) {
         User user = UserSessionManager.getSession().getUserSession(handleUserName);

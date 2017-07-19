@@ -1,20 +1,32 @@
 package org.loxf.metric.common.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by hutingting on 2017/7/6.
  */
+@ApiModel("基础数据")
 public class BaseDto implements Serializable {
     private Long _id;
+    @ApiModelProperty("创建时间")
     private Date createdAt;
+    @ApiModelProperty("更新时间")
     private Date updatedAt;
-    private String updateUserName;
+    @ApiModelProperty("创建用户")
     private String createUserName;
+    @ApiModelProperty("更新用户")
+    private String updateUserName;
+    @ApiModelProperty("处理用户")
     private String handleUserName;
+    @ApiModelProperty("时间起")
     private Date startDate;
+    @ApiModelProperty("时间止")
     private Date endDate;
+    @ApiModelProperty("分页")
     private Pager pager;
 
     public Long get_id() {

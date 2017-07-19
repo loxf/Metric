@@ -1,6 +1,7 @@
 package org.loxf.metric.dal.dao.impl;
 
 import com.mongodb.BasicDBObject;
+import com.sun.tools.javac.util.Assert;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.loxf.metric.base.constants.CollectionConstants;
@@ -41,6 +42,7 @@ public class ChartDaoImpl extends MongoDaoBase<Chart> implements ChartDao {
 
     @Override
     public long countByParams(Chart params) {
+        Assert.error("不支持此方法");
         return 0;
     }
 
@@ -120,16 +122,19 @@ public class ChartDaoImpl extends MongoDaoBase<Chart> implements ChartDao {
 
     @Override
     public Chart findOne(Chart params) {
+        Assert.error("不支持此方法");
         return null;
     }
 
     @Override
     public List<Chart> findAll(Chart params) {
+        Assert.error("不支持此方法");
         return null;
     }
 
     @Override
     public List<Chart> findByPager(Chart params, int start, int pageSize) {
+        Assert.error("不支持此方法");
         return null;
     }
 

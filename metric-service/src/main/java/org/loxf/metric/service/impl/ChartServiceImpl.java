@@ -48,7 +48,7 @@ public class ChartServiceImpl extends BaseService implements IChartService {
     public BaseResult<String> insertItem(ChartDto obj) {//前端去重，可见范围列表。只有root用户可以添加图
         BaseResult result = new BaseResult();
         if (StringUtils.isEmpty(obj.getChartName()) || StringUtils.isEmpty(obj.getType()) ||
-                StringUtils.isEmpty(obj.getChartDim()) || obj.getQuotaList().size() == 0 ||
+                StringUtils.isEmpty(obj.getChartDimension()) || obj.getQuotaList().size() == 0 ||
                 obj.getQuotaList() == null||StringUtils.isEmpty(obj.getUniqueCode())||obj.getQuotaList()==null||obj.getQuotaList().size()==0) {
             result.setCode(ResultCodeEnum.PARAM_LACK.getCode());
             result.setMsg("图名称、类型、维度、指标、团队码都不能为空！操作用户为：" + obj.getCreateUserName());

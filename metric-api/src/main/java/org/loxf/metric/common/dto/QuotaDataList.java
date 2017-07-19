@@ -1,5 +1,7 @@
 package org.loxf.metric.common.dto;
 
+import io.swagger.annotations.ApiModel;
+
 import java.util.*;
 
 /**

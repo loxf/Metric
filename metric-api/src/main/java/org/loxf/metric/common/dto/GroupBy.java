@@ -1,14 +1,19 @@
 package org.loxf.metric.common.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 
 /**
  * Created by luohj on 2017/5/10.
  */
+@ApiModel("分组")
 public class GroupBy implements Serializable {
     public GroupBy(String code){
         this.code = code;
     }
+    @ApiModelProperty("分组列编码，即指标维度编码")
     private String code ;
 
     public String getCode() {

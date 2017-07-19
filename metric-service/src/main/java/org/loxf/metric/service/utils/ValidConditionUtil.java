@@ -27,9 +27,6 @@ public class ValidConditionUtil {
         if (StringUtils.isEmpty(quotaCode)) {
             throw new MetricException("指标CODE为空");
         }
-        if (StringUtils.isEmpty(vo.getBusiDomain())) {
-            throw new MetricException("指标业务域为空");
-        }
         Quota param = new Quota();
         param.setQuotaCode(quotaCode);
         Quota quota = quotaDao.findOne(param);

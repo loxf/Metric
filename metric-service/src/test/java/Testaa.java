@@ -34,7 +34,7 @@ public class Testaa {
     public void testPageList(){
         ChartDto chartDto=new ChartDto();
         chartDto.setChartCode("htt");
-        chartDto.setChartDim("渠道");
+        chartDto.setChartDimension("channel_name");
         chartDto.setHandleUserName("htt");
         BaseResult<PageData> i=chartService.getPageList(chartDto);
         int a=0;

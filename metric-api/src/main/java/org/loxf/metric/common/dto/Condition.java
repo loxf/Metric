@@ -1,6 +1,8 @@
 package org.loxf.metric.common.dto;
 
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.Serializable;
@@ -8,10 +10,15 @@ import java.io.Serializable;
 /**
  * Created by luohj on 2017/5/10.
  */
+@ApiModel("条件项")
 public class Condition implements Serializable {
+    @ApiModelProperty("条件项编码，即指标维度编码")
     private String code;
+    @ApiModelProperty("条件项名称")
     private String desc;
+    @ApiModelProperty("条件项值")
     private String[] value;
+    @ApiModelProperty("条件项操作: 等于(=)/不等于(<>)/包括(in)/不包括(not in)")
     private String oper;
 
     public Condition(){}

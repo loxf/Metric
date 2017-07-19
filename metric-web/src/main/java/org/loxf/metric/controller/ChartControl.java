@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Controller
 @RequestMapping("/chart")
-@Api(value = "chart", description = "图表操作")
+@Api(value = "chart", description = "图表")
 public class ChartControl {
     @Autowired
     private IChartService chartService;

@@ -41,8 +41,9 @@ public class UserController {
     @ApiOperation(value = "主用户注册", notes = "主用户注册", httpMethod = "POST", response = BaseResult.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
     public BaseResult<String> registerRoot(@ApiParam(value = "用户手机号", name = "phone", required = true) String phone,
-                                           @ApiParam(value = "用户密码", name = "phone", required = true) String pwd,
-                                           @ApiParam(value = "真实姓名", name = "phone", required = true) String realName) {
+                                           @ApiParam(value = "用户密码", name = "pwd", required = true) String pwd,
+                                           @ApiParam(value = "真实姓名", name = "realName", required = true) String realName,
+                                           @ApiParam(value = "真实姓名", name = "verifyCode", required = true) String verifyCode) {
         return userService.register(phone, pwd, realName);
     }
 
@@ -59,7 +60,7 @@ public class UserController {
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
     public BaseResult<String> login(@ApiParam(value = "用户手机号", name = "phone", required = true) String phone,
                                     @ApiParam(value = "密码/验证码", name = "pwd", required = true) String pwd,
-                                    @ApiParam(value = "团队码", name = "uniqueCode", required = true) String uniqueCode,
+                                    @ApiParam(value = "团队码", name = "uniqueCode") String uniqueCode,
                                     @ApiParam(value = "用户类型：ROOT/CHILD", name = "userType", required = true) String userType,
                                     @ApiParam(value = "登录类型：PHONE/PC", name = "loginType", required = true) String loginType,
                                     HttpServletRequest request, HttpServletResponse response) {

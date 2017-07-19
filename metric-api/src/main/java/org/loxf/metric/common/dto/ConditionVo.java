@@ -1,5 +1,7 @@
 package org.loxf.metric.common.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -12,15 +14,23 @@ import java.util.Map;
  * 查询条件
  * Created by luohj on 2017/5/9.
  */
+@ApiModel("查询条件")
 public class ConditionVo implements Serializable {
+    @ApiModelProperty(value = "指标编码", readOnly = true)
     private String quotaCode;
-    private String busiDomain;
+    @ApiModelProperty(value = "图类型", readOnly = true)
     private String chartType;
+    @ApiModelProperty(value = "开始时间", required = true)
     private String startCircleTime;
+    @ApiModelProperty(value = "结束时间", required = true)
     private String endCircleTime;
+    @ApiModelProperty("条件关系:AND/OR")
     private String relation;
+    @ApiModelProperty("条件项")
     private List<Condition> condition;
-    private Map<String, ConditionVo> defaultCondition = new HashMap<>();
+    @ApiModelProperty(value = "默认条件", readOnly = true)
+    private transient Map<String, ConditionVo> defaultCondition = new HashMap<>();
+    @ApiModelProperty(value = "聚合列", readOnly = true)
     private List<GroupBy> groupBy;
 
     public ConditionVo(){}
@@ -31,14 +41,6 @@ public class ConditionVo implements Serializable {
 
     public void setQuotaCode(String quotaCode) {
         this.quotaCode = quotaCode;
-    }
-
-    public String getBusiDomain() {
-        return busiDomain;
-    }
-
-    public void setBusiDomain(String busiDomain) {
-        this.busiDomain = busiDomain;
     }
 
     public String getChartType() {

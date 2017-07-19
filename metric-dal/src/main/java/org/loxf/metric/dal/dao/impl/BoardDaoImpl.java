@@ -95,11 +95,6 @@ public class BoardDaoImpl extends MongoDaoBase<Board> implements BoardDao {
             query.put("createUserName", board.getCreateUserName());
         }
 
-//        List<ChartItem> chartItemList=board.getChartList();
-//        if(chartItemList!=null&&chartItemList.size()>0){
-//
-//        }
-
         if(board.getStartDate()!=null||board.getEndDate()!=null){
             Map<String, Object> createT = new HashMap<>();
             if(board.getStartDate()!=null)

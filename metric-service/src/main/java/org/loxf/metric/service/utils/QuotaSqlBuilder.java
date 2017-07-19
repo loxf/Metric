@@ -34,8 +34,7 @@ public class QuotaSqlBuilder {
         }
         sb.append(" from ").append(tableName).append(" where circle_time between str_to_date('").
                 append(vo.getStartCircleTime()).append("','%Y-%m-%d %T') and str_to_date('").
-                append(vo.getEndCircleTime()).append("','%Y-%m-%d %T')").append(" and busi_domain = '").
-                append(vo.getBusiDomain()).append("' ");
+                append(vo.getEndCircleTime()).append("','%Y-%m-%d %T')");
         if (CollectionUtils.isNotEmpty(vo.getCondition())) {
             List<Condition> conditionList = vo.getCondition();
             sb.append(" and (");

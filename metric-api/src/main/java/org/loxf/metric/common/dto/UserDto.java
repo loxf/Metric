@@ -1,16 +1,28 @@
 package org.loxf.metric.common.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * Created by hutingting on 2017/7/6.
  */
+@ApiModel("用户")
 public class UserDto extends BaseDto{
+    @ApiModelProperty("用户名，自动编码")
     private String userName;
+    @ApiModelProperty("团队码")
     private String uniqueCode;
+    @ApiModelProperty("密码")
     private String pwd;
+    @ApiModelProperty("真实姓名")
     private String realName;
+    @ApiModelProperty("手机号码")
     private String phone;
+    @ApiModelProperty("邮箱")
     private String email;
+    @ApiModelProperty("用户类型:CHILD/ROOT")
     private String userType;
+    @ApiModelProperty("状态:AVAILABLE(生效)/DISABLED(失效)")
     private String state;
     /**
      * 浏览器信息
