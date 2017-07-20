@@ -8,7 +8,7 @@ import java.io.Serializable;
 /**
  * Created by luohj on 2017/3/21.
  */
-@ApiModel("分页")
+@ApiModel(value = "分页", description = "分页查询专用")
 public class Pager implements Serializable {
     /**
      * 开始

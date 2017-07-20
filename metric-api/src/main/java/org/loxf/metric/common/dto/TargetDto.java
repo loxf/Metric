@@ -9,34 +9,34 @@ import java.util.Date;
 import java.util.List;
 @ApiModel("目标")
 public class TargetDto extends BaseDto{
-    @ApiModelProperty("目标编码")
+    @ApiModelProperty("目标编码，查询专用")
     private String targetCode;
 
-    @ApiModelProperty("目标名称")
+    @ApiModelProperty(value = "目标名称", required = true)
     private String targetName;
 
-    @ApiModelProperty("目标描述")
+    @ApiModelProperty(value = "目标描述", required = true)
     private String targetDesc;
 
-    @ApiModelProperty("状态:AVAILABLE(生效)/DISABLED(失效)")
+    @ApiModelProperty(value = "状态:AVAILABLE(生效)/DISABLED(失效)", hidden = true)
     private String state;
 
-    @ApiModelProperty("目标开始时间")
+    @ApiModelProperty(value = "目标开始时间", required = true)
     private Date targetStartTime;
 
-    @ApiModelProperty("目标结束时间")
+    @ApiModelProperty(value = "目标结束时间", required = true)
     private Date targetEndTime;
 
-    @ApiModelProperty("团队码")
+    @ApiModelProperty(value = "团队码", required = true)
     private String uniqueCode;
 
-    @ApiModelProperty("可见范围:SPECIFICRANGE/ALL")
+    @ApiModelProperty(value = "可见范围:SPECIFICRANGE/ALL", required = true)
     private String visibleType;
 
     @ApiModelProperty("可见列表")
     private List<VisibleItem> visibleList;
 
-    @ApiModelProperty("目标项")
+    @ApiModelProperty(value = "目标项", required = true)
     private List<TargetItem> itemList;
 
     public String getTargetCode() {

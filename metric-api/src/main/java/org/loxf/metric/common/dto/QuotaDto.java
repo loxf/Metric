@@ -9,36 +9,36 @@ import java.util.List;
 /**
  * Created by luohj on 2017/5/4.
  */
-@ApiModel("指标")
+@ApiModel(value = "指标", description = "查询时，根据需要传相应数据")
 public class QuotaDto extends BaseDto{
-    @ApiModelProperty("指标编码")
+    @ApiModelProperty(value = "指标编码，查询专用")
     private String quotaCode;
 
-    @ApiModelProperty("指标编码")
+    @ApiModelProperty(value = "指标源，复合指标的公式，基础指标不传")
     private String quotaSource;
 
-    @ApiModelProperty("指标名称")
+    @ApiModelProperty(value = "指标名称", required = true)
     private String quotaName;
 
-    @ApiModelProperty("指标类型:BASIC(基础指标)/COMPOSITE(复合指标)")
+    @ApiModelProperty(value = "指标类型:BASIC(基础指标)/COMPOSITE(复合指标)", required = true)
     private String type;
 
-    @ApiModelProperty("聚合类型:SUM/AVG/MAX/MIN/COUNT")
+    @ApiModelProperty(value = "聚合类型:SUM/AVG/MAX/MIN/COUNT", required = true)
     private String showOperation;
 
-    @ApiModelProperty("展示类型:MONEY(金额)/NUMBER(数字)/PERCENT(百分比)/RATIO(比率)")
+    @ApiModelProperty(value = "展示类型:MONEY(金额)/NUMBER(数字)/PERCENT(百分比)/RATIO(比率)", required = true)
     private String showType;
 
-    @ApiModelProperty("指标状态:AVAILABLE(生效)/DISABLED(失效)")
+    @ApiModelProperty(value = "指标状态:AVAILABLE(生效)/DISABLED(失效)", hidden = true)
     private String state;
 
-    @ApiModelProperty("数据接入方式:EXCEL/SDK")
+    @ApiModelProperty(value = "数据接入方式:EXCEL/SDK", required = true)
     private String dataImportType;
 
-    @ApiModelProperty("指标周期:1440(日)/-1(周)/-2(月)/-3(年)/>0数字(分钟)")
+    @ApiModelProperty(value = "指标周期:1440(日)/-1(周)/-2(月)/-3(年)/>0数字(分钟)", required = true)
     private int intervalPeriod;
 
-    @ApiModelProperty("指标维度")
+    @ApiModelProperty(value = "指标维度", required = true)
     private List<QuotaDimItem> quotaDim;
 
     @ApiModelProperty("团队码")

@@ -9,22 +9,23 @@ import java.util.Date;
 /**
  * Created by hutingting on 2017/7/6.
  */
-@ApiModel("基础数据")
+@ApiModel("通用数据")
 public class BaseDto implements Serializable {
+    @ApiModelProperty(value = "ID", hidden = true)
     private Long _id;
-    @ApiModelProperty("创建时间")
+    @ApiModelProperty(value = "创建时间", hidden = true)
     private Date createdAt;
-    @ApiModelProperty("更新时间")
+    @ApiModelProperty(value = "更新时间", hidden = true)
     private Date updatedAt;
-    @ApiModelProperty("创建用户")
+    @ApiModelProperty(value = "创建用户", hidden = true)
     private String createUserName;
-    @ApiModelProperty("更新用户")
+    @ApiModelProperty(value = "更新用户", hidden = true)
     private String updateUserName;
-    @ApiModelProperty("处理用户")
+    @ApiModelProperty(value = "处理用户", required = true)
     private String handleUserName;
-    @ApiModelProperty("时间起")
+    @ApiModelProperty(value = "时间起", hidden = true)
     private Date startDate;
-    @ApiModelProperty("时间止")
+    @ApiModelProperty(value = "时间止", hidden = true)
     private Date endDate;
     @ApiModelProperty("分页")
     private Pager pager;

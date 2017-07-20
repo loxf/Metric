@@ -14,7 +14,7 @@ public class BoardDto extends BaseDto{
     @ApiModelProperty("看板名称")
     private String boardName;
 
-    @ApiModelProperty("看板状态:AVAILABLE(生效)/DISABLED(失效)")
+    @ApiModelProperty(value = "看板状态:AVAILABLE(生效)/DISABLED(失效)", hidden = true)
     private String state;
 
     @ApiModelProperty("图项列表")

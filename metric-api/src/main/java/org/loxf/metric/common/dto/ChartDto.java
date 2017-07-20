@@ -23,22 +23,22 @@ public class ChartDto extends BaseDto {
     @ApiModelProperty(value = "图类型", example = "brokenLine", position = 4)
     private String type;
 
-    @ApiModelProperty(value = "默认查询条件", position = 5)
+    @ApiModelProperty(value = "默认查询条件", hidden = true, position = 5)
     private String defaultCondition;
 
-    @ApiModelProperty(value = "图维度", example = "circleTime", position = 6)
+    @ApiModelProperty(value = "图维度", example = "circleTime", required = true, position = 6)
     private String chartDimension;
 
-    @ApiModelProperty(value = "可见范围:SPECIFICRANGE/ALL", example = "SPECIFICRANGE", position = 7)
+    @ApiModelProperty(value = "可见范围:SPECIFICRANGE/ALL", required = true, example = "SPECIFICRANGE", position = 7)
     private String visibleType;
 
     @ApiModelProperty(value = "可见列表", position = 8)
     private List<VisibleItem> visibleList;
 
-    @ApiModelProperty(value = "状态:AVAILABLE(生效)/DISABLED(失效)", example = "AVAILABLE", position = 10)
+    @ApiModelProperty(value = "状态:AVAILABLE(生效)/DISABLED(失效)", hidden = true, example = "AVAILABLE", position = 10)
     private String state;
 
-    @ApiModelProperty(value = "团队码", example = "KX45Khdfk95k", position = 11)
+    @ApiModelProperty(value = "团队码", required = true, position = 11)
     private String uniqueCode;
 
     public String getChartCode() {

@@ -11,12 +11,12 @@ public class VisibleItem {
     /**
      * 类型：USER/GROUP
      */
-    @ApiModelProperty(value = "类型", example = "用户：USER/组：GROUP")
+    @ApiModelProperty(value = "类型", example = "用户：USER/组：GROUP", required = true)
     private String type;
     /**
      * USERNAME/GROUP_ID
      */
-    @ApiModelProperty(value = "编码")
+    @ApiModelProperty(value = "编码", required = true)
     private String code;
 
     public String getType() {

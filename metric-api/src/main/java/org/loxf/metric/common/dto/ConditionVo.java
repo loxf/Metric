@@ -14,11 +14,11 @@ import java.util.Map;
  * 查询条件
  * Created by luohj on 2017/5/9.
  */
-@ApiModel("查询条件")
+@ApiModel(value = "查询条件", description = "用于首页/看板条件过滤")
 public class ConditionVo implements Serializable {
-    @ApiModelProperty(value = "指标编码", readOnly = true)
+    @ApiModelProperty(value = "指标编码", hidden = true, readOnly = true)
     private String quotaCode;
-    @ApiModelProperty(value = "图类型", readOnly = true)
+    @ApiModelProperty(value = "图类型", hidden = true, readOnly = true)
     private String chartType;
     @ApiModelProperty(value = "开始时间", required = true)
     private String startCircleTime;
@@ -28,9 +28,9 @@ public class ConditionVo implements Serializable {
     private String relation;
     @ApiModelProperty("条件项")
     private List<Condition> condition;
-    @ApiModelProperty(value = "默认条件", readOnly = true)
+    @ApiModelProperty(value = "默认条件", hidden = true, readOnly = true)
     private transient Map<String, ConditionVo> defaultCondition = new HashMap<>();
-    @ApiModelProperty(value = "聚合列", readOnly = true)
+    @ApiModelProperty(value = "聚合列", hidden = true, readOnly = true)
     private List<GroupBy> groupBy;
 
     public ConditionVo(){}
