@@ -31,6 +31,16 @@
             <groupId>org.loxf</groupId>
             <artifactId>metric-base</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>alicom-dysms-api</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>alicom-dysms-core</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

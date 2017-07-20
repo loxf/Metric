@@ -1,17 +1,14 @@
 package org.loxf.metric.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.*;
+import org.loxf.metric.SendMsgUtils;
 import org.loxf.metric.api.IUserService;
 import org.loxf.metric.base.annotations.Permission;
 import org.loxf.metric.base.constants.PermissionType;
 import org.loxf.metric.base.utils.IdGenerator;
 import org.loxf.metric.common.constants.ResultCodeEnum;
 import org.loxf.metric.common.dto.BaseResult;
-import org.loxf.metric.common.dto.QuotaDto;
 import org.loxf.metric.common.dto.UserDto;
-import org.loxf.metric.dal.po.User;
 import org.loxf.metric.filter.LoginFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -29,8 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 public class UserController {
     @Autowired
     private IUserService userService;
-
-
     /**
      * 获取短信验证码
      *
@@ -42,8 +37,10 @@ public class UserController {
     @ApiOperation(value = "获取验证码", notes = "获取验证码", httpMethod = "GET", response = BaseResult.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
     public BaseResult<String> getValidateCode(@ApiParam(value = "用户手机号", name = "phone", required = true) String phone) {
+        SendMsgUtils.sendMsg(null,null,null,null,null);
         return new BaseResult<>("1234");
     }
+
     /**
      * 主用户注册
      *
@@ -58,13 +55,12 @@ public class UserController {
                                            @ApiParam(value = "用户密码", name = "pwd", required = true) String pwd,
                                            @ApiParam(value = "真实姓名", name = "realName", required = true) String realName,
                                            @ApiParam(value = "验证码", name = "verifyCode", required = true) String verifyCode) {
-        if("1234".equals(verifyCode)){
+        if ("1234".equals(verifyCode)) {
             return userService.register(phone, pwd, realName);
-        }else{
-            return new BaseResult<String>(ResultCodeEnum.PARAM_ERROR.getCode(),"验证码不匹配");
+        } else {
+            return new BaseResult<String>(ResultCodeEnum.PARAM_ERROR.getCode(), "验证码不匹配");
         }
     }
-
 
 
     /**
