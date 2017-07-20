@@ -81,7 +81,7 @@ public class BoardControl {
     @ResponseBody
     @ApiOperation(value = "获取看板列表", notes = "分页获取", httpMethod = "GET", response = BaseResult.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
-    public BaseResult<PageData> pager(@RequestBody @ApiParam(value = "看板实体") BoardDto boardDto,
+    public BaseResult<PageData<BoardDto>> pager(@RequestBody @ApiParam(value = "看板实体") BoardDto boardDto,
                                       HttpServletRequest request, HttpServletResponse response){
         UserDto userDto = LoginFilter.getUser(request);
         boardDto.setHandleUserName(userDto.getUserName());

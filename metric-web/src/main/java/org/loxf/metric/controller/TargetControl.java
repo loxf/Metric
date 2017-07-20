@@ -9,6 +9,7 @@ import org.loxf.metric.common.dto.BaseResult;
 import org.loxf.metric.common.dto.TargetDto;
 import org.loxf.metric.common.dto.PageData;
 import org.loxf.metric.common.dto.UserDto;
+import org.loxf.metric.dal.po.Target;
 import org.loxf.metric.filter.LoginFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -81,8 +82,8 @@ public class TargetControl {
     @ResponseBody
     @ApiOperation(value = "获取目标列表", notes = "分页获取", httpMethod = "GET", response = BaseResult.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
-    public BaseResult<PageData> pager(@RequestBody @ApiParam(value = "目标实体") TargetDto targetDto,
-                                      HttpServletRequest request, HttpServletResponse response){
+    public BaseResult<PageData<TargetDto>> pager(@RequestBody @ApiParam(value = "目标实体") TargetDto targetDto,
+                                              HttpServletRequest request, HttpServletResponse response){
         UserDto userDto = LoginFilter.getUser(request);
         targetDto.setHandleUserName(userDto.getUserName());
         targetDto.setUniqueCode(userDto.getUniqueCode());

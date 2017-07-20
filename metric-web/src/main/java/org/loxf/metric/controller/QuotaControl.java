@@ -10,6 +10,7 @@ import org.loxf.metric.common.dto.BaseResult;
 import org.loxf.metric.common.dto.PageData;
 import org.loxf.metric.common.dto.QuotaDto;
 import org.loxf.metric.common.dto.UserDto;
+import org.loxf.metric.dal.po.Quota;
 import org.loxf.metric.filter.LoginFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -94,8 +95,8 @@ public class QuotaControl {
     @ResponseBody
     @ApiOperation(value = "获取指标", notes = "获取一个指标", httpMethod = "GET", response = BaseResult.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
-    public BaseResult getQuota(@RequestBody @ApiParam(value = "指标编码", required = true) String quotaCode,
-                               HttpServletRequest request, HttpServletResponse response) {
+    public BaseResult<QuotaDto> getQuota(@RequestBody @ApiParam(value = "指标编码", required = true) String quotaCode,
+                                      HttpServletRequest request, HttpServletResponse response) {
         UserDto userDto = LoginFilter.getUser(request);
         return quotaService.queryItemByCode(quotaCode, userDto.getUserName());
     }
@@ -109,7 +110,7 @@ public class QuotaControl {
     @ResponseBody
     @ApiOperation(value = "获取指标（分页）", notes = "获取分页指标列表", httpMethod = "GET", response = BaseResult.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
-    public BaseResult<PageData> pager(@RequestBody @ApiParam(value = "指标过滤条件", required = true) QuotaDto quotaDto,
+    public BaseResult<PageData<QuotaDto>> pager(@RequestBody @ApiParam(value = "指标过滤条件", required = true) QuotaDto quotaDto,
                                       HttpServletRequest request, HttpServletResponse response) {
         UserDto userDto = LoginFilter.getUser(request);
         quotaDto.setHandleUserName(userDto.getUserName());

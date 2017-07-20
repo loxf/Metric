@@ -99,7 +99,7 @@ public class ChartServiceImpl extends BaseService implements IChartService {
     }
 
     @Override
-    public BaseResult<PageData> getPageList(ChartDto obj) {
+    public BaseResult<PageData<ChartDto>> getPageList(ChartDto obj) {
         Pager pager=obj.getPager();
         BaseResult validPagerResult = super.validPager(obj.getPager());
         if (ResultCodeEnum.SUCCESS.getCode().equals(validPagerResult.getCode())) {

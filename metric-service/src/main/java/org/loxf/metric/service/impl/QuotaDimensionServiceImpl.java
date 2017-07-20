@@ -8,6 +8,7 @@ import org.loxf.metric.common.dto.PageData;
 import org.loxf.metric.common.dto.Pager;
 import org.loxf.metric.common.dto.QuotaDimensionDto;
 import org.loxf.metric.dal.dao.interfaces.QuotaDimensionDao;
+import org.loxf.metric.dal.po.Quota;
 import org.loxf.metric.dal.po.QuotaDimension;
 import org.loxf.metric.service.base.BaseService;
 import org.slf4j.Logger;
@@ -28,7 +29,7 @@ public class QuotaDimensionServiceImpl extends BaseService implements IQuotaDime
     @Autowired
     private QuotaDimensionDao quotaDimensionDao;
     @Override
-    public BaseResult<PageData> getPageList(QuotaDimensionDto obj) {
+    public BaseResult<PageData<QuotaDimensionDto>> getPageList(QuotaDimensionDto obj) {
         Pager pager = obj.getPager();
         if (pager == null) {
             return new BaseResult<>(ResultCodeEnum.PARAM_LACK.getCode(), "分页信息为空");

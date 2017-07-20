@@ -1,5 +1,6 @@
 package org.loxf.metric.service.impl;
 
+import com.sun.tools.javac.util.Assert;
 import org.apache.log4j.Logger;
 import org.loxf.metric.api.IQuotaDimenValueService;
 import org.loxf.metric.common.dto.*;
@@ -33,7 +34,8 @@ public class QuotaDimenValueServiceImpl implements IQuotaDimenValueService {
     }
 
     @Override
-    public BaseResult<PageData> getPageList(QuotaDimensionValueDto obj){
+    public BaseResult<PageData<QuotaDimensionValueDto>> getPageList(QuotaDimensionValueDto obj){
+        Assert.error("不支持此方法");
         return null;
     }
 
