@@ -14,7 +14,8 @@ public enum ResultCodeEnum {
     USER_NOT_EXIST("504","用户不存在"),
     DATA_EXIST("505","数据已存在"),
     NOT_SUPPORT("509","接口弃用"),
-    NO_PERMISSION("300","权限不足");
+    NO_PERMISSION("300","权限不足"),
+    ILLEGAL_REQUEST("555","非法请求"),;
 
     private String code;
     private String codeMsg;
