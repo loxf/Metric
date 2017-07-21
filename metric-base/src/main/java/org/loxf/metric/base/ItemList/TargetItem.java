@@ -9,16 +9,16 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel("目标项")
 public class TargetItem {
 
-    @ApiModelProperty("指标编码")
+    @ApiModelProperty(value = "指标编码", required = true)
     private String quotaCode;
 
-    @ApiModelProperty("指标名称")
+    @ApiModelProperty(value = "指标名称", required = true)
     private String quotaName;
 
-    @ApiModelProperty("目标值")
+    @ApiModelProperty(value = "目标值", required = true)
     private String targetValue;
 
-    @ApiModelProperty("权重")
+    @ApiModelProperty(value = "权重", required = true)
     private int weight;
 
     public String getQuotaCode() {

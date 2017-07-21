@@ -14,7 +14,7 @@ import java.io.Serializable;
 public class Condition implements Serializable {
     @ApiModelProperty("条件项编码，即指标维度编码")
     private String code;
-    @ApiModelProperty("条件项名称")
+    @ApiModelProperty(value = "条件项名称", hidden = true)
     private String desc;
     @ApiModelProperty("条件项值")
     private String[] value;

@@ -41,8 +41,8 @@ public class DataControl {
     @ResponseBody
     @ApiOperation(value = "获取首页数据", notes = "获取首页数据", httpMethod = "GET", response = BaseResult.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
-    public BaseResult<List<ChartData>> getIndexData(@ApiParam(value = "开始时间", required = true) String startDate,
-                                                    @RequestBody @ApiParam(value = "结束时间", required = true) String endDate,
+    public BaseResult<List<ChartData>> getIndexData(@ApiParam(value = "开始时间", required = true) String startCircleTime,
+                                                    @RequestBody @ApiParam(value = "结束时间", required = true) String endCircleTime,
                                                     HttpServletRequest request, HttpServletResponse response){
         UserDto userDto = LoginFilter.getUser(request);
         BaseResult result = indexSettingService.getIndexSetting(userDto.getUserName());
@@ -50,8 +50,8 @@ public class DataControl {
             List<ChartItem> chartItemList = (List<ChartItem> )result.getData();
             if(CollectionUtils.isNotEmpty(chartItemList)){
                 ConditionVo conditionVo = new ConditionVo();
-                conditionVo.setStartCircleTime(startDate);
-                conditionVo.setEndCircleTime(endDate);
+                conditionVo.setStartCircleTime(startCircleTime);
+                conditionVo.setEndCircleTime(endCircleTime);
                 List<ChartData> chartDataList = dataQueryService.getIndexData(userDto.getHandleUserName(), userDto.getUniqueCode(), conditionVo);
                 return new BaseResult<>(chartDataList);
             }
@@ -68,7 +68,7 @@ public class DataControl {
     @ApiOperation(value = "获取看板数据", notes = "获取看板数据", httpMethod = "GET", response = BaseResult.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
     public BaseResult<List<ChartData>> getBoardData(@ApiParam(value = "看板编码", required = true) String boardCode,
-                                                    @RequestBody @ApiParam(value = "查询条件", required = false) ConditionVo conditionVo,
+                                                    @RequestBody @ApiParam(value = "查询条件", required = true) ConditionVo conditionVo,
                                                     HttpServletRequest request, HttpServletResponse response){
         UserDto userDto = LoginFilter.getUser(request);
         BaseResult result = indexSettingService.getIndexSetting(userDto.getUniqueCode());

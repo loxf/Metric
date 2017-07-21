@@ -36,7 +36,7 @@ public class Testaa {
         chartDto.setChartCode("htt");
         chartDto.setChartDimension("channel_name");
         chartDto.setHandleUserName("htt");
-        BaseResult<PageData> i=chartService.getPageList(chartDto);
+        BaseResult<PageData<ChartDto>> i=chartService.getPageList(chartDto);
         int a=0;
 
     }

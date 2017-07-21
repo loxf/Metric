@@ -81,7 +81,7 @@ public class TargetServiceImpl extends BaseService implements ITargetService {
     }
 
     @Override
-    public BaseResult<PageData> getPageList(TargetDto obj) {
+    public BaseResult<PageData<TargetDto>> getPageList(TargetDto obj) {
         Pager pager = obj.getPager();
         BaseResult validPagerResult = super.validPager(obj.getPager());
         if (ResultCodeEnum.SUCCESS.getCode().equals(validPagerResult.getCode())) {

@@ -83,7 +83,7 @@ public class ChartControl {
     @ResponseBody
     @ApiOperation(value = "获取图列表", notes = "分页获取", httpMethod = "GET", response = BaseResult.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
-    public BaseResult<PageData> pager(@RequestBody @ApiParam(value = "图实体") ChartDto chartDto, HttpServletRequest request, HttpServletResponse response){
+    public BaseResult<PageData<ChartDto>> pager(@RequestBody @ApiParam(value = "图实体") ChartDto chartDto, HttpServletRequest request, HttpServletResponse response){
         UserDto userDto = LoginFilter.getUser(request);
         chartDto.setHandleUserName(userDto.getUserName());
         chartDto.setUniqueCode(userDto.getUniqueCode());

@@ -8,16 +8,16 @@ import io.swagger.annotations.ApiModelProperty;
  */
 @ApiModel("图项")
 public class ChartItem{
-    @ApiModelProperty("图编码")
+    @ApiModelProperty(value = "图编码", required = true)
     private String chartCode;
 
-    @ApiModelProperty("图名称")
+    @ApiModelProperty(value = "图名称", required = true)
     private String chartName;
 
-    @ApiModelProperty("图的属性")
+    @ApiModelProperty(value = "图的属性", required = true)
     private String properties;
 
-    @ApiModelProperty("顺序")
+    @ApiModelProperty(value = "顺序", hidden = true)
     private int order;
 
     public String getChartCode() {

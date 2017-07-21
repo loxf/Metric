@@ -110,7 +110,7 @@ public class QuotaServiceImpl extends BaseService implements IQuotaService {
     }
 
     @Override
-    public BaseResult<PageData> getPageList(QuotaDto obj) {
+    public BaseResult<PageData<QuotaDto>> getPageList(QuotaDto obj) {
         Pager pager=obj.getPager();
         BaseResult validPagerResult = super.validPager(obj.getPager());
         if(ResultCodeEnum.SUCCESS.getCode().equals(validPagerResult.getCode())){

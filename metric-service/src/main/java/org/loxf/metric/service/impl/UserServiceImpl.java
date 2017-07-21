@@ -217,8 +217,8 @@ public class UserServiceImpl extends BaseService implements IUserService {
     }
 
     @Override
-    public BaseResult<PageData> getPageList(UserDto obj) {
-        BaseResult<PageData> result = new BaseResult<>();
+    public BaseResult<PageData<UserDto>> getPageList(UserDto obj) {
+        BaseResult result = new BaseResult();
         if (StringUtils.isEmpty(obj.getUniqueCode())) {//只能查询所属团队的成员
             result.setCode(ResultCodeEnum.PARAM_LACK.getCode());
             result.setMsg(ResultCodeEnum.PARAM_LACK.getCodeMsg());

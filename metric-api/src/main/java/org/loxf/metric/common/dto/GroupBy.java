@@ -13,7 +13,8 @@ public class GroupBy implements Serializable {
     public GroupBy(String code){
         this.code = code;
     }
-    @ApiModelProperty("分组列编码，即指标维度编码")
+
+    @ApiModelProperty(value = "分组列编码，即指标维度编码", hidden = true)
     private String code ;
 
     public String getCode() {

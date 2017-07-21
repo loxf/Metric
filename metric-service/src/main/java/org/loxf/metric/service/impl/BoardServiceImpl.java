@@ -66,7 +66,7 @@ public class BoardServiceImpl extends BaseService implements IBoardService {
     }
 
     @Override
-    public BaseResult<PageData> getPageList(BoardDto obj) {
+    public BaseResult<PageData<BoardDto>> getPageList(BoardDto obj) {
 
         Pager pager=obj.getPager();
         BaseResult result=super.validPager(pager);

@@ -8,10 +8,10 @@ import io.swagger.annotations.ApiModelProperty;
  */
 @ApiModel("维度项")
 public class QuotaDimItem{
-    @ApiModelProperty("维度编码")
+    @ApiModelProperty(value = "维度编码", required = true)
     private String dimCode;
 
-    @ApiModelProperty("维度名称")
+    @ApiModelProperty(value = "维度名称", required = true)
     private String dimName;
 
     public String getDimCode() {

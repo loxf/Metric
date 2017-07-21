@@ -9,10 +9,10 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel("指标项")
 public class QuotaItem{
 
-    @ApiModelProperty("指标编码")
+    @ApiModelProperty(value = "指标编码", required = true)
     private String quotaCode;
 
-    @ApiModelProperty("展示方式")
+    @ApiModelProperty(value = "展示方式", required = true)
     private String showOperation;
 
     public String getQuotaCode() {

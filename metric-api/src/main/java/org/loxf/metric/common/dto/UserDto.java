@@ -10,19 +10,19 @@ import io.swagger.annotations.ApiModelProperty;
 public class UserDto extends BaseDto{
     @ApiModelProperty("用户名，自动编码")
     private String userName;
-    @ApiModelProperty("团队码")
+    @ApiModelProperty(value = "团队码", required = true)
     private String uniqueCode;
-    @ApiModelProperty("密码")
+    @ApiModelProperty(value = "密码", required = true)
     private String pwd;
-    @ApiModelProperty("真实姓名")
+    @ApiModelProperty(value = "真实姓名", required = true)
     private String realName;
-    @ApiModelProperty("手机号码")
+    @ApiModelProperty(value = "手机号码", required = true)
     private String phone;
-    @ApiModelProperty("邮箱")
+    @ApiModelProperty(value = "邮箱")
     private String email;
-    @ApiModelProperty("用户类型:CHILD/ROOT")
+    @ApiModelProperty(value = "用户类型:CHILD/ROOT", required = true)
     private String userType;
-    @ApiModelProperty("状态:AVAILABLE(生效)/DISABLED(失效)")
+    @ApiModelProperty(value = "状态:AVAILABLE(生效)/DISABLED(失效)", hidden = true)
     private String state;
     /**
      * 浏览器信息

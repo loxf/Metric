@@ -8,6 +8,7 @@ import org.loxf.metric.base.ItemList.QuotaDimItem;
 import org.loxf.metric.base.constants.StandardState;
 import org.loxf.metric.common.constants.*;
 import org.loxf.metric.common.dto.*;
+import org.loxf.metric.dal.po.Quota;
 import org.loxf.metric.test.core.JUnit4ClassRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,7 +93,7 @@ public class QuotaTest {
         pager.setRownum(10);
         pager.setCurrentPage(1);
         quotaDto.setPager(pager);
-        BaseResult<PageData> pageData = quotaService.getPageList(quotaDto);
+        BaseResult<PageData<QuotaDto>> pageData = quotaService.getPageList(quotaDto);
         logger.debug("获取结果：" + JSON.toJSONString(pageData));
     }
 
