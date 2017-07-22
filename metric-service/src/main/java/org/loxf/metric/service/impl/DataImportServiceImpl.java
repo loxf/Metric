@@ -13,6 +13,7 @@ import org.loxf.metric.dal.dao.interfaces.QuotaDao;
 import org.loxf.metric.dal.dao.interfaces.QuotaDimensionValueDao;
 import org.loxf.metric.dal.po.Quota;
 import org.loxf.metric.service.callable.SaveDataCallable;
+import org.loxf.metric.service.utils.CircleTimeUtil;
 import org.loxf.metric.service.utils.PoolUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +39,7 @@ public class DataImportServiceImpl implements IDataImportService {
     private QuotaDimensionValueDao quotaDimensionValueDao;
 
     @Override
-    public BaseResult<QuotaDto> importData(String handleUserName, String quotaCode, List<Map> data) {
+    public BaseResult<QuotaDto> importData(String uniqueCode, String quotaCode, List<Map> data) {
         if (CollectionUtils.isEmpty(data)) {
             return new BaseResult(ResultCodeEnum.PARAM_ERROR.getCode(), "导入数据为空");
         }
@@ -49,7 +50,7 @@ public class DataImportServiceImpl implements IDataImportService {
             BaseResult validDataStruct = validDataStruct(data, dto);
             if (validDataStruct.getCode().equals(ResultCodeEnum.SUCCESS.getCode())) {
                 Map<String, Set> dimValueMap = (Map<String, Set>) validDataStruct.getData();
-                SaveDataCallable callable = new SaveDataCallable(data, dimValueMap, dto.getQuotaSource());
+                SaveDataCallable callable = new SaveDataCallable(data, dimValueMap, dto.getQuotaSource(), uniqueCode);
                 try {
                     PoolUtil.getPool().submit(callable);
                 } catch (Exception e) {
@@ -82,6 +83,9 @@ public class DataImportServiceImpl implements IDataImportService {
     }
 
     private BaseResult<QuotaDto> validBasic(String quotaCode) {
+        if(StringUtils.isBlank(quotaCode)){
+            return new BaseResult(ResultCodeEnum.PARAM_LACK.getCode(), "指标编码为空");
+        }
         Quota param = new Quota();
         param.setQuotaCode(quotaCode);
         Quota existsQuota = quotaDao.findOne(param);
@@ -102,10 +106,10 @@ public class DataImportServiceImpl implements IDataImportService {
 
     private BaseResult validDataStruct(List<Map> data, QuotaDto quotaDto) {
         List<QuotaDimItem> list = quotaDto.getQuotaDim();
-        List<String> qimCodeArray = new ArrayList<>();
+        Map<String, String> codeMapName = new HashMap();
         if (CollectionUtils.isNotEmpty(list)) {
             for (QuotaDimItem item : list) {
-                qimCodeArray.add(item.getDimCode());
+                codeMapName.put(item.getDimCode(), item.getDimName());
             }
         }
         Map<String, Set> dimValueMap = new HashMap();
@@ -114,18 +118,17 @@ public class DataImportServiceImpl implements IDataImportService {
             if (!map.containsKey("value") || !map.containsKey("circleTime")) {
                 return new BaseResult(ResultCodeEnum.PARAM_ERROR.getCode(), "导入数据的结构错误：缺失值或账期");
             }
-            if (map.get("circleTime") == null || !(map.get("circleTime") instanceof Date)) {
+            if (map.get("circleTime") == null ) {
                 return new BaseResult(ResultCodeEnum.PARAM_ERROR.getCode(), "导入数据错误：账期不正确");
             }
-            long circleTime = ((Date) map.get("circleTime")).getTime();
             Iterator ite = map.keySet().iterator();
             while (ite.hasNext()) {
                 String key = ite.next().toString();
                 if (!"value".equals(key) && !"circleTime".equals(key)) {
-                    if (!qimCodeArray.contains(key)) {
+                    if (!codeMapName.containsKey(key)) {
                         return new BaseResult(ResultCodeEnum.PARAM_ERROR.getCode(), "导入数据的结构错误：维度与定义不一致");
                     }
-                    String dimKey = key + "-" + circleTime;
+                    String dimKey = key + "-" + codeMapName.get(key);
                     if (dimValueMap.containsKey(dimKey)) {
                         dimValueMap.get(dimKey).add(map.get(key) == null ? "" : map.get(key).toString());
                     } else {

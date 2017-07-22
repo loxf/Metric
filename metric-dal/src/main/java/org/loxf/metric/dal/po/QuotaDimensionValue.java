@@ -9,13 +9,9 @@ public class QuotaDimensionValue extends BasePO{
 
     private String dimName;
 
-    private String dimValueDesc;
-
     private String dimValue;
 
     private String uniqueCode;
-
-    private Date circleTime;
 
     public String getDimValueCode() {
         return dimValueCode;
@@ -41,14 +37,6 @@ public class QuotaDimensionValue extends BasePO{
         this.dimName = dimName;
     }
 
-    public String getDimValueDesc() {
-        return dimValueDesc;
-    }
-
-    public void setDimValueDesc(String dimValueDesc) {
-        this.dimValueDesc = dimValueDesc;
-    }
-
     public String getDimValue() {
         return dimValue;
     }
@@ -65,11 +53,4 @@ public class QuotaDimensionValue extends BasePO{
         this.uniqueCode = uniqueCode;
     }
 
-    public Date getCircleTime() {
-        return circleTime;
-    }
-
-    public void setCircleTime(Date circleTime) {
-        this.circleTime = circleTime;
-    }
 }

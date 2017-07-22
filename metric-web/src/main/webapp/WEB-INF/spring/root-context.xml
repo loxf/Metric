@@ -8,23 +8,11 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
 		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">
+
     <mvc:default-servlet-handler/>
+
     <mvc:annotation-driven />
-   <!-- <mvc:annotation-driven>
-        <mvc:message-converters register-defaults="true">
-            &lt;!&ndash; 将StringHttpMessageConverter的默认编码设为UTF-8 &ndash;&gt;
-            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
-                <constructor-arg value="UTF-8"/>
-                <property name = "supportedMediaTypes">
-                    <list>
-                        <value>text/html;charset=UTF-8</value>
-                        <value>application/json;charset=UTF-8</value>
-                    </list>
-                </property>
-            </bean>
-        </mvc:message-converters>
-    </mvc:annotation-driven>
--->
+
     <import resource="velocity.xml"/>
     <import resource="classpath:metric-core.xml"/>
     <import resource="classpath:metric-dal.xml"/>
@@ -38,23 +26,12 @@
         <property name="defaultEncoding"><value>UTF-8</value></property>
     </bean>
 
-    <context:component-scan base-package="org.loxf.metric.test"/>
     <mvc:interceptors>
         <mvc:interceptor>
             <mvc:mapping path="/user/*"/> <!-- 拦截范围 -->
             <mvc:exclude-mapping path="/user/register"/> <!--不被拦截范围（路径）-->
             <mvc:exclude-mapping path="/user/login"/>
             <bean class="org.loxf.metric.interceptor.PermissionInterceptor" />
-            <!-- <mvc:mapping path="/**"/>
-<bean class="com.hz.sunday.portalvip.interceptor.PermissionInterceptor">
-<property name="uncheckUrls">
-             <list>
-                <value>/login</value>
-                  <value>/doLogin</value>
-
-              </list>
-   </property>
-</bean>  -->
         </mvc:interceptor>
     </mvc:interceptors>
 </beans>

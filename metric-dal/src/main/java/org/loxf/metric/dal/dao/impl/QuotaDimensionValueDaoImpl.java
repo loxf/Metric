@@ -86,10 +86,7 @@ public class QuotaDimensionValueDaoImpl extends MongoDaoBase<QuotaDimensionValue
     }
 
     @Override
-    public void saveDimensionValue(Date circleTime, String key, Set<String> values) {
-        Map map = new HashMap();
-        for(String val : values){
-            map.put("dimValue", val);
-        }
+    public void saveDimensionValue(List<QuotaDimensionValue> list) {
+        mongoTemplate.insert(list, collectionName);
     }
 }

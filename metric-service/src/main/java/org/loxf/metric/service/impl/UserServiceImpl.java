@@ -4,6 +4,7 @@ import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.loxf.metric.api.IUserService;
+import org.loxf.metric.base.annotations.Permission;
 import org.loxf.metric.base.utils.IdGenerator;
 import org.loxf.metric.base.utils.MapAndBeanTransUtils;
 import org.loxf.metric.base.utils.ValideDataUtils;
@@ -184,9 +185,9 @@ public class UserServiceImpl extends BaseService implements IUserService {
      * @param newPwd
      * @return
      */
-
     @Override
-    public  BaseResult<String> modifyPwd(UserDto userDto,String oldPwd,String newPwd){
+    @Permission
+    public  BaseResult<String> modifyPwd(UserDto userDto, String oldPwd,String newPwd){
         BaseResult<String> result=new BaseResult<>();
         if(userDto==null||StringUtils.isBlank(oldPwd)||StringUtils.isBlank(newPwd)){
             result.setCode(ResultCodeEnum.PARAM_LACK.getCode());
@@ -204,6 +205,30 @@ public class UserServiceImpl extends BaseService implements IUserService {
         Map setMap=MapAndBeanTransUtils.transBean2Map(user);
         userDao.updateOne(user.getUserName(),setMap);
         return result;
+    }
+
+    /**
+     * 修改密码（通过手机号码）
+     * @param phone
+     * @param newPwd
+     * @return
+     */
+    public  BaseResult<String> modifyPwd(String phone, String uniqueCode, String newPwd){
+        if(StringUtils.isBlank(phone)||StringUtils.isBlank(uniqueCode)||StringUtils.isBlank(newPwd)){
+            return new BaseResult<>(ResultCodeEnum.PARAM_LACK.getCode(), "必填参数缺失!");
+        }
+        User user=new User();
+        user.setUniqueCode(uniqueCode);
+        user.setPhone(phone);
+        User existsUser = userDao.findOne(user);
+        if(existsUser==null){
+            return new BaseResult<>(ResultCodeEnum.USER_NOT_EXIST.getCode(), ResultCodeEnum.USER_NOT_EXIST.getCodeMsg());
+        }
+        User setParam = new User();
+        setParam.setPwd(newPwd);
+        Map setMap=MapAndBeanTransUtils.transBean2Map(setParam);
+        userDao.updateOne(user.getUserName(), setMap);
+        return new BaseResult<>();
     }
 
     /**

@@ -29,9 +29,9 @@ import java.util.Map;
  * Created by luohj on 2017/7/19.
  */
 @Controller
-@RequestMapping("/data")
-@Api(value = "data", description = "数据")
-public class DataControl {
+@RequestMapping("/dataQuery")
+@Api(value = "dataQuery", description = "数据请求")
+public class DataQueryControl {
     @Autowired
     private IDataQueryService dataQueryService;
     @Autowired

@@ -15,12 +15,12 @@ import java.util.Map;
 public interface IDataImportService {
     /**
      * 数据导入接口
-     * @param handleUserName
+     * @param uniqueCode
      * @param quotaCode
      * @param data
      * @return
      */
-    public BaseResult<QuotaDto> importData(String handleUserName, String quotaCode, List<Map> data);
+    public BaseResult<QuotaDto> importData(String uniqueCode, String quotaCode, List<Map> data);
     /**
      * 按账期删除指标数据接口
      * @param handleUserName
