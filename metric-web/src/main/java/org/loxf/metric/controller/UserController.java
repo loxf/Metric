@@ -1,6 +1,9 @@
 package org.loxf.metric.controller;
 
 import io.swagger.annotations.*;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.loxf.metric.base.utils.ValideDataUtils;
 import org.loxf.metric.utils.SendMsgUtils;
 import org.loxf.metric.api.IUserService;
 import org.loxf.metric.base.annotations.Permission;
@@ -24,6 +27,9 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/user")
 @Api(value = "user", description = "用户管理")
 public class UserController {
+
+    Logger logger = Logger.getLogger(this.getClass());
+
     @Autowired
     private IUserService userService;
     /**
@@ -32,13 +38,22 @@ public class UserController {
      * @return
      */
 
-    @RequestMapping(value = "/getValidateCode", method = RequestMethod.GET, consumes = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/getSMSValidateCode", method = RequestMethod.GET, consumes = "application/json;charset=UTF-8")
     @ResponseBody
     @ApiOperation(value = "获取验证码", notes = "获取验证码", httpMethod = "GET", response = BaseResult.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
-    public BaseResult<String> getValidateCode(@ApiParam(value = "用户手机号", name = "phone", required = true) String phone) {
-        SendMsgUtils.sendMsg(null,null,null,null,null);
-        return new BaseResult<>("1234");
+    public BaseResult<String> getSMSValidateCode(@ApiParam(value = "用户手机号", name = "phone", required = true) String phone,
+                                                 @ApiParam(value = "短信类型", name = "smsType", required = true) String smsType) {
+        if(StringUtils.isBlank(phone)||StringUtils.isBlank(smsType)){
+            return new BaseResult<>(ResultCodeEnum.PARAM_LACK.getCode(), "手机号和短信类型不能为空!");
+        }
+        if(!ValideDataUtils.mobileValidate(phone)){
+            logger.error("手机号校验失败!phone="+phone);
+            return new BaseResult<>(ResultCodeEnum.PARAM_ERROR.getCode(), "手机号格式错误!");
+        }
+        SendMsgUtils.sendMsgByType(smsType,phone);
+        return new BaseResult<>();
+       // return new BaseResult<>("1234");
     }
 
     /**

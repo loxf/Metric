@@ -12,7 +12,8 @@ public enum  CollectionConstants {
     QUOTA_DIMENSION("quota_dimension"),
     QUOTA_DIMENSION_VALUE("quota_dimension_value"),
     TARGET("target"),
-    USER("user");
+    USER("user"),
+    RATE_LIMIT("rate_limit");
 
     private String collectionName;
 
