@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
  * Created by luohj on 2017/7/22.
  */
 @Controller
-@RequestMapping("/login")
+@RequestMapping("/authen")
 @Api(value = "login", description = "登录、注册、修改密码")
 public class LoginControl {
     @Autowired
