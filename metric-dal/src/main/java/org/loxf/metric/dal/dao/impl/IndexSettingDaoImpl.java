@@ -67,7 +67,7 @@ public class IndexSettingDaoImpl extends MongoDaoBase implements IndexSettingDao
                     List<ChartItem> result = new ArrayList<>();
                     for(ChartItem chartItem : chartItemList) {
                         chartParam.setChartCode(chartItem.getChartCode());
-                        long count = chartDao.countByParams(chartParam, handlerUserName);
+                        long count = chartDao.countByParams(chartParam, null, handlerUserName);
                         if (count > 0) {
                             result.add(chartItem);
                         }

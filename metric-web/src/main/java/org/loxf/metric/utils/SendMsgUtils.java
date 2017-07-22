@@ -1,9 +1,10 @@
-package org.loxf.metric;
+package org.loxf.metric.utils;
 
 import com.aliyuncs.dysmsapi.model.v20170525.SendSmsRequest;
 import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
 import com.google.common.util.concurrent.RateLimiter;
 import org.apache.log4j.Logger;
+import org.loxf.metric.utils.AcsClientSingleton;
 
 /**
  * Created by hutingting on 2017/7/20.
@@ -16,7 +17,7 @@ public class SendMsgUtils {
         rateLimiter.acquire();
         SendSmsRequest request=getSmsRequestBody("18902212310","LOXF指标网站","SMS_78615007","{\"code\":\"123\"}","yourOutId");
         try{
-            SendSmsResponse sendSmsResponse = AcsClientSingleton.getSingleton().getAcsResponse(request);
+            SendSmsResponse sendSmsResponse = AcsClientSingleton.getInstance().getAcsClient().getAcsResponse(request);
             if(sendSmsResponse.getCode() != null && sendSmsResponse.getCode().equals("OK")) {//请求成功
 
             }

@@ -127,14 +127,14 @@
             <artifactId>jackson-databind</artifactId>
         </dependency>
 
-    <dependency>
-      <groupId>com.alibaba</groupId>
-      <artifactId>alicom-dysms-api</artifactId>
-      <version>1.0</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/src/main/webapp/WEB-INF/libs/aliyun-java-sdk-dysmsapi-1.0.0-SANPSHOT.jar</systemPath>
-    </dependency>
-
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>alicom-dysms-api</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/webapp/WEB-INF/libs/aliyun-java-sdk-dysmsapi-1.0.0-SANPSHOT.jar
+            </systemPath>
+        </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>alicom-dysms-core</artifactId>

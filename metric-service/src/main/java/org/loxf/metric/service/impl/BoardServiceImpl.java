@@ -109,7 +109,7 @@ public class BoardServiceImpl extends BaseService implements IBoardService {
                     chart.setUniqueCode(user.getUniqueCode());
                     for(ChartItem chartItem : chartItemList) {
                         chart.setChartCode(chartItem.getChartCode());
-                        long count = chartDao.countByParams(chart, handleUserName);
+                        long count = chartDao.countByParams(chart, null, handleUserName);
                         if (count>0) {
                             hasPermissionChart.add(chartItem);
                         }

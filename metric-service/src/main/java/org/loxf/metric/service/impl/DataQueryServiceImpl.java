@@ -5,14 +5,16 @@ import org.apache.commons.lang.StringUtils;
 import org.loxf.metric.api.IDataQueryService;
 import org.loxf.metric.base.ItemList.ChartItem;
 import org.loxf.metric.base.ItemList.QuotaItem;
+import org.loxf.metric.base.ItemList.TargetItem;
 import org.loxf.metric.base.constants.DefaultDimCode;
 import org.loxf.metric.base.exception.MetricException;
 import org.loxf.metric.common.constants.ChartTypeEnum;
 import org.loxf.metric.common.constants.QuotaType;
+import org.loxf.metric.common.constants.ResultCodeEnum;
 import org.loxf.metric.common.dto.*;
 import org.loxf.metric.dal.dao.interfaces.*;
 import org.loxf.metric.dal.po.*;
-import org.loxf.metric.service.Operation.Expression;
+import org.loxf.metric.service.operation.Expression;
 import org.loxf.metric.service.base.TableData;
 import org.loxf.metric.service.base.TableDim;
 import org.loxf.metric.service.callable.QueryChartDataCallable;
@@ -121,6 +123,104 @@ public class DataQueryServiceImpl implements IDataQueryService {
     public ChartData getChartData(String handleUserName, String chartCode, ConditionVo condition) {
         User user = UserSessionManager.getSession().getUserSession(handleUserName);
         return getChartData(user, chartCode, condition);
+    }
+
+    @Override
+    public TargetData getTargetData(TargetDto targetDto){
+        List<TargetItem> targetItemDtos = targetDto.getItemList();
+        List<TargetQuotaData> targetQuotaDataList = new ArrayList<>();
+        BigDecimal percent = new BigDecimal(0);
+        ConditionVo newCond = new ConditionVo();
+        newCond.setStartCircleTime(CircleTimeUtil.formatCircleTime(targetDto.getTargetStartTime().getTime()));
+        newCond.setEndCircleTime(CircleTimeUtil.formatCircleTime(targetDto.getTargetEndTime().getTime()));
+        long nowTime = new Date().getTime();
+        BigDecimal standardPercent = new BigDecimal(nowTime - targetDto.getTargetStartTime().getTime()).divide(new BigDecimal(
+                (targetDto.getTargetEndTime().getTime()-targetDto.getTargetStartTime().getTime())), 4).
+                multiply(new BigDecimal(100)).setScale(2, BigDecimal.ROUND_HALF_UP);;
+        for (TargetItem targetItem : targetItemDtos) {
+            newCond.setQuotaCode(targetItem.getQuotaCode());
+            BaseResult quotaData = getQuotaData(targetItem.getQuotaCode(), targetItem.getSummary(), newCond);
+            String valueStr = (String) quotaData.getData();
+            TargetQuotaData targetQuotaData = createTargetQuotaData(targetItem.getQuotaName(), valueStr, targetItem.getTargetValue(), standardPercent);
+            percent = targetQuotaData.getPercent().divide(new BigDecimal(100)).
+                    multiply(new BigDecimal(targetItem.getWeight())).add(percent).setScale(2, BigDecimal.ROUND_HALF_UP);
+            targetQuotaDataList.add(targetQuotaData);
+        }
+        percent = percent.setScale(0, BigDecimal.ROUND_HALF_UP);
+        TargetData targetData = createTargetData(targetDto, percent, standardPercent, targetQuotaDataList);
+        return targetData;
+    }
+
+    private TargetQuotaData createTargetQuotaData(String quotaName, String valueStr, String targetValue, BigDecimal standardPercent){
+        TargetQuotaData targetQuotaData = new TargetQuotaData();
+        targetQuotaData.setQuotaName(quotaName);
+        targetQuotaData.setCurrentValue(new BigDecimal(valueStr));
+        targetQuotaData.setTargetValue(new BigDecimal(targetValue));
+        targetQuotaData.setPercent(targetQuotaData.getCurrentValue().divide(targetQuotaData.getTargetValue(), 2));
+        targetQuotaData.setIsAdvance(standardPercent.compareTo(targetQuotaData.getPercent()));
+        return targetQuotaData;
+    }
+
+    private TargetData createTargetData(TargetDto targetDto, BigDecimal percent, BigDecimal standardPercent, List<TargetQuotaData> targetQuotaDataList ){
+        TargetData data = new TargetData();
+        data.setTargetName(targetDto.getTargetName());
+        data.setPercent(percent);
+        data.setItemList(targetQuotaDataList);
+        data.setTargetStartTime(targetDto.getTargetStartTime());
+        data.setTargetEndTime(targetDto.getTargetEndTime());
+        data.setTrend(percent.subtract(standardPercent));
+        return data;
+    }
+
+    @Override
+    public BaseResult<QuotaData> getQuotaData(String quotaCode, String summaryOperation, ConditionVo condition){
+        Quota quotaParam = new Quota();
+        quotaParam.setQuotaCode(quotaCode);
+        Quota quota = quotaDao.findOne(quotaParam);
+        if(quota==null){
+            return new BaseResult(ResultCodeEnum.DATA_NOT_EXIST.getCode(), "指标不存在");
+        }
+        condition.setQuotaCode(quota.getQuotaCode());
+        List<GroupBy> groupBy = new ArrayList<>();
+        groupBy.add(new GroupBy(DefaultDimCode.CIRCLE_TIME));//默认的维度 时间
+        condition.setGroupBy(groupBy);
+        // 条件校验
+        valid.valid(quota.getQuotaCode(), condition);
+        // 获取指标值
+        Expression expression = new Expression(quota.getType().equals(QuotaType.BASIC.getValue()) ?
+                QuotaSqlBuilder.getQuotaExpress(quota.getQuotaCode()) : quota.getQuotaSource(),
+                true, summaryOperation);
+        try {
+            expression.init(condition, URLDecoder.decode(quota.getDefaultCondition(), "utf-8"));
+        } catch (UnsupportedEncodingException e) {
+            logger.error("解码默认条件错误：", e);
+        }
+        List<QuotaData> mapList = expression.execute();
+        // 根据指标类型处理值
+        if (CollectionUtils.isNotEmpty(mapList) && mapList.get(0) != null) {
+            List<Command> commands = new ArrayList<>();
+            // 根据指标类型处理值
+            if("NUM".equals(quota.getShowType())){
+                commands.add(new Command("R", "0"));
+            } else if("MONEY".equals(quota.getShowType())){
+                commands.add(new Command("R", "2"));
+            } else if("PERCENT".equals(quota.getShowType())){
+                commands.add(new Command("MULTIPLY", "100"));
+                commands.add(new Command("R", "2"));
+            }
+            Object tmp = mapList.get(0);
+            if(CollectionUtils.isNotEmpty(commands)) {
+                for (Command cmd : commands) {
+                    tmp = CommandUtils.executeCommand(cmd, tmp);
+                }
+            }
+            if(tmp instanceof BigDecimal){
+                return new BaseResult((((BigDecimal) tmp).toPlainString()));
+            } else {
+                return new BaseResult(tmp.toString());
+            }
+        }
+        return new BaseResult("0");
     }
 
     private ChartData getChartData(User user, String chartCode, ConditionVo condition) {

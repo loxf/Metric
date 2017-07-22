@@ -119,7 +119,7 @@ public class QuotaControl {
     }
 
     /**
-     * 获取指标
+     * 获取指标(不分页)
      *
      * @return
      */

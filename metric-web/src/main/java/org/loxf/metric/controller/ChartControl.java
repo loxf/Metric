@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * Created by luohj on 2017/7/15.
@@ -83,7 +84,7 @@ public class ChartControl {
     @ResponseBody
     @ApiOperation(value = "获取图列表", notes = "分页获取", httpMethod = "GET", response = BaseResult.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
-    public BaseResult<PageData<ChartDto>> pager(@RequestBody @ApiParam(value = "图实体") ChartDto chartDto, HttpServletRequest request, HttpServletResponse response){
+    public BaseResult<PageData<ChartDto>> pager(@RequestBody @ApiParam(value = "过滤图的条件") ChartDto chartDto, HttpServletRequest request, HttpServletResponse response){
         UserDto userDto = LoginFilter.getUser(request);
         chartDto.setHandleUserName(userDto.getUserName());
         chartDto.setUniqueCode(userDto.getUniqueCode());
@@ -91,6 +92,27 @@ public class ChartControl {
             chartDto.setVisibleType(VisibleTypeEnum.SPECIFICRANGE.name());
         }
         return chartService.getPageList(chartDto);
+    }
+
+    /**
+     * 获取图（分页，排除指定的图）
+     * @return
+     */
+    @RequestMapping(value = "/getChartList", method = RequestMethod.GET)
+    @ResponseBody
+    @ApiOperation(value = "获取图列表", notes = "分页获取，排除指定的图", httpMethod = "GET", response = BaseResult.class)
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
+    public BaseResult<PageData<ChartDto>> getChartListExcludeChartList(
+            @RequestBody @ApiParam(value = "过滤图的条件") ChartDto chartDto,
+            @RequestBody @ApiParam(value = "要排除的图") List<String> chartList,
+            HttpServletRequest request, HttpServletResponse response){
+        UserDto userDto = LoginFilter.getUser(request);
+        chartDto.setHandleUserName(userDto.getUserName());
+        chartDto.setUniqueCode(userDto.getUniqueCode());
+        if(userDto.getUserType().equals(UserTypeEnum.CHILD.name())){
+            chartDto.setVisibleType(VisibleTypeEnum.SPECIFICRANGE.name());
+        }
+        return chartService.getPageListExcludeChartList(chartDto, chartList);
     }
 
 }

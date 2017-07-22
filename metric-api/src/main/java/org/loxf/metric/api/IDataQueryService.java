@@ -1,7 +1,6 @@
 package org.loxf.metric.api;
 
-import org.loxf.metric.common.dto.ChartData;
-import org.loxf.metric.common.dto.ConditionVo;
+import org.loxf.metric.common.dto.*;
 
 import java.util.List;
 
@@ -34,4 +33,20 @@ public interface IDataQueryService {
      * @return
      */
     public ChartData getChartData(String handleUserName, String chartCode, ConditionVo condition);
+
+    /**
+     * 获取目标数据
+     * @param dto
+     * @return
+     */
+    public TargetData getTargetData(TargetDto dto);
+
+    /**
+     * 获取指标的值
+     * @param quotaCode
+     * @param summaryOperation
+     * @param condition
+     * @return
+     */
+    public BaseResult getQuotaData(String quotaCode, String summaryOperation, ConditionVo condition);
 }

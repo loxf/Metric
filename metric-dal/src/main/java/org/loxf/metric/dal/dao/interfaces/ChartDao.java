@@ -12,11 +12,11 @@ public interface ChartDao extends IBaseDao<Chart> {
 
     public List<Chart> findAll(Chart object,String handleUserName) ;
 
-    public List<Chart> findByPager(Chart object,String handleUserName, int start, int pageSize) ;
+    public List<Chart> findByPager(Chart object, List<String> excludeChartList, String handleUserName, int start, int pageSize) ;
 
     public long countByParams(Map<String, Object> qryParams);
 
-    public long countByParams(Chart object,String handleUserName);
+    public long countByParams(Chart object, List<String> excludeChartList, String handleUserName);
 
     public Chart findByCode(String chartCode,String handleUserName);
 

@@ -1,7 +1,7 @@
 package org.loxf.metric.controller;
 
 import io.swagger.annotations.*;
-import org.loxf.metric.SendMsgUtils;
+import org.loxf.metric.utils.SendMsgUtils;
 import org.loxf.metric.api.IUserService;
 import org.loxf.metric.base.annotations.Permission;
 import org.loxf.metric.base.constants.PermissionType;

@@ -49,7 +49,7 @@ public class ChartServiceImpl extends BaseService implements IChartService {
         BaseResult result = new BaseResult();
         if (StringUtils.isEmpty(obj.getChartName()) || StringUtils.isEmpty(obj.getType()) ||
                 StringUtils.isEmpty(obj.getChartDimension()) || obj.getQuotaList().size() == 0 ||
-                obj.getQuotaList() == null||StringUtils.isEmpty(obj.getUniqueCode())||obj.getQuotaList()==null||obj.getQuotaList().size()==0) {
+                obj.getQuotaList() == null || StringUtils.isEmpty(obj.getUniqueCode()) || obj.getQuotaList() == null || obj.getQuotaList().size() == 0) {
             result.setCode(ResultCodeEnum.PARAM_LACK.getCode());
             result.setMsg("图名称、类型、维度、指标、团队码都不能为空！操作用户为：" + obj.getCreateUserName());
             return result;
@@ -70,18 +70,18 @@ public class ChartServiceImpl extends BaseService implements IChartService {
             result.setMsg(ResultCodeEnum.PARAM_ERROR.getCodeMsg());
             return result;
         }
-        boolean flag=true;
-        List<QuotaItem> quotaItemList=obj.getQuotaList();
-        Quota baseQuota=new Quota();
-        for(QuotaItem quotaItem:quotaItemList){
+        boolean flag = true;
+        List<QuotaItem> quotaItemList = obj.getQuotaList();
+        Quota baseQuota = new Quota();
+        for (QuotaItem quotaItem : quotaItemList) {
             baseQuota.setQuotaCode(quotaItem.getQuotaCode());
-           if(quotaDao.findOne(baseQuota)==null){
-               logger.info("不存在quotaCode=" + quotaItem.getQuotaCode() + "的指标");
-               flag=false;
-               break;
-           }
+            if (quotaDao.findOne(baseQuota) == null) {
+                logger.info("不存在quotaCode=" + quotaItem.getQuotaCode() + "的指标");
+                flag = false;
+                break;
+            }
         }
-        if(!flag){
+        if (!flag) {
             result.setCode(ResultCodeEnum.DATA_NOT_EXIST.getCode());
             result.setMsg(ResultCodeEnum.DATA_NOT_EXIST.getCodeMsg());
             return result;
@@ -100,43 +100,28 @@ public class ChartServiceImpl extends BaseService implements IChartService {
 
     @Override
     public BaseResult<PageData<ChartDto>> getPageList(ChartDto obj) {
-        Pager pager=obj.getPager();
+        Pager pager = obj.getPager();
         BaseResult validPagerResult = super.validPager(obj.getPager());
         if (ResultCodeEnum.SUCCESS.getCode().equals(validPagerResult.getCode())) {
-            Chart chart=new Chart();
+            Chart chart = new Chart();
             BeanUtils.copyProperties(obj, chart);
             User user = new User();
             user.setUserName(obj.getHandleUserName());
             user = userDao.findOne(user);
-            if(user!=null) {
+            if (user != null) {
                 if (UserTypeEnum.CHILD.name().equals(user.getUserType())) {
                     chart.setVisibleType(VisibleTypeEnum.SPECIFICRANGE.name());
                 }
-                validPagerResult.setData(getPermissionPageResult(chart,obj.getHandleUserName(), pager.getStart(), pager.getRownum()));
+                validPagerResult.setData(getPermissionPageResult(chart, obj.getHandleUserName(), pager.getStart(), pager.getRownum()));
             }
         }
         return validPagerResult;
     }
 
     private PageData getPermissionPageResult(Chart obj, String handleUserName, int start, int pageSize) {
-        try {
-            long totalCount = (long) chartDao.countByParams(obj,handleUserName);
-            if (totalCount <= 0) {
-                return null;
-            }
-            List pageResult = chartDao.findByPager(obj,handleUserName, start, pageSize);
-            PageData pageData=new PageData();
-            pageData.setRows(pageResult);
-            pageData.setTotalRecords(totalCount);
-            pageData.setCurrentPage(start/pageSize+1);
-            pageData.setRownum(pageSize);
-            pageData.setTotalPage(pageData.calculateTotalPage());
-            return pageData;
-        }catch (Exception e){
-            logger.error("查询分页异常！",e);
-            return null;
-        }
+        return getPermissionPageResultExcludeChartList(obj, handleUserName, null, start, pageSize);
     }
+
     @Override
     public BaseResult<ChartDto> queryItemByCode(String itemCode, String handleUserName) {//是否要查询已失效的图
         BaseResult<ChartDto> result = new BaseResult<>();
@@ -148,9 +133,9 @@ public class ChartServiceImpl extends BaseService implements IChartService {
         User user = new User();
         user.setUserName(handleUserName);
         user = userDao.findOne(user);
-        if(user!=null) {
+        if (user != null) {
             Chart chart = new Chart();
-            if(UserTypeEnum.CHILD.name().equals(user.getUserType())){
+            if (UserTypeEnum.CHILD.name().equals(user.getUserType())) {
                 chart.setVisibleType(VisibleTypeEnum.SPECIFICRANGE.name());
             }
             chart.setChartCode(itemCode);
@@ -192,4 +177,43 @@ public class ChartServiceImpl extends BaseService implements IChartService {
         return result;
     }
 
+    @Override
+    public BaseResult<PageData<ChartDto>> getPageListExcludeChartList(ChartDto obj, List<String> excludeChartList) {
+        Pager pager = obj.getPager();
+        BaseResult validPagerResult = super.validPager(obj.getPager());
+        if (ResultCodeEnum.SUCCESS.getCode().equals(validPagerResult.getCode())) {
+            Chart chart = new Chart();
+            BeanUtils.copyProperties(obj, chart);
+            User user = new User();
+            user.setUserName(obj.getHandleUserName());
+            user = userDao.findOne(user);
+            if (user != null) {
+                if (UserTypeEnum.CHILD.name().equals(user.getUserType())) {
+                    chart.setVisibleType(VisibleTypeEnum.SPECIFICRANGE.name());
+                }
+                validPagerResult.setData(getPermissionPageResult(chart, obj.getHandleUserName(), pager.getStart(), pager.getRownum()));
+            }
+        }
+        return validPagerResult;
+    }
+
+    private PageData getPermissionPageResultExcludeChartList(Chart obj, String handleUserName, List<String> excludeChartList, int start, int pageSize) {
+        try {
+            long totalCount = (long) chartDao.countByParams(obj, excludeChartList, handleUserName);
+            if (totalCount <= 0) {
+                return null;
+            }
+            List pageResult = chartDao.findByPager(obj, excludeChartList, handleUserName, start, pageSize);
+            PageData pageData = new PageData();
+            pageData.setRows(pageResult);
+            pageData.setTotalRecords(totalCount);
+            pageData.setCurrentPage(start / pageSize + 1);
+            pageData.setRownum(pageSize);
+            pageData.setTotalPage(pageData.calculateTotalPage());
+            return pageData;
+        } catch (Exception e) {
+            logger.error("查询分页异常！", e);
+            return null;
+        }
+    }
 }

@@ -21,6 +21,9 @@ public class TargetItem {
     @ApiModelProperty(value = "权重", required = true)
     private int weight;
 
+    @ApiModelProperty(value = "指标计算方法，默认继承指标", required = true)
+    private String summary;
+
     public String getQuotaCode() {
         return quotaCode;
     }
@@ -51,5 +54,13 @@ public class TargetItem {
 
     public void setWeight(int weight) {
         this.weight = weight;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
 }

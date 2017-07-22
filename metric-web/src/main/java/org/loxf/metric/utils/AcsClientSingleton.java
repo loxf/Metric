@@ -1,30 +1,37 @@
-package org.loxf.metric;
+package org.loxf.metric.utils;
 
 import com.aliyuncs.DefaultAcsClient;
 import com.aliyuncs.IAcsClient;
 import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by hutingting on 2017/7/20.
  */
 public class AcsClientSingleton {
-    private volatile static IAcsClient acsClient;
-    private AcsClientSingleton (){}
-    public static IAcsClient getSingleton() {
-        if (acsClient == null) {
-            synchronized (IAcsClient.class) {
-                if (acsClient == null) {
-                    acsClient = getAcsClient();
+    private static Logger logger = LoggerFactory.getLogger(AcsClientSingleton.class);
+    private static AcsClientSingleton singleton;
+    private IAcsClient acsClient;
+
+    private AcsClientSingleton() {
+        init();
+    }
+
+    public static AcsClientSingleton getInstance() {
+        if (singleton == null) {
+            synchronized (AcsClientSingleton.class) {
+                if (singleton == null) {
+                    singleton = new AcsClientSingleton();
                 }
             }
         }
-        return acsClient;
+        return singleton;
     }
 
-
-    private static  IAcsClient getAcsClient(){
+    private void init(){
         //设置超时时间-可自行调整
         System.setProperty("sun.net.client.defaultConnectTimeout", "10000");
         System.setProperty("sun.net.client.defaultReadTimeout", "10000");
@@ -37,12 +44,15 @@ public class AcsClientSingleton {
         //初始化ascClient,暂时不支持多region
         IClientProfile profile = DefaultProfile.getProfile("cn-hangzhou", accessKeyId,
                 accessKeySecret);
-        try{
+        try {
             DefaultProfile.addEndpoint("cn-hangzhou", "cn-hangzhou", product, domain);
-        }catch (ClientException e){
-            System.out.println(e);
+        } catch (ClientException e) {
+            logger.error("", e);
         }
         acsClient = new DefaultAcsClient(profile);
-        return  acsClient;
+    }
+
+    protected IAcsClient getAcsClient() {
+        return acsClient;
     }
 }
