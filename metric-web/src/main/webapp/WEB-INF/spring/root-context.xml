@@ -41,7 +41,6 @@
     <!-- 初始缓存数据，初始化spring中定义的bean的前后都会用此实现类 -->
     <bean id="rateLimitInitListener" class="org.loxf.metric.utils.RateLimitInitListener"/>
 
-    <context:component-scan base-package="org.loxf.metric.test"/>
     <mvc:interceptors>
         <mvc:interceptor>
             <mvc:mapping path="/user/*"/> <!-- 拦截范围 -->

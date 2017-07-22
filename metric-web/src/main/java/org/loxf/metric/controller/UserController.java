@@ -172,7 +172,7 @@ public class UserController {
      */
     @RequestMapping(value = "/modifyPwd", method = RequestMethod.GET)
     @ResponseBody
-    @ApiOperation(value = "修改密码", notes = "修改密码",
+    @ApiOperation(value = "修改密码", notes = "修改密码，通过老密码修改",
             httpMethod = "GET", response = BaseResult.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
     public BaseResult<String> modifyPwd(@RequestParam String oldPwd, @RequestParam String newPwd, HttpServletRequest request, HttpServletResponse response) {

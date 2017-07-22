@@ -1,6 +1,9 @@
 package org.loxf.metric.filter;
 
+import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang.StringUtils;
+import org.loxf.metric.common.constants.ResultCodeEnum;
+import org.loxf.metric.common.dto.BaseResult;
 import org.loxf.metric.common.dto.UserDto;
 
 import javax.servlet.*;
@@ -86,9 +89,9 @@ public class LoginFilter implements Filter {
         //如果不需要拦截请求,PASS
         if (needSecurity) {
             //sesesion是否有效
-            boolean userValid = checkUser(req, resp);
-            if (!userValid) {
-                resp.sendRedirect(req.getContextPath() + LOGIN_PAGE);
+            if (!checkUser(req, resp)) {
+                resp.getWriter().write(JSON.toJSONString(
+                        new BaseResult(ResultCodeEnum.NO_PERMISSION.getCode(), "未登录")));
                 return;
             }
         }

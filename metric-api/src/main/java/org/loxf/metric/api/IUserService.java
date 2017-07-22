@@ -18,5 +18,7 @@ public interface IUserService extends IBaseService<UserDto> {
 
     public  BaseResult<String> modifyPwd(UserDto userDto,String oldPwd,String newPwd);
 
+    public  BaseResult<String> modifyPwd(String phone, String uniqueCode, String newPwd);
+
     public BaseResult<UserDto> queryUser(String phone, String teamCode, String userType);
 }

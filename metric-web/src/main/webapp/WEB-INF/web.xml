@@ -33,11 +33,7 @@
         <filter-class>org.loxf.metric.filter.LoginFilter</filter-class>
         <init-param>
             <param-name>SECURITY_URI</param-name>
-            <param-value>/admin/*,/security/*</param-value>
-        </init-param>
-        <init-param>
-            <param-name>LOGIN_PAGE</param-name>
-            <param-value>/tologin.html</param-value>
+            <param-value>/user/*,/board/*,/chart/*,/dataImport/*,/dataQuery/*,/index/*,/quota/*,/quotaDim/*,/target/*</param-value>
         </init-param>
     </filter>
     <filter-mapping>
