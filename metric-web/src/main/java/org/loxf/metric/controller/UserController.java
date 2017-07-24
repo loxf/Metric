@@ -76,4 +76,24 @@ public class UserController {
         return userService.disableChildUser(childUserName, rootUser.getUserName(), rootUser.getUniqueCode());
     }
 
+    /**
+     * 修改密码
+     *
+     * @param oldPwd
+     * @param newPwd
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = "/modifyPwd", method = RequestMethod.GET)
+    @ResponseBody
+    @ApiOperation(value = "修改密码", notes = "修改密码，通过老密码修改",
+            httpMethod = "GET", response = BaseResult.class)
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
+    @Permission
+    public BaseResult<String> modifyPwd(@RequestParam String oldPwd, @RequestParam String newPwd, HttpServletRequest request, HttpServletResponse response) {
+        UserDto existsUser = LoginFilter.getUser(request);
+        return userService.modifyPwd(existsUser, oldPwd, newPwd);
+    }
+
 }
