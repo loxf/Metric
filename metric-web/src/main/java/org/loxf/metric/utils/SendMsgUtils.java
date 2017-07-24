@@ -20,7 +20,7 @@ public class SendMsgUtils {
     static  final String LOGINTEMPLATECODE="SMS_78575008";
     static  final String MODIFYPWDTEMPLATECODE="SMS_78715010";
     static  final String CHILDSENDPWDTEMPLATECODE="SMS_78540011";
-    static  final String signName="LOXF指标网站";//骑驴指标
+    static  final String signName="骑驴指标";//骑驴指标
 
     public static void sendMsgByType(String type,String phoneNumbers){
         String code;

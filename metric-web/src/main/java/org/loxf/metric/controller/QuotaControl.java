@@ -46,8 +46,8 @@ public class QuotaControl {
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
     public BaseResult createQuota(@RequestBody @ApiParam(value = "待创建的指标", required = true) QuotaDto quotaDto, HttpServletRequest request, HttpServletResponse response) {
         UserDto userDto = LoginFilter.getUser(request);
-        quotaDto.setHandleUserName(quotaDto.getHandleUserName());
-        quotaDto.setUniqueCode(quotaDto.getUniqueCode());
+        quotaDto.setHandleUserName(userDto.getUserName());
+        quotaDto.setUniqueCode(userDto.getUniqueCode());
         return quotaService.insertItem(quotaDto);
     }
 

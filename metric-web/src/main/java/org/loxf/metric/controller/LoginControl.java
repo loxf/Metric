@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Controller
 @RequestMapping("/authen")
-@Api(value = "login", description = "登录、注册、修改密码")
+@Api(value = "authen", description = "登录、注册、修改密码")
 public class LoginControl {
     Logger logger = Logger.getLogger(this.getClass());
 
@@ -39,7 +39,7 @@ public class LoginControl {
      * @return
      */
 
-    @RequestMapping(value = "/getSMSValidateCode", method = RequestMethod.GET, consumes = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/getSMSValidateCode", method = RequestMethod.GET)
     @ResponseBody
     @ApiOperation(value = "获取验证码", notes = "获取验证码", httpMethod = "GET", response = BaseResult.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
