@@ -127,6 +127,7 @@ public class LoginFilter implements Filter {
     public static void setUser(HttpServletRequest request, String sessionId, UserDto user) {
         HttpSession session = request.getSession();
         session.setAttribute(sessionId, user);
+        session.setMaxInactiveInterval(60*60);//设置登录失效1小时
     }
 
     /**

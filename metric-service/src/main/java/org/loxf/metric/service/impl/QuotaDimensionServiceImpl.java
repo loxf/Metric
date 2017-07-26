@@ -34,8 +34,7 @@ public class QuotaDimensionServiceImpl extends BaseService implements IQuotaDime
         if (pager == null) {
             return new BaseResult<>(ResultCodeEnum.PARAM_LACK.getCode(), "分页信息为空");
         }
-        Map<String, Object> params = MapAndBeanTransUtils.transBean2Map(obj);
-        return new BaseResult<>(getPageResult(quotaDimensionDao, params, pager.getStart(), pager.getRownum()));
+        return new BaseResult<>(getPageResult(quotaDimensionDao, obj, pager.getStart(), pager.getRownum()));
     }
 
     @Override

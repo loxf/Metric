@@ -227,7 +227,7 @@ public class UserServiceImpl extends BaseService implements IUserService {
         User setParam = new User();
         setParam.setPwd(newPwd);
         Map setMap=MapAndBeanTransUtils.transBean2Map(setParam);
-        userDao.updateOne(user.getUserName(), setMap);
+        userDao.updateOne(existsUser.getUserName(), setMap);
         return new BaseResult<>();
     }
 
@@ -253,8 +253,10 @@ public class UserServiceImpl extends BaseService implements IUserService {
         result = super.validPager(obj.getPager());
         if (ResultCodeEnum.SUCCESS.getCode().equals(result.getCode())) {
             obj.setState(StandardState.AVAILABLE.getValue());
-            Map<String, Object> params = MapAndBeanTransUtils.transBean2Map(obj);
-            result.setData(getPageResult(userDao, params, pager.getStart(), pager.getRownum()));
+            User user=new User();
+            user.setState(StandardState.AVAILABLE.getValue());
+            user.setUniqueCode(obj.getUniqueCode());
+            result.setData(getPageResult(userDao, user, pager.getStart(), pager.getRownum()));
         }
         return result;
     }

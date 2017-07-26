@@ -17,6 +17,12 @@ public class BaseResult<T> implements Serializable {
     @ApiModelProperty(value = "数据", example = "返回的数据，失败时为空", position = 3)
     protected T data;
 
+    public boolean isSucess(){
+        if(ResultCodeEnum.SUCCESS.getCode().equals(code)){
+            return true;
+        }
+        return false;
+    }
     public BaseResult() {
         this.code = ResultCodeEnum.SUCCESS.getCode();
         this.msg = ResultCodeEnum.SUCCESS.getCodeMsg();

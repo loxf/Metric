@@ -11,8 +11,6 @@ import java.util.Date;
  */
 @ApiModel("通用数据")
 public class BaseDto implements Serializable {
-    @ApiModelProperty(value = "ID", hidden = true)
-    private Long _id;
     @ApiModelProperty(value = "创建时间", hidden = true)
     private Date createdAt;
     @ApiModelProperty(value = "更新时间", hidden = true)
@@ -29,14 +27,6 @@ public class BaseDto implements Serializable {
     private Date endDate;
     @ApiModelProperty("分页")
     private Pager pager;
-
-    public Long get_id() {
-        return _id;
-    }
-
-    public void set_id(Long _id) {
-        this._id = _id;
-    }
 
     public Date getCreatedAt() {
         return createdAt;

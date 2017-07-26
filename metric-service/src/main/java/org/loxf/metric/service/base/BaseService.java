@@ -29,10 +29,10 @@ import java.util.Map;
 public class BaseService {
     Logger logger = Logger.getLogger(this.getClass());
 
-    public PageData getPageResult(Class<? extends Object> daoClazz, Map<String, Object> params,int start,int pageSize) {
-        IBaseDao dao = (IBaseDao)SpringApplicationContextUtil.getBean(daoClazz);
-        return getPageResult(dao, params, start, pageSize);
-    }
+//    public PageData getPageResult(Class<? extends Object> daoClazz, Map<String, Object> params,int start,int pageSize) {
+//        IBaseDao dao = (IBaseDao)SpringApplicationContextUtil.getBean(daoClazz);
+//        return getPageResult(dao, params, start, pageSize);
+//    }
 
 
     public BaseResult validPager(Pager pager){
@@ -49,13 +49,13 @@ public class BaseService {
     }
 
 
-    public PageData getPageResult(IBaseDao dao, Map<String, Object> params, int start, int pageSize) {
+    public PageData getPageResult(IBaseDao dao, Object object, int start, int pageSize) {
         try {
-            long totalCount = (long) dao.countByParams(params);
+            long totalCount = (long) dao.countByParams(object);
             if (totalCount <= 0) {
                 return null;
             }
-            List pageResult = dao.findByPager(params, start, pageSize);
+            List pageResult = dao.findByPager(object, start, pageSize);
             PageData pageData=new PageData();
             pageData.setRows(pageResult);
             pageData.setTotalRecords(totalCount);

@@ -31,6 +31,10 @@ public class Pager implements Serializable {
     @ApiModelProperty("当前页")
     private int currentPage;
 
+    public Pager(){
+        this.rownum=20;
+        this.currentPage=1;
+    }
     public int getStart() {
         if(this.getRownum()>0 && this.getCurrentPage()>0){
             return (this.getCurrentPage()-1)*this.getRownum();

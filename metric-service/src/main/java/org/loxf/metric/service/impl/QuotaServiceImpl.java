@@ -117,8 +117,7 @@ public class QuotaServiceImpl extends BaseService implements IQuotaService {
         Pager pager=obj.getPager();
         BaseResult validPagerResult = super.validPager(obj.getPager());
         if(ResultCodeEnum.SUCCESS.getCode().equals(validPagerResult.getCode())){
-            Map<String, Object> params = MapAndBeanTransUtils.transBean2Map(obj);
-            return new BaseResult<>(getPageResult(quotaDao, params, pager.getStart(), pager.getRownum()));
+            return new BaseResult<>(getPageResult(quotaDao, obj, pager.getStart(), pager.getRownum()));
         }
         return validPagerResult;
     }

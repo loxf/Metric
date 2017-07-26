@@ -85,7 +85,6 @@ public class TargetServiceImpl extends BaseService implements ITargetService {
         Pager pager = obj.getPager();
         BaseResult validPagerResult = super.validPager(obj.getPager());
         if (ResultCodeEnum.SUCCESS.getCode().equals(validPagerResult.getCode())) {
-            Map<String, Object> params = MapAndBeanTransUtils.transBean2Map(obj);
             User user = new User();
             user.setUserName(obj.getHandleUserName());
             user = userDao.findOne(user);
@@ -97,7 +96,7 @@ public class TargetServiceImpl extends BaseService implements ITargetService {
                 list.add(visibleItem);
                 obj.setVisibleList(list);
             }
-            return new BaseResult<>(getPageResult(targetDao, params, pager.getStart(), pager.getRownum()));
+            return new BaseResult<>(getPageResult(targetDao, obj, pager.getStart(), pager.getRownum()));
         }
         return validPagerResult;
     }

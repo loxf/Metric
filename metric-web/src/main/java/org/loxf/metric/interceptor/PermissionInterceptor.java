@@ -1,9 +1,12 @@
 package org.loxf.metric.interceptor;
 
+import com.alibaba.fastjson.JSON;
 import org.loxf.metric.base.annotations.Permission;
 import org.loxf.metric.base.exception.MetricException;
 import org.loxf.metric.base.constants.PermissionType;
+import org.loxf.metric.common.constants.ResultCodeEnum;
 import org.loxf.metric.common.constants.UserTypeEnum;
+import org.loxf.metric.common.dto.BaseResult;
 import org.loxf.metric.common.dto.UserDto;
 import org.loxf.metric.filter.LoginFilter;
 import org.slf4j.Logger;
@@ -22,14 +25,20 @@ public class PermissionInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        Class<?> clazz = handler.getClass();
-        if (handler.getClass().isAssignableFrom(HandlerMethod.class)) {
-            if (clazz.isAnnotationPresent(Permission.class)) {
-                Permission permission = ((HandlerMethod) handler).getMethodAnnotation(Permission.class);
-                if (permission == null) {
+        if(handler instanceof HandlerMethod){
+            HandlerMethod method = (HandlerMethod)handler;
+            Permission permission = method.getMethodAnnotation(Permission.class);
+            if(permission!=null){
+                boolean chekResult=checkUserRole(request, permission);
+                if(!chekResult){//校验失败
+                    try {
+                        response.getWriter().write(JSON.toJSONString(
+                                new BaseResult(ResultCodeEnum.NO_PERMISSION.getCode(), ResultCodeEnum.NO_PERMISSION.getCodeMsg())));
+                    }catch (Exception e){
 
+                    }
+                    return false;
                 }
-                return checkUserRole(request, permission);
             }
         }
         return true;

@@ -8,6 +8,8 @@ import org.loxf.metric.base.constants.RateLimitType;
 import org.loxf.metric.base.utils.RandomUtils;
 import org.loxf.metric.utils.AcsClientSingleton;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.Random;
 
 /**
@@ -93,5 +95,27 @@ public class SendMsgUtils {
         //可选:outId为提供给业务方扩展字段,最终在短信回执消息中将此值带回给调用者
         //request.setOutId(outId);
         return request;
+    }
+
+    /**
+     * 校验验证码
+     * @param phone
+     * @param validateCode
+     * @param validateType
+     * @param request
+     * @return
+     */
+    public static boolean validateSmsCode(String phone,String validateCode,String validateType,StringBuilder error,HttpServletRequest request) {
+        HttpSession session=request.getSession();
+        if(session.getAttribute(phone+validateType)==null){
+            error.append("验证码已过期或未获取验证码，请重新获取验证码!");
+            return false;
+        }
+        if(!validateCode.equals((String)session.getAttribute(phone+validateType))){
+            error.append("验证码错误!");
+            return false;
+        }
+        session.removeAttribute(phone+validateType);
+        return true;
     }
 }

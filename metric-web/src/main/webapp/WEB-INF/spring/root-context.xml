@@ -26,12 +26,4 @@
     <!-- 初始缓存数据，初始化spring中定义的bean的前后都会用此实现类 -->
     <bean id="rateLimitInitListener" class="org.loxf.metric.utils.RateLimitInitListener"/>
 
-    <mvc:interceptors>
-        <mvc:interceptor>
-            <mvc:mapping path="/user/*"/> <!-- 拦截范围 -->
-            <mvc:exclude-mapping path="/user/register"/> <!--不被拦截范围（路径）-->
-            <mvc:exclude-mapping path="/user/login"/>
-            <bean class="org.loxf.metric.interceptor.PermissionInterceptor" />
-        </mvc:interceptor>
-    </mvc:interceptors>
 </beans>

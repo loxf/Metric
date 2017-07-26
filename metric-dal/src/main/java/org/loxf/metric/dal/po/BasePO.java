@@ -14,21 +14,12 @@ import java.util.List;
  * Created by hutingting on 2017/7/5.
  */
 public class BasePO {
-    private ObjectId _id;
     private Date createdAt;
     private Date updatedAt;
     private Date startDate;
     private Date endDate;
     private String createUserName;
     private  String updateUserName;
-
-    public ObjectId get_id() {
-        return _id;
-    }
-
-    public void set_id(ObjectId _id) {
-        this._id = _id;
-    }
 
     public Date getCreatedAt() {
         return createdAt;

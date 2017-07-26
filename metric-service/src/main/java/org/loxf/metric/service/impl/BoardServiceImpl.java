@@ -79,8 +79,7 @@ public class BoardServiceImpl extends BaseService implements IBoardService {
             return result;
         }
         obj.setState(StandardState.AVAILABLE.getValue());
-        Map<String, Object> params = MapAndBeanTransUtils.transBean2Map(obj);
-        result.setData(getPageResult(boardDao, params, pager.getStart(), pager.getRownum()));
+        result.setData(getPageResult(boardDao, obj, pager.getStart(), pager.getRownum()));
         return result;
     }
 
