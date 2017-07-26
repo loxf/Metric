@@ -16,6 +16,8 @@ public enum ResultCodeEnum {
     NOT_SUPPORT("509","接口弃用"),
     NO_PERMISSION("300","权限不足"),
     ILLEGAL_REQUEST("555","非法请求"),
+    SMS_ERROR("510","短信发送失败"),
+    SYSTEM_BUSY("100","系统繁忙"),
     ERROR("511","系统异常"),;
 
     private String code;

@@ -1,15 +1,15 @@
 package org.loxf.metric.controller;
 
 import io.swagger.annotations.*;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.loxf.metric.api.IUserService;
+import org.loxf.metric.base.constants.RateLimitType;
 import org.loxf.metric.base.utils.IdGenerator;
-import org.loxf.metric.base.utils.ValideDataUtils;
 import org.loxf.metric.common.constants.ResultCodeEnum;
 import org.loxf.metric.common.dto.BaseResult;
 import org.loxf.metric.common.dto.UserDto;
 import org.loxf.metric.filter.LoginFilter;
+import org.loxf.metric.requestInfo.SmsRequestInfo;
 import org.loxf.metric.utils.SendMsgUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * Created by luohj on 2017/7/22.
@@ -44,37 +45,69 @@ public class LoginControl {
     @ApiOperation(value = "获取验证码", notes = "获取验证码", httpMethod = "GET", response = BaseResult.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
     public BaseResult<String> getSMSValidateCode(@ApiParam(value = "用户手机号", name = "phone", required = true) String phone,
-                                                 @ApiParam(value = "短信类型", name = "smsType", required = true) String smsType) {
-        if(StringUtils.isBlank(phone)||StringUtils.isBlank(smsType)){
-            return new BaseResult<>(ResultCodeEnum.PARAM_LACK.getCode(), "手机号和短信类型不能为空!");
+                                                 @ApiParam(value = "验证码类型(仅限登录和注册)", name = "validateType", required = true) String validateType,
+                                                 HttpServletRequest request) {
+        SmsRequestInfo smsRequestInfo=new SmsRequestInfo(phone,null,validateType,false);
+        if(!smsRequestInfo.validate()){
+            return new BaseResult<>(ResultCodeEnum.PARAM_ERROR.getCode(), smsRequestInfo.getErrorMsg());
+
         }
-        if(!ValideDataUtils.mobileValidate(phone)){
-            logger.error("手机号校验失败!phone="+phone);
-            return new BaseResult<>(ResultCodeEnum.PARAM_ERROR.getCode(), "手机号格式错误!");
+        String code=SendMsgUtils.sendMsgByType(validateType,phone);
+        if(code==null){
+            return new BaseResult<>(ResultCodeEnum.PARAM_ERROR.getCode(), "验证码发送失败!");
         }
-        SendMsgUtils.sendMsgByType(smsType,phone);
+        HttpSession session=request.getSession();
+        session.setAttribute(phone+validateType,code);
+        session.setMaxInactiveInterval(60);
         return new BaseResult<>();
     }
+
+    /**
+     * 校验验证码
+     * @param phone
+     * @param validateCode
+     * @param validateType
+     * @param request
+     * @return
+     */
+    private boolean validateSmsCode(String phone,String validateCode,String validateType,StringBuilder error,HttpServletRequest request) {
+        SmsRequestInfo smsRequestInfo=new SmsRequestInfo(phone,validateCode,validateType,true);
+        if(!smsRequestInfo.validate()){
+            error.append(smsRequestInfo.getErrorMsg());
+            return false;
+        }
+        HttpSession session=request.getSession();
+        if(session.getAttribute(phone+validateType)==null){
+            error.append("验证码已过期或未获取验证码，请重新获取验证码!");
+            return false;
+        }
+        if(!validateCode.equals((String)session.getAttribute(phone+validateType))){
+            error.append("验证码错误!");
+            return false;
+        }
+        return true;
+    }
+
 
     /**
      * 主用户注册
      *
      * @return
      */
-
-    @RequestMapping(value = "/register", method = RequestMethod.POST, consumes = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/register", method = RequestMethod.GET, produces = "application/json;charset=UTF-8",consumes = "application/json;charset=UTF-8")
     @ResponseBody
-    @ApiOperation(value = "主用户注册", notes = "主用户注册", httpMethod = "POST", response = BaseResult.class)
+    @ApiOperation(value = "主用户注册", notes = "主用户注册", httpMethod = "GET", response = BaseResult.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
     public BaseResult<String> registerRoot(@ApiParam(value = "用户手机号", name = "phone", required = true) String phone,
                                            @ApiParam(value = "用户密码", name = "pwd", required = true) String pwd,
                                            @ApiParam(value = "真实姓名", name = "realName", required = true) String realName,
-                                           @ApiParam(value = "验证码", name = "verifyCode", required = true) String verifyCode) {
-        if ("1234".equals(verifyCode)) {
-            return userService.register(phone, pwd, realName);
-        } else {
-            return new BaseResult<String>(ResultCodeEnum.PARAM_ERROR.getCode(), "验证码不匹配");
+                                           @ApiParam(value = "验证码", name = "verifyCode", required = true) String verifyCode,
+                                           HttpServletRequest request) {//realName乱码，配置tomcat
+        StringBuilder error=new StringBuilder();
+        if(!validateSmsCode(phone,verifyCode,RateLimitType.REGISTERCODE,error,request)){
+            return new BaseResult<>(ResultCodeEnum.PARAM_ERROR.getCode(), error.toString());
         }
+        return userService.register(phone, pwd, realName);
     }
 
 

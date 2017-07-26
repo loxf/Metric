@@ -1,12 +1,12 @@
 package org.loxf.metric.filter;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.util.concurrent.RateLimiter;
 import org.apache.commons.lang.StringUtils;
-import org.loxf.metric.api.IRateLimitService;
 import org.loxf.metric.base.constants.RateLimitType;
+import org.loxf.metric.common.constants.ResultCodeEnum;
+import org.loxf.metric.common.dto.BaseResult;
 import org.loxf.metric.controller.RateLimitMapBean;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -48,31 +48,43 @@ public class RateLimitFilter implements Filter {
         }
         //如果不需要拦截请求,PASS
         if (needValidate) {
-            String smsType=request.getParameter("smsType");
+            String rateLimitType=req.getRequestURI();
             RateLimiter limiter;
-            switch (smsType){
-                case RateLimitType.REGISTERCODE:
+            switch (rateLimitType){
+                case "/authen/getSMSValidateCode":
                     limiter=RateLimitMapBean.RATELIMITMAPSTATIC.get(RateLimitType.REGISTERCODE);
                     if(limiter!=null){
-                        limiter.acquire();
+                        if(!limiter.tryAcquire()){ //未请求到limiter则立即返回false
+                            returnBusy(resp);
+                            return;
+                        }
                     }
                     break;
                 case RateLimitType.LOGINCODE:
                     limiter=RateLimitMapBean.RATELIMITMAPSTATIC.get(RateLimitType.LOGINCODE);
                     if(limiter!=null){
-                        limiter.acquire();
+                        if(!limiter.tryAcquire()){ //未请求到limiter则立即返回false
+                            returnBusy(resp);
+                            return;
+                        }
                     }
                     break;
                 case RateLimitType.MODIFYPWDCODE:
                     limiter=RateLimitMapBean.RATELIMITMAPSTATIC.get(RateLimitType.MODIFYPWDCODE);
                     if(limiter!=null){
-                        limiter.acquire();
+                        if(!limiter.tryAcquire()){ //未请求到limiter则立即返回false
+                            returnBusy(resp);
+                            return;
+                        }
                     }
                     break;
                 case RateLimitType.CHILDSENDPWDCODE:
                     limiter=RateLimitMapBean.RATELIMITMAPSTATIC.get(RateLimitType.CHILDSENDPWDCODE);
                     if(limiter!=null){
-                        limiter.acquire();
+                        if(!limiter.tryAcquire()){ //未请求到limiter则立即返回false
+                            returnBusy(resp);
+                            return;
+                        }
                     }
                     break;
                 default:
@@ -81,6 +93,15 @@ public class RateLimitFilter implements Filter {
         }
 
         chain.doFilter(request, response);
+    }
+
+    private void returnBusy(HttpServletResponse resp){
+        try {
+            resp.getWriter().write(JSON.toJSONString(
+                    new BaseResult(ResultCodeEnum.SYSTEM_BUSY.getCode(), ResultCodeEnum.SYSTEM_BUSY.getCodeMsg())));
+        }catch (Exception e){
+
+        }
     }
 
     @Override

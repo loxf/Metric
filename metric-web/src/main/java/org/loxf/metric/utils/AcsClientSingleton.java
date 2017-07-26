@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  */
 public class AcsClientSingleton {
     private static Logger logger = LoggerFactory.getLogger(AcsClientSingleton.class);
-    private static AcsClientSingleton singleton;
+    private static volatile AcsClientSingleton singleton;//使用volitale为了避免singleton已生成但主存中没有，还在线程空间的情况。
     private IAcsClient acsClient;
 
     private AcsClientSingleton() {
@@ -22,7 +22,7 @@ public class AcsClientSingleton {
 
     public static AcsClientSingleton getInstance() {
         if (singleton == null) {
-            synchronized (AcsClientSingleton.class) {
+            synchronized (AcsClientSingleton.class) {//多线程并发，都判断为null，但A线程等待完b线程释放锁后（b线程已new了实例）,A线程进入同步块如果不再次判断则会又new一个实例。
                 if (singleton == null) {
                     singleton = new AcsClientSingleton();
                 }

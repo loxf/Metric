@@ -22,53 +22,60 @@ public class SendMsgUtils {
     static  final String CHILDSENDPWDTEMPLATECODE="SMS_78540011";
     static  final String signName="骑驴指标";//骑驴指标
 
-    public static void sendMsgByType(String type,String phoneNumbers){
+    public static String sendMsgByType(String type,String phoneNumbers){
         String code;
         String templateParam;
         switch (type){
             case RateLimitType.REGISTERCODE://注册验证码
                 code=RandomUtils.getFourRandom();
                 templateParam="{\"code\":\""+code+"\"}";
-                sendMsg(phoneNumbers,REGISTERTEMPLATECODE,templateParam);
+                if(sendMsg(phoneNumbers,REGISTERTEMPLATECODE,templateParam)){
+                    return code;
+                }
                 break;
             case RateLimitType.LOGINCODE://登录验证码
                 code=RandomUtils.getFourRandom();
                 templateParam="{\"code\":\""+code+"\"}";
-                sendMsg(phoneNumbers,LOGINTEMPLATECODE,templateParam);
+                if(sendMsg(phoneNumbers,LOGINTEMPLATECODE,templateParam)){
+                    return code;
+                }
                 break;
             case RateLimitType.MODIFYPWDCODE://修改密码
                 code=RandomUtils.getFourRandom();
                 templateParam="{\"code\":\""+code+"\"}";
-                sendMsg(phoneNumbers,MODIFYPWDTEMPLATECODE,templateParam);
+                if(sendMsg(phoneNumbers,MODIFYPWDTEMPLATECODE,templateParam)){
+                    return code;
+                }
                 break;
             case RateLimitType.CHILDSENDPWDCODE://子用户注册密码下发
                 code=RandomUtils.getFourRandom();
                 templateParam="{\"code\":\""+code+"\"}";
-                sendMsg(phoneNumbers,CHILDSENDPWDTEMPLATECODE,templateParam);
+                if(sendMsg(phoneNumbers,CHILDSENDPWDTEMPLATECODE,templateParam)){
+                    return code;
+                }
                 break;
             default:
                 break;
         }
+        return null;
     }
 
-    private static void sendMsg(String phoneNumbers,String templateCode,String templateParam){
-        //SendSmsRequest request=getSmsRequestBody("18902212310","LOXF指标网站","SMS_78615007","{\"code\":\"123\"}");
+    private static boolean sendMsg(String phoneNumbers,String templateCode,String templateParam){
         SendSmsRequest request=getSmsRequestBody(phoneNumbers,signName,templateCode,templateParam);
         try{
             SendSmsResponse sendSmsResponse = AcsClientSingleton.getInstance().getAcsClient().getAcsResponse(request);
             if(sendSmsResponse.getCode() != null && sendSmsResponse.getCode().equals("OK")) {//请求成功
-
+                return true;
             }
+            return  false;
         }catch (Exception e){//请求失败这里会抛ClientException异常
             logger.error("短信发送异常:",e);
+            return false;
         }
-
-
     }
 
     private static SendSmsRequest getSmsRequestBody(String phoneNumbers,String signName,String templateCode,String templateParam){
         //组装请求对象
-
         SendSmsRequest request = new SendSmsRequest();
         //必填:待发送手机号。支持以逗号分隔的形式进行批量调用，批量上限为20个手机号码,批量调用相对于单条调用及时性稍有延迟,验证码类型的短信推荐使用单条调用的方式
         request.setPhoneNumbers(phoneNumbers);
