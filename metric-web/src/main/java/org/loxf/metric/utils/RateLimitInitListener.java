@@ -1,18 +1,16 @@
 package org.loxf.metric.utils;
 
 import com.google.common.util.concurrent.RateLimiter;
-import org.apache.commons.collections.map.HashedMap;
 import org.loxf.metric.api.IRateLimitService;
 import org.loxf.metric.common.dto.RateLimitDto;
 import org.loxf.metric.controller.RateLimitMapBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by hutingting on 2017/7/22.
@@ -32,7 +30,7 @@ public class RateLimitInitListener implements BeanPostProcessor {
             if(bean instanceof IRateLimitService) {
                 List<RateLimitDto> rateLimitList= ((IRateLimitService)bean).getRateLimitList();//加载栏目数据
                 if(rateLimitList!=null&&rateLimitList.size()>0){
-                    RateLimitMapBean.RATELIMITMAPSTATIC=new HashedMap();
+                    RateLimitMapBean.RATELIMITMAPSTATIC=new ConcurrentHashMap<>();
                     for(RateLimitDto rateLimitDto:rateLimitList){
                         RateLimiter rateLimiter=RateLimiter.create(rateLimitDto.getRate());
                         RateLimitMapBean.RATELIMITMAPSTATIC.put(rateLimitDto.getBussinessType(),rateLimiter);
