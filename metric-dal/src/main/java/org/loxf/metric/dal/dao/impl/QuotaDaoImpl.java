@@ -40,6 +40,7 @@ public class QuotaDaoImpl extends MongoDaoBase<Quota> implements QuotaDao{
     public String insert(Quota quota) {
         quota.setCreatedAt(new Date());
         quota.setUpdatedAt(new Date());
+        quota.setState(StandardState.AVAILABLE.getValue());
         super.insert(quota, collectionName);
         return quota.getQuotaCode();
     }

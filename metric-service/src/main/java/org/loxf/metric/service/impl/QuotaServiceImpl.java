@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-@Service
+@Service("quotaServiceImpl")
 public class QuotaServiceImpl extends BaseService implements IQuotaService {
     private static Logger logger = LoggerFactory.getLogger(QuotaServiceImpl.class);
 
@@ -40,11 +40,11 @@ public class QuotaServiceImpl extends BaseService implements IQuotaService {
         BaseResult result = validQuota(quotaDto);
         if (ResultCodeEnum.SUCCESS.getCode().equals(result.getCode())) {
             try {
+                String ids = IdGenerator.generate("QUOTA_", 13);
+                quotaDto.setQuotaCode(ids);
                 if (quotaDto.getType().equals(QuotaType.BASIC.getValue())) {
                     // 基础指标
-                    String ids = null;
                     while (true) {
-                        ids = IdGenerator.generate("QUOTA_", 13);
                         Quota qryParams = new Quota();
                         qryParams.setQuotaCode(ids);
                         Quota quota = quotaDao.findOne(qryParams);
@@ -63,6 +63,9 @@ public class QuotaServiceImpl extends BaseService implements IQuotaService {
                     List<String> quotaCodeList = QuotaSqlBuilder.quotaList(quotaSource);
                     if (CollectionUtils.isEmpty(quotaCodeList)) {
                         return new BaseResult(ResultCodeEnum.PARAM_ERROR.getCode(), "复合指标必须基于其他指标运算");
+                    } else {
+                        // 复合指标的维度基于基础指标的交集
+
                     }
                 }
                 Quota quota = new Quota();

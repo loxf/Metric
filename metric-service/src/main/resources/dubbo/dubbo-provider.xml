@@ -7,6 +7,6 @@
         http://www.springframework.org/schema/beans/spring-beans.xsd http://code.alibabatech.com/schema/dubbo
         http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
-    <dubbo:service timeout="${dubbo.service.timeout}" interface="org.loxf.metric.api.IQuotaService" ref="quotaService"
+    <dubbo:service timeout="${dubbo.service.timeout}" interface="org.loxf.metric.api.IQuotaService" ref="quotaServiceImpl"
                    version="${dubbo.service.version}"/>
 </beans>
