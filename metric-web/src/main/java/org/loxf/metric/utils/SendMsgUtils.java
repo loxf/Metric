@@ -2,15 +2,11 @@ package org.loxf.metric.utils;
 
 import com.aliyuncs.dysmsapi.model.v20170525.SendSmsRequest;
 import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
-import com.google.common.util.concurrent.RateLimiter;
 import org.apache.log4j.Logger;
 import org.loxf.metric.base.constants.RateLimitType;
 import org.loxf.metric.base.utils.RandomUtils;
-import org.loxf.metric.utils.AcsClientSingleton;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.Random;
 
 /**
  * Created by hutingting on 2017/7/20.

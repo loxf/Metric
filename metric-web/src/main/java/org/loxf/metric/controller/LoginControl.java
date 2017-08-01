@@ -46,7 +46,7 @@ public class LoginControl {
     @ApiOperation(value = "获取验证码", notes = "获取验证码", httpMethod = "GET", response = BaseResult.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
     public BaseResult<String> getSMSValidateCode(@ApiParam(value = "用户手机号", name = "phone", required = true) String phone,
-                                                 @ApiParam(value = "验证码类型(仅限登录和注册)", name = "smsType", required = true) String smsType,
+                                                 @ApiParam(value = "验证码类型(登录、注册、修改密码:LOGINCODE、REGISTERCODE、MODIFYPWDCODE)", name = "smsType", required = true) String smsType,
                                                  HttpServletRequest request) {
         if (StringUtils.isBlank(phone) || StringUtils.isBlank(smsType)) {
             return new BaseResult<>(ResultCodeEnum.PARAM_ERROR.getCode(),"手机号、验证码类型不能为空!");
