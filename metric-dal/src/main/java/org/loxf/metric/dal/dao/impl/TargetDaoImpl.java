@@ -116,7 +116,7 @@ public class TargetDaoImpl extends MongoDaoBase<Target> implements TargetDao{
                 includeUser.add(visibleItem.getUserName());
             }
             query.put("visibleList.type", "user");// 目前只有用户
-            query.put("visibleList.code", new BasicDBObject("$in", includeUser));
+            query.put("visibleList.userName", new BasicDBObject("$in", includeUser));
             query.put("visibleType", VisibleTypeEnum.SPECIFICRANGE.name());
         }
         return new BasicQuery(query);

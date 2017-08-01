@@ -78,9 +78,9 @@ public class TargetControl {
      * 获取目标（分页）
      * @return
      */
-    @RequestMapping(value = "/pager", method = RequestMethod.GET)
+    @RequestMapping(value = "/pager", method = RequestMethod.POST)
     @ResponseBody
-    @ApiOperation(value = "获取目标列表", notes = "分页获取", httpMethod = "GET", response = BaseResult.class)
+    @ApiOperation(value = "获取目标列表", notes = "分页获取", httpMethod = "POST", response = BaseResult.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
     public BaseResult<PageData<TargetDto>> pager(@RequestBody @ApiParam(value = "目标实体") TargetDto targetDto,
                                               HttpServletRequest request, HttpServletResponse response){

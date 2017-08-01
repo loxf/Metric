@@ -98,8 +98,12 @@ public class TargetServiceImpl extends BaseService implements ITargetService {
                 List<VisibleItem> list = new ArrayList<>();
                 list.add(visibleItem);
                 obj.setVisibleList(list);
+            }else{
+                obj.setVisibleType(VisibleTypeEnum.ALL.name());
             }
-            return new BaseResult<>(getPageResult(targetDao, obj, pager.getStart(), pager.getRownum()));
+            Target target=new Target();
+            BeanUtils.copyProperties(obj,target);
+            return new BaseResult<>(getPageResult(targetDao, target, pager.getStart(), pager.getRownum()));
         }
         return validPagerResult;
     }
@@ -115,6 +119,8 @@ public class TargetServiceImpl extends BaseService implements ITargetService {
             List<VisibleItem> list = new ArrayList<>();
             list.add(visibleItem);
             qryParams.setVisibleList(list);
+        }else{
+            qryParams.setVisibleType(VisibleTypeEnum.ALL.name());
         }
         //获取该用户可见范围内的图
         qryParams.setTargetCode(itemCode);
