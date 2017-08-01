@@ -8,8 +8,17 @@ import java.util.List;
  * Created by luohj on 2017/7/19.
  */
 public class IndexSetting extends BasePO {
+    private String indexCode;
     private String uniqueCode;
     private List<ChartItem> chartList;
+
+    public String getIndexCode() {
+        return indexCode;
+    }
+
+    public void setIndexCode(String indexCode) {
+        this.indexCode = indexCode;
+    }
 
     public String getUniqueCode() {
         return uniqueCode;

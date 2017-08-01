@@ -13,10 +13,7 @@ import org.loxf.metric.common.dto.*;
 import org.loxf.metric.filter.LoginFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -49,7 +46,7 @@ public class DataQueryControl {
     @ApiOperation(value = "获取首页数据", notes = "获取首页数据", httpMethod = "GET", response = BaseResult.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
     public BaseResult<List<ChartData>> getIndexData(@ApiParam(value = "开始时间", required = true) String startCircleTime,
-                                                    @RequestBody @ApiParam(value = "结束时间", required = true) String endCircleTime,
+                                                    @RequestParam @ApiParam(value = "结束时间", required = true) String endCircleTime,
                                                     HttpServletRequest request, HttpServletResponse response){
         UserDto userDto = LoginFilter.getUser(request);
         BaseResult result = indexSettingService.getIndexSetting(userDto.getUserName());

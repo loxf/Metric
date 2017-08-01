@@ -3,12 +3,10 @@ package org.loxf.metric.dal.dao.impl;
 import com.mongodb.BasicDBObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.HashedMap;
-import org.apache.commons.lang.StringUtils;
 import org.loxf.metric.base.ItemList.ChartItem;
-import org.loxf.metric.base.ItemList.VisibleItem;
 import org.loxf.metric.base.constants.CollectionConstants;
-import org.loxf.metric.base.constants.StandardState;
 import org.loxf.metric.base.constants.VisibleTypeEnum;
+import org.loxf.metric.base.utils.IdGenerator;
 import org.loxf.metric.core.mongo.MongoDaoBase;
 import org.loxf.metric.dal.dao.interfaces.ChartDao;
 import org.loxf.metric.dal.dao.interfaces.IndexSettingDao;
@@ -20,18 +18,18 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.regex.Pattern;
 
 /**
  * Created by luohj on 2017/7/19.
  */
 @Component
-public class IndexSettingDaoImpl extends MongoDaoBase implements IndexSettingDao<IndexSetting> {
+public class IndexSettingDaoImpl extends MongoDaoBase<IndexSetting> implements IndexSettingDao {
     private static String collectionName = CollectionConstants.INDEX_SETTING.getCollectionName();
+    private static String index_prefix = "INDEX";
     @Autowired
     private ChartDao chartDao;
     @Override
-    public void updateSetting(List<ChartItem> data, String handlerUserName, String uniqueCode) {
+    public void addOrUpdateSetting(List<ChartItem> data, String handlerUserName, String uniqueCode) {
         Query query = getCommonQuery(handlerUserName, uniqueCode);
         long count = super.countByParams(query, collectionName);
         if(count>0){
@@ -40,6 +38,7 @@ public class IndexSettingDaoImpl extends MongoDaoBase implements IndexSettingDao
             super.update(query, setParams, collectionName);
         } else {
             IndexSetting setting = new IndexSetting();
+            setting.setIndexCode(IdGenerator.generate(index_prefix));
             setting.setChartList(data);
             setting.setUniqueCode(uniqueCode);
             setting.setCreateUserName(handlerUserName);
@@ -88,4 +87,10 @@ public class IndexSettingDaoImpl extends MongoDaoBase implements IndexSettingDao
         return new BasicQuery(query);
     }
 
+    @Override
+    public IndexSetting getIndexSetting(String indexCode) {
+        Map<String,Object> queryMap=new HashedMap();
+        queryMap.put("indexCode",indexCode);
+        return super.findOne(queryMap,collectionName);
+    }
 }

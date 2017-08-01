@@ -113,7 +113,7 @@ public class TargetDaoImpl extends MongoDaoBase<Target> implements TargetDao{
                 CollectionUtils.isNotEmpty(target.getVisibleList())){
             BasicDBList includeUser = new BasicDBList();
             for(VisibleItem visibleItem : target.getVisibleList()){
-                includeUser.add(visibleItem.getCode());
+                includeUser.add(visibleItem.getUserName());
             }
             query.put("visibleList.type", "user");// 目前只有用户
             query.put("visibleList.code", new BasicDBObject("$in", includeUser));

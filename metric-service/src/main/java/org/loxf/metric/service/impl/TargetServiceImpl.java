@@ -2,6 +2,7 @@ package org.loxf.metric.service.impl;
 
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.loxf.metric.api.ITargetService;
 import org.loxf.metric.base.ItemList.TargetItem;
 import org.loxf.metric.base.ItemList.VisibleItem;
@@ -12,7 +13,6 @@ import org.loxf.metric.common.dto.*;
 import org.loxf.metric.base.utils.MapAndBeanTransUtils;
 import org.loxf.metric.dal.dao.interfaces.TargetDao;
 import org.loxf.metric.dal.dao.interfaces.UserDao;
-import org.loxf.metric.dal.po.Chart;
 import org.loxf.metric.dal.po.Target;
 import org.apache.log4j.Logger;
 import org.loxf.metric.dal.po.User;
@@ -20,7 +20,6 @@ import org.loxf.metric.service.base.BaseService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,19 +62,23 @@ public class TargetServiceImpl extends BaseService implements ITargetService {
                 return new BaseResult<>(ResultCodeEnum.PARAM_ERROR.getCode(), "目标开始时间大于结束时间");
             }
         }
-        if(StringUtils.isEmpty(obj.getVisibleType())){
-            return new BaseResult<>(ResultCodeEnum.PARAM_LACK.getCode(), "目标可见范围为空");
+        if (StringUtils.isEmpty(obj.getVisibleType())) {
+            obj.setVisibleType(VisibleTypeEnum.ALL.name());
         }
         if (CollectionUtils.isEmpty(obj.getItemList())) {
             return new BaseResult<>(ResultCodeEnum.PARAM_LACK.getCode(), "目标的指标项为空");
         } else {
             int totalWeight = 0;
             for (TargetItem item : obj.getItemList()) {
+                if (StringUtils.isBlank(item.getQuotaCode()) || StringUtils.isBlank(item.getTargetValue())) {
+                    return new BaseResult<>(ResultCodeEnum.PARAM_ERROR.getCode(), "指标码和目标值必填!");
+                }
                 totalWeight += item.getWeight();
             }
             if (totalWeight != 100) {
                 return new BaseResult<>(ResultCodeEnum.PARAM_ERROR.getCode(), "目标的所有指标的权重和不为100");
             }
+
         }
         return new BaseResult<>();
     }
@@ -88,10 +91,10 @@ public class TargetServiceImpl extends BaseService implements ITargetService {
             User user = new User();
             user.setUserName(obj.getHandleUserName());
             user = userDao.findOne(user);
-            if(UserTypeEnum.CHILD.name().equals(user.getUserType())){
+            if (UserTypeEnum.CHILD.name().equals(user.getUserType())) {
                 obj.setVisibleType(VisibleTypeEnum.SPECIFICRANGE.name());
                 VisibleItem visibleItem = new VisibleItem();
-                visibleItem.setCode(obj.getHandleUserName());
+                visibleItem.setUserName(obj.getHandleUserName());
                 List<VisibleItem> list = new ArrayList<>();
                 list.add(visibleItem);
                 obj.setVisibleList(list);
@@ -102,33 +105,24 @@ public class TargetServiceImpl extends BaseService implements ITargetService {
     }
 
     @Override
-    public BaseResult<TargetDto> queryItemByCode(String itemCode, String handleUserName) {
+    public BaseResult<TargetDto> queryItemByCode(String itemCode,UserDto userDto) {
         BaseResult result = new BaseResult();
-        User user = new User();
-        user.setUserName(handleUserName);
-        user = userDao.findOne(user);
-        if(user!=null) {
-            Target qryParams = new Target();
-            if(UserTypeEnum.CHILD.name().equals(user.getUserType())){
-                qryParams.setVisibleType(VisibleTypeEnum.SPECIFICRANGE.name());
-                VisibleItem visibleItem = new VisibleItem();
-                visibleItem.setCode(handleUserName);
-                List<VisibleItem> list = new ArrayList<>();
-                list.add(visibleItem);
-                qryParams.setVisibleList(list);
-            }
-            //获取该用户可见范围内的图
-            qryParams.setTargetCode(itemCode);
-            Target target = targetDao.findOne(qryParams);
-            if(target!=null) {
-                TargetDto targetDto = new TargetDto();
-                BeanUtils.copyProperties(target, targetDto);
-                result.setData(targetDto);
-            }
-            return result;
-        } else {
-            result.setCode(ResultCodeEnum.USER_NOT_EXIST.getCode());
-            result.setMsg(ResultCodeEnum.USER_NOT_EXIST.getCodeMsg());
+        Target qryParams = new Target();
+        if (UserTypeEnum.CHILD.name().equals(userDto.getUserType())) {
+            qryParams.setVisibleType(VisibleTypeEnum.SPECIFICRANGE.name());
+            VisibleItem visibleItem = new VisibleItem();
+            visibleItem.setUserName(userDto.getUserName());
+            List<VisibleItem> list = new ArrayList<>();
+            list.add(visibleItem);
+            qryParams.setVisibleList(list);
+        }
+        //获取该用户可见范围内的图
+        qryParams.setTargetCode(itemCode);
+        Target target = targetDao.findOne(qryParams);
+        if (target != null) {
+            TargetDto targetDto = new TargetDto();
+            BeanUtils.copyProperties(target, targetDto);
+            result.setData(targetDto);
         }
         return result;
     }

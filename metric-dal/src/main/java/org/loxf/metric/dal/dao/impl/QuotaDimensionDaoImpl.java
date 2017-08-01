@@ -104,9 +104,9 @@ public class QuotaDimensionDaoImpl extends MongoDaoBase<QuotaDimension> implemen
 
     @Override
     public void updateOne(Map params, String dimName) {
-        params.put("updatedAt", new Date());
         Map setMap = new HashMap();
         setMap.put("dimName", dimName);
+        setMap.put("updatedAt", new Date());
         super.updateOne(params, setMap, collectionName);
     }
 

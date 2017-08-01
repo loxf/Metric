@@ -26,12 +26,14 @@ public class UserDaoImpl extends MongoDaoBase<User> implements UserDao {
 
     @Override
     public String insert(User object) {
-        String sid = IdGenerator.generate("",32);
-        object.setUserName(sid);
+        if(StringUtils.isBlank(object.getUserName())){
+            String sid = IdGenerator.generate("",32);
+            object.setUserName(sid);
+        }
         object.setCreatedAt(new Date());
         object.setUpdatedAt(new Date());
         super.insert(object, collectionName);
-        return  sid;
+        return  object.getUserName();
     }
 
     @Override

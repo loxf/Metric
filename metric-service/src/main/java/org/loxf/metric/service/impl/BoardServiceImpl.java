@@ -20,20 +20,19 @@ import org.loxf.metric.dal.dao.interfaces.UserDao;
 import org.loxf.metric.dal.po.Board;
 import org.apache.log4j.Logger;
 import org.loxf.metric.dal.po.Chart;
-import org.loxf.metric.dal.po.Target;
-import org.loxf.metric.dal.po.User;
 import org.loxf.metric.service.base.BaseService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 /**
  * 看板配置业务类
- * Created by caiyang on 2017/5/4.
+ * Created by htt on 2017/5/4.
  */
 @Service("boardService")
 public class BoardServiceImpl extends BaseService implements IBoardService {
@@ -45,9 +44,6 @@ public class BoardServiceImpl extends BaseService implements IBoardService {
     @Autowired
     private ChartDao chartDao;
 
-    @Autowired
-    private UserDao userDao;
-
     @Override
     public BaseResult<String> insertItem(BoardDto obj) {
         BaseResult result = new BaseResult();
@@ -58,9 +54,14 @@ public class BoardServiceImpl extends BaseService implements IBoardService {
             return result;
         }
 
+
         Board board = new Board();
         BeanUtils.copyProperties(obj, board);
         board.setState(StandardState.AVAILABLE.getValue());
+        if (boardDao.findOne(board) != null) {
+            return new BaseResult<>(ResultCodeEnum.DATA_EXIST.getCode(), "您的看板库中已存在同名看板!");
+        }
+
         board.setCreateUserName(obj.getHandleUserName());
         return new BaseResult<>(boardDao.insert(board));
     }
@@ -68,48 +69,47 @@ public class BoardServiceImpl extends BaseService implements IBoardService {
     @Override
     public BaseResult<PageData<BoardDto>> getPageList(BoardDto obj) {
 
-        Pager pager=obj.getPager();
-        BaseResult result=super.validPager(pager);
-        if(!ResultCodeEnum.SUCCESS.getCodeMsg().equals(result.getCode())){
+        Pager pager = obj.getPager();
+        BaseResult result = super.validPager(pager);
+        if (!ResultCodeEnum.SUCCESS.getCode().equals(result.getCode())) {
             return result;
         }
-        if(StringUtils.isEmpty(obj.getUniqueCode())){//只能查询所属团队的看板
+        if (StringUtils.isEmpty(obj.getUniqueCode())) {//只能查询所属团队的看板
             result.setCode(ResultCodeEnum.PARAM_LACK.getCode());
             result.setMsg(ResultCodeEnum.PARAM_LACK.getCodeMsg());
             return result;
         }
         obj.setState(StandardState.AVAILABLE.getValue());
-        result.setData(getPageResult(boardDao, obj, pager.getStart(), pager.getRownum()));
+        Board board = new Board();
+        BeanUtils.copyProperties(obj, board);
+        result.setData(getPageResult(boardDao, board, pager.getStart(), pager.getRownum()));
         return result;
     }
 
 
     @Override
-    public BaseResult<BoardDto> queryItemByCode(String itemCode, String handleUserName) {
+    public BaseResult<BoardDto> queryItemByCode(String itemCode, UserDto userDto) {
         BaseResult<BoardDto> result = new BaseResult<>();
         if (StringUtils.isEmpty(itemCode)) {
             result.setCode(ResultCodeEnum.PARAM_LACK.getCode());
             result.setMsg(ResultCodeEnum.PARAM_LACK.getCodeMsg());
             return result;
         }
-        User user = new User();
-        user.setUserName(handleUserName);
-        user = userDao.findOne(user);
-        if(user!=null) {
-            Board qryParams = new Board();
-            qryParams.setBoardCode(itemCode);
-            Board board = boardDao.findOne(qryParams);
-            if(UserTypeEnum.CHILD.name().equals(user.getUserType())){
+        Board qryParams = new Board();
+        qryParams.setBoardCode(itemCode);
+        Board board = boardDao.findOne(qryParams);
+        if (board != null) {
+            if (UserTypeEnum.CHILD.name().equals(userDto.getUserType())) {
                 //获取该用户可见范围内的图
                 List<ChartItem> hasPermissionChart = board.getChartList();
                 List<ChartItem> chartItemList = board.getChartList();
-                if(CollectionUtils.isNotEmpty(chartItemList)) {
+                if (CollectionUtils.isNotEmpty(chartItemList)) {
                     Chart chart = new Chart();
-                    chart.setUniqueCode(user.getUniqueCode());
-                    for(ChartItem chartItem : chartItemList) {
+                    chart.setUniqueCode(userDto.getUniqueCode());
+                    for (ChartItem chartItem : chartItemList) {
                         chart.setChartCode(chartItem.getChartCode());
-                        long count = chartDao.countByParams(chart, null, handleUserName);
-                        if (count>0) {
+                        long count = chartDao.countByParams(chart, null, userDto.getUserName());
+                        if (count > 0) {
                             hasPermissionChart.add(chartItem);
                         }
                     }
@@ -120,8 +120,8 @@ public class BoardServiceImpl extends BaseService implements IBoardService {
             BeanUtils.copyProperties(board, boardDto);//前者赋值给后者
             result.setData(boardDto);
         } else {
-            result.setCode(ResultCodeEnum.USER_NOT_EXIST.getCode());
-            result.setMsg(ResultCodeEnum.USER_NOT_EXIST.getCodeMsg());
+            result.setCode(ResultCodeEnum.DATA_NOT_EXIST.getCode());
+            result.setMsg("无此看板!");
         }
         return result;
     }
@@ -136,15 +136,15 @@ public class BoardServiceImpl extends BaseService implements IBoardService {
             return result;
         }
         obj.setUpdateUserName(obj.getHandleUserName());
-        Board paramBoard=new Board();
+        Board paramBoard = new Board();
         BeanUtils.copyProperties(obj, paramBoard);
         paramBoard.setUpdateUserName(obj.getHandleUserName());
-        Map<String,Object> boardMap = MapAndBeanTransUtils.transBean2Map(paramBoard);
-        StringBuilder updateParams=new StringBuilder();
-        for (Map.Entry<String,Object> entry : boardMap.entrySet()) {
-            updateParams.append( entry.getKey()+":"+entry.getValue()+";");
+        Map<String, Object> boardMap = MapAndBeanTransUtils.transBean2Map(paramBoard);
+        StringBuilder updateParams = new StringBuilder();
+        for (Map.Entry<String, Object> entry : boardMap.entrySet()) {
+            updateParams.append(entry.getKey() + ":" + entry.getValue() + ";");
         }
-        logger.info(obj.getHandleUserName()+"将更新boardCode="+itemCode+"的数据为"+updateParams);
+        logger.info(obj.getHandleUserName() + "将更新boardCode=" + itemCode + "的数据为" + updateParams);
         boardDao.updateOne(itemCode, boardMap);
         return result;
     }
@@ -166,88 +166,89 @@ public class BoardServiceImpl extends BaseService implements IBoardService {
     }
 
     @Override
-    public BaseResult<String> addChart(String boardCode,String handleUserName,List<ChartItem> chartItemList) {
-        BaseResult<String> result=new BaseResult<>();
-        if(StringUtils.isBlank(boardCode)){
+    public BaseResult<String> addChartList(String boardCode,UserDto userDto, List<ChartItem> chartItemList) {
+        BaseResult<String> result = new BaseResult<>();
+        if (StringUtils.isBlank(boardCode) || StringUtils.isBlank(userDto.getUserName())||StringUtils.isBlank(userDto.getUniqueCode())) {
             result.setCode(ResultCodeEnum.PARAM_LACK.getCode());
-            result.setCode("看板code缺失,无法添加!");
+            result.setCode("看板code、操作人、团队码缺失!");
             return result;
         }
-        if(chartItemList==null||chartItemList.size()==0){
+        if (chartItemList == null || chartItemList.size() == 0) {
             result.setCode(ResultCodeEnum.PARAM_LACK.getCode());
             result.setCode("请添加图!");
             return result;
         }
-        Board board=boardDao.findByBoardCode(boardCode);
-        if(board==null){
+        Board board = boardDao.findByBoardCode(boardCode);
+        if (board == null) {
             result.setCode(ResultCodeEnum.DATA_NOT_EXIST.getCode());
             result.setCode("不存在该看板!");
             return result;
         }
-        boolean validChartFlag=true;
-        boolean checkEmptyChartFlag=true;
-        for(ChartItem chartItem:chartItemList){
-            if(StringUtils.isBlank(chartItem.getChartCode())||StringUtils.isBlank(chartItem.getChartName())||StringUtils.isBlank(chartItem.getProperties())){
-                checkEmptyChartFlag=false;
-                break;
-            }else if(chartDao.findByCode(chartItem.getChartCode(),handleUserName)==null){
-                validChartFlag=false;
+
+        List<String> addChartStrList=new ArrayList<>();
+        boolean checkEmptyChartFlag = true;
+        for (ChartItem chartItem : chartItemList) {
+            if (StringUtils.isBlank(chartItem.getChartCode())|| StringUtils.isBlank(chartItem.getProperties())) {
+                checkEmptyChartFlag = false;
                 break;
             }
+            addChartStrList.add(chartItem.getChartCode());
         }
-        if(!checkEmptyChartFlag){
+        if (!checkEmptyChartFlag) {
             result.setCode(ResultCodeEnum.PARAM_LACK.getCode());
             result.setCode("图信息缺失,无法添加!");
             return result;
         }
-        if(!validChartFlag){
+        List<Chart> addChartList=chartDao.findAll(addChartStrList,userDto.getUniqueCode());//添加图只能是root操作，不需考虑可见性。
+
+        if (addChartList==null||(addChartList.size()!=chartItemList.size())) {
             result.setCode(ResultCodeEnum.DATA_NOT_EXIST.getCode());
-            result.setCode("图不存在,无法添加！");
+            result.setCode("有图不存在,无法添加！");
             return result;
         }
 
-        List<ChartItem> boardChartItemList=board.getChartList();
+        List<ChartItem> boardChartItemList = board.getChartList();
+        if(boardChartItemList==null){
+            boardChartItemList=new ArrayList<>();
+        }
         boardChartItemList.addAll(chartItemList);
-        Map setMap=new HashedMap();
-        setMap.put("chartList",boardChartItemList);
-        boardDao.updateOne(boardCode,setMap);
+        Map setMap = new HashedMap();
+        setMap.put("chartList", boardChartItemList);
+        boardDao.updateOne(boardCode, setMap);
         return result;
     }
 
     @Override
-    public BaseResult<String> delChart(String boardCode,String chartCode, String handleUserName) {
-        BaseResult<String> result=new BaseResult<>();
-        if(StringUtils.isBlank(chartCode)||StringUtils.isBlank(boardCode)){
-            result.setCode(ResultCodeEnum.PARAM_LACK.getCode());
-            result.setCode(ResultCodeEnum.PARAM_LACK.getCodeMsg());
-            return result;
+    public BaseResult<String> delChartList(String boardCode, String chartCodeList, String handleUserName) {
+        if (StringUtils.isBlank(chartCodeList) || StringUtils.isBlank(boardCode)) {
+            return new BaseResult<>(ResultCodeEnum.PARAM_LACK.getCode(), "看板标志、图列表、操作用户不能为空!");
         }
-        Board board=boardDao.findByBoardCode(boardCode);
-        if(board==null){
-            result.setCode(ResultCodeEnum.DATA_NOT_EXIST.getCode());
-            result.setCode("不存在该看板");
-            return result;
+        Board board = boardDao.findByBoardCode(boardCode);
+        if (board == null) {
+            return new BaseResult<>(ResultCodeEnum.DATA_NOT_EXIST.getCode(), "不存在该看板!");
         }
-        List<ChartItem> chartItemList=board.getChartList();
-        boolean flag=false;
-        for(ChartItem chartItem:chartItemList){
-            String chartItemCode=chartItem.getChartCode();
-            if(chartCode.equals(chartItemCode)){
+        String[] chartCodeDelStr = chartCodeList.split(",");
+        List<String> chartCodeDelList = Arrays.asList(chartCodeDelStr);
+        List<ChartItem> chartItemList = board.getChartList();
+        boolean flag = false;
+        for (ChartItem chartItem : chartItemList) {
+            String chartItemCode = chartItem.getChartCode();
+            if (chartCodeDelList.contains(chartItemCode)) {
                 chartItemList.remove(chartItem);
-                break;
+                flag = true;
             }
         }
-        if(flag){//存在则删除
-            Map setMap=new HashedMap();
-            setMap.put("chartList",chartItemList);
-            boardDao.updateOne(boardCode,setMap);
-        }else{
-            result.setCode(ResultCodeEnum.DATA_NOT_EXIST.getCode());
-            result.setCode("该看板没有配置该图!");
-            return result;
+        if (!flag) {
+            return new BaseResult<>(ResultCodeEnum.DATA_NOT_EXIST.getCode(), "该看板没有配置需要删除的图!");
         }
-        return result;
+        //存在则删除
+        Map setMap = new HashedMap();
+        setMap.put("chartList", chartItemList);
+        boardDao.updateOne(boardCode, setMap);
+        return new BaseResult<>();
+
     }
+
 /*
     @Override
     public BaseResult<List<ChartItem>> getOwnChartList(String boardCode, String handleUserName) {
@@ -269,35 +270,35 @@ public class BoardServiceImpl extends BaseService implements IBoardService {
 
     @Override
     public BaseResult<List<ChartItem>> getOtherChartListByPage(BoardDto boardDto) {
-        Pager pager=boardDto.getPager();
-        BaseResult result=super.validPager(pager);
-        if(!ResultCodeEnum.SUCCESS.getCodeMsg().equals(result.getCode())){
+        Pager pager = boardDto.getPager();
+        BaseResult result = super.validPager(pager);
+        if (!ResultCodeEnum.SUCCESS.getCodeMsg().equals(result.getCode())) {
             return result;
         }
-        if(StringUtils.isBlank(boardDto.getBoardCode())){
+        if (StringUtils.isBlank(boardDto.getBoardCode())) {
             result.setCode(ResultCodeEnum.PARAM_LACK.getCode());
             result.setCode(ResultCodeEnum.PARAM_LACK.getCodeMsg());
             return result;
         }
 
-        Board board=boardDao.findByBoardCode(boardDto.getBoardCode());
-        if(board==null){
+        Board board = boardDao.findByBoardCode(boardDto.getBoardCode());
+        if (board == null) {
             result.setCode(ResultCodeEnum.DATA_NOT_EXIST.getCode());
             result.setCode("不存在该看板");
             return result;
         }
-        List<ChartItem> chartItemList=board.getChartList();
-        List boardChartCodeList=new ArrayList();
-        for(ChartItem chartItem:chartItemList){
+        List<ChartItem> chartItemList = board.getChartList();
+        List boardChartCodeList = new ArrayList();
+        for (ChartItem chartItem : chartItemList) {
             boardChartCodeList.add(chartItem.getChartCode());
         }
-        Map qryMap=new HashedMap();
-        qryMap.put("uniqueCode",board.getUniqueCode());
-        Map chartNotInMap=new HashedMap();
-        chartNotInMap.put(ComPareConstants.NOTIN.getDisplayName(),boardChartCodeList);
-        qryMap.put("chartCode",chartNotInMap);
+        Map qryMap = new HashedMap();
+        qryMap.put("uniqueCode", board.getUniqueCode());
+        Map chartNotInMap = new HashedMap();
+        chartNotInMap.put(ComPareConstants.NOTIN.getDisplayName(), boardChartCodeList);
+        qryMap.put("chartCode", chartNotInMap);
 
-        PageData pageData=getChartPageResult(qryMap, pager.getStart(), pager.getRownum());
+        PageData pageData = getChartPageResult(qryMap, pager.getStart(), pager.getRownum());
         result.setData(pageData);
         return result;
     }
@@ -309,15 +310,15 @@ public class BoardServiceImpl extends BaseService implements IBoardService {
                 return null;
             }
             List pageResult = chartDao.findPagerByParams(params, start, pageSize);
-            PageData pageData=new PageData();
+            PageData pageData = new PageData();
             pageData.setRows(pageResult);
             pageData.setTotalRecords(totalCount);
-            pageData.setCurrentPage(start/pageSize+1);
+            pageData.setCurrentPage(start / pageSize + 1);
             pageData.setRownum(pageSize);
             pageData.setTotalPage(pageData.calculateTotalPage());
             return pageData;
-        }catch (Exception e){
-            logger.error("查询分页异常！",e);
+        } catch (Exception e) {
+            logger.error("查询分页异常！", e);
             return null;
         }
     }

@@ -58,7 +58,7 @@ public class TargetControl {
     @Permission(PermissionType.ROOT)
     @ApiOperation(value = "删除目标", notes = "删除一个目标，需要ROOT权限", httpMethod = "GET", response = BaseResult.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
-    public BaseResult rmTarget(@RequestBody @ApiParam(value = "目标编码") String targetCode, HttpServletRequest request, HttpServletResponse response){
+    public BaseResult rmTarget(@ApiParam(value = "目标编码") String targetCode, HttpServletRequest request, HttpServletResponse response){
         UserDto userDto = LoginFilter.getUser(request);
         return targetService.delItemByCode(targetCode, userDto.getUserName());
     }
@@ -70,9 +70,9 @@ public class TargetControl {
     @ResponseBody
     @ApiOperation(value = "获取目标的信息", notes = "获取目标的信息", httpMethod = "GET", response = BaseResult.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
-    public BaseResult<TargetDto> getTarget(@RequestBody @ApiParam(value = "目标编码") String targetCode, HttpServletRequest request, HttpServletResponse response){
+    public BaseResult<TargetDto> getTarget(@ApiParam(value = "目标编码") String targetCode, HttpServletRequest request, HttpServletResponse response){
         UserDto userDto = LoginFilter.getUser(request);
-        return targetService.queryItemByCode(targetCode, userDto.getUserName());
+        return targetService.queryItemByCode(targetCode,userDto);
     }
     /**
      * 获取目标（分页）

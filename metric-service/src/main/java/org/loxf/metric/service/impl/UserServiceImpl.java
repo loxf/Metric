@@ -15,6 +15,7 @@ import org.loxf.metric.common.dto.BaseResult;
 import org.loxf.metric.common.dto.PageData;
 import org.loxf.metric.common.dto.Pager;
 import org.loxf.metric.common.dto.UserDto;
+import org.loxf.metric.dal.dao.interfaces.IndexSettingDao;
 import org.loxf.metric.dal.dao.interfaces.UserDao;
 import org.loxf.metric.dal.po.User;
 import org.loxf.metric.service.base.BaseService;
@@ -33,8 +34,8 @@ public class UserServiceImpl extends BaseService implements IUserService {
 
     @Autowired
     private UserDao userDao;
-    //ctrl+shif+f：格式化
-    //ctrl+b：全项目编译
+    @Autowired
+    private IndexSettingDao indexSettingDao;
     @Override
     public BaseResult<UserDto> login(String phone, String pwd, String teamCode, String type) {//手机号码登录
         BaseResult<UserDto> result = new BaseResult<>();
@@ -81,7 +82,7 @@ public class UserServiceImpl extends BaseService implements IUserService {
      * @return
      */
     @Override
-    public BaseResult<String> register(String phone, String pwd, String realName) {//主用户注册，自动生成userName，团队码
+    public BaseResult<String> register(String phone, String pwd, String realName) {//主用户注册，自动生成userName，团队码,自动生成首页看板
         BaseResult<String> result = new BaseResult<>();
         if (StringUtils.isBlank(phone) || StringUtils.isBlank(pwd) || StringUtils.isBlank(realName)) {//校验参数是否为空
             result.setCode(ResultCodeEnum.PARAM_LACK.getCode());
@@ -108,7 +109,10 @@ public class UserServiceImpl extends BaseService implements IUserService {
         qryUser.setUniqueCode(generateTeamCode);
         qryUser.setPwd(pwd);
         qryUser.setRealName(realName);
+        String sid = IdGenerator.generate("",32);
+        qryUser.setUserName(sid);
         userDao.insert(qryUser);
+        indexSettingDao.addOrUpdateSetting(null,sid,generateTeamCode);//自动配置首页看板
         return result;
     }
 
@@ -263,7 +267,7 @@ public class UserServiceImpl extends BaseService implements IUserService {
 
 
     @Override
-    public BaseResult<UserDto> queryItemByCode(String itemCode, String handleUserName) {
+    public BaseResult<UserDto> queryItemByCode(String itemCode, UserDto userDto) {
         BaseResult<UserDto> result = new BaseResult<>();
         if (StringUtils.isEmpty(itemCode)) {
             result.setCode(ResultCodeEnum.PARAM_LACK.getCode());
@@ -273,9 +277,9 @@ public class UserServiceImpl extends BaseService implements IUserService {
         User user = new User();
         user.setUserName(itemCode);
         User userData = userDao.findOne(user);
-        UserDto userDto = new UserDto();
-        BeanUtils.copyProperties(userData, userDto);//前者赋值给后者
-        result.setData(userDto);
+        UserDto returnDto = new UserDto();
+        BeanUtils.copyProperties(userData, returnDto);//前者赋值给后者
+        result.setData(returnDto);
         return result;
     }
 

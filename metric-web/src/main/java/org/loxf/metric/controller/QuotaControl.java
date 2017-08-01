@@ -10,14 +10,10 @@ import org.loxf.metric.common.dto.BaseResult;
 import org.loxf.metric.common.dto.PageData;
 import org.loxf.metric.common.dto.QuotaDto;
 import org.loxf.metric.common.dto.UserDto;
-import org.loxf.metric.dal.po.Quota;
 import org.loxf.metric.filter.LoginFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -81,7 +77,7 @@ public class QuotaControl {
     @ApiOperation(value = "删除指标", notes = "如果指标被其他指标引用，不能删除。如果被有效目标（当前日期在目标的时间范围）引用，不能删除。需要ROOT权限",
             httpMethod = "GET", response = BaseResult.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
-    public BaseResult rmQuota(@RequestBody @ApiParam(value = "指标编码", required = true) String quotaCode, HttpServletRequest request, HttpServletResponse response) {
+    public BaseResult rmQuota(@ApiParam(value = "指标编码", required = true) String quotaCode, HttpServletRequest request, HttpServletResponse response) {
         UserDto userDto = LoginFilter.getUser(request);
         return quotaService.delItemByCode(quotaCode, userDto.getUserName());
     }
@@ -95,10 +91,10 @@ public class QuotaControl {
     @ResponseBody
     @ApiOperation(value = "获取指标", notes = "获取一个指标", httpMethod = "GET", response = BaseResult.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
-    public BaseResult<QuotaDto> getQuota(@RequestBody @ApiParam(value = "指标编码", required = true) String quotaCode,
+    public BaseResult<QuotaDto> getQuota(@ApiParam(value = "指标编码", required = true) String quotaCode,
                                       HttpServletRequest request, HttpServletResponse response) {
         UserDto userDto = LoginFilter.getUser(request);
-        return quotaService.queryItemByCode(quotaCode, userDto.getUserName());
+        return quotaService.queryItemByCode(quotaCode, userDto);
     }
 
     /**

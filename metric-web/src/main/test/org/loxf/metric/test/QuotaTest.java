@@ -61,8 +61,7 @@ public class QuotaTest {
 
     @Test
     public void getQuota(){
-        QuotaDto quotaDto = new QuotaDto();
-        BaseResult<QuotaDto> result = quotaService.queryItemByCode("QUOTA001", "admin");
+        BaseResult<QuotaDto> result = quotaService.queryItemByCode("QUOTA001", null);
         logger.debug("获取结果：" + JSON.toJSONString(result));
     }
 

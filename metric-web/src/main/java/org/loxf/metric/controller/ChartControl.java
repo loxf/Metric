@@ -15,10 +15,7 @@ import org.loxf.metric.common.dto.UserDto;
 import org.loxf.metric.filter.LoginFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -49,6 +46,7 @@ public class ChartControl {
         UserDto userDto = LoginFilter.getUser(request);
         chartDto.setHandleUserName(userDto.getUserName());
         chartDto.setUniqueCode(userDto.getUniqueCode());
+        chartDto.setCreateUserName(userDto.getUserName());
         return chartService.insertItem(chartDto);
     }
     /**
@@ -60,7 +58,7 @@ public class ChartControl {
     @Permission(PermissionType.ROOT)
     @ApiOperation(value = "删除图", notes = "删除一个图，需要ROOT权限", httpMethod = "GET", response = BaseResult.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
-    public BaseResult rmChart(@RequestBody @ApiParam(value = "图编码") String chartCode, HttpServletRequest request, HttpServletResponse response){
+    public BaseResult rmChart(@ApiParam(value = "图编码") String chartCode, HttpServletRequest request, HttpServletResponse response){
         UserDto userDto = LoginFilter.getUser(request);
         return chartService.delItemByCode(chartCode, userDto.getUserName());
     }
@@ -72,17 +70,17 @@ public class ChartControl {
     @ResponseBody
     @ApiOperation(value = "获取图的信息", notes = "获取图的信息", httpMethod = "GET", response = BaseResult.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
-    public BaseResult<ChartDto> getChart(@RequestBody @ApiParam(value = "图编码") String chartCode, HttpServletRequest request, HttpServletResponse response){
+    public BaseResult<ChartDto> getChart(@ApiParam(value = "图编码") String chartCode, HttpServletRequest request, HttpServletResponse response){
         UserDto userDto = LoginFilter.getUser(request);
-        return chartService.queryItemByCode(chartCode, userDto.getUserName());
+        return chartService.queryItemByCode(chartCode, userDto);
     }
     /**
      * 获取图（分页）
      * @return
      */
-    @RequestMapping(value = "/pager", method = RequestMethod.GET)
+    @RequestMapping(value = "/pager", method = RequestMethod.POST)
     @ResponseBody
-    @ApiOperation(value = "获取图列表", notes = "分页获取", httpMethod = "GET", response = BaseResult.class)
+    @ApiOperation(value = "获取图列表", notes = "分页获取", httpMethod = "POST", response = BaseResult.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
     public BaseResult<PageData<ChartDto>> pager(@RequestBody @ApiParam(value = "过滤图的条件") ChartDto chartDto, HttpServletRequest request, HttpServletResponse response){
         UserDto userDto = LoginFilter.getUser(request);
@@ -98,9 +96,9 @@ public class ChartControl {
      * 获取图（分页，排除指定的图）
      * @return
      */
-    @RequestMapping(value = "/getChartList", method = RequestMethod.GET)
+    @RequestMapping(value = "/getChartList", method = RequestMethod.POST)
     @ResponseBody
-    @ApiOperation(value = "获取图列表", notes = "分页获取，排除指定的图", httpMethod = "GET", response = BaseResult.class)
+    @ApiOperation(value = "获取图列表", notes = "分页获取，排除指定的图", httpMethod = "POST", response = BaseResult.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
     public BaseResult<PageData<ChartDto>> getChartListExcludeChartList(
             @RequestBody @ApiParam(value = "过滤图的条件") ChartDto chartDto,

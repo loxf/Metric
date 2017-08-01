@@ -133,8 +133,7 @@ public class ChartDaoImpl extends MongoDaoBase<Chart> implements ChartDao {
 
     @Override
     public Chart findOne(Chart params) {
-        Assert.error("不支持此方法");
-        return null;
+        return super.findOne(getCommonQuery(params, null, null), collectionName);
     }
 
     @Override
@@ -160,13 +159,26 @@ public class ChartDaoImpl extends MongoDaoBase<Chart> implements ChartDao {
         Map<String, Object> qryMap = new HashedMap();
         qryMap.put("chartCode", chartCode);
         qryMap.put("state", StandardState.AVAILABLE.getValue());
-        Map<String, Map> elemMap = new HashedMap();
-        Map<String, String> userMap = new HashedMap();
-        userMap.put("code", handleUserName);
-        elemMap.put(ComPareConstants.ELEMMATCH.getDisplayName(), userMap);
-        qryMap.put("visibleList", elemMap);
+        if(StringUtils.isNotBlank(handleUserName)){
+            Map<String, Map> elemMap = new HashedMap();
+            Map<String, String> userMap = new HashedMap();
+            userMap.put("userName", handleUserName);
+            elemMap.put(ComPareConstants.ELEMMATCH.getDisplayName(), userMap);
+            qryMap.put("visibleList", elemMap);
+        }
         return super.findOne(qryMap, collectionName);
     }
+
+    @Override
+    public List<Chart> findAll(List<String>  chartCodeList,String uniqueCode) {
+        Map<String, Object> qryMap = new HashedMap();
+        Map<String, List> chartCodeListMap = new HashedMap();
+        chartCodeListMap.put(ComPareConstants.IN.getDisplayName(),chartCodeList);
+        qryMap.put("chartCode",chartCodeListMap);
+        qryMap.put("uniqueCode",uniqueCode);
+        return super.findAll(qryMap, collectionName);
+    }
+
     @Override
     public List<Chart> findAll(Chart object, String handleUserName) {
         List<Chart> chartList = super.findAll(getCommonQuery(object, handleUserName, null), collectionName);

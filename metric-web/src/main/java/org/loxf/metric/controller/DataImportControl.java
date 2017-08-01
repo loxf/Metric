@@ -51,7 +51,7 @@ public class DataImportControl {
                                         DefaultMultipartHttpServletRequest request,
                                       HttpServletResponse response) {
         UserDto userDto = LoginFilter.getUser(request);
-        BaseResult<QuotaDto> quotaResult = quotaService.queryItemByCode(quotaCode, userDto.getHandleUserName());
+        BaseResult<QuotaDto> quotaResult = quotaService.queryItemByCode(quotaCode, userDto);
         if (quotaResult.getCode() == ResultCodeEnum.SUCCESS.getCode()) {
             try {
                 // 校验表头 根据表头 指标和用户获取表头对应的dimCode和dimName的映射关系

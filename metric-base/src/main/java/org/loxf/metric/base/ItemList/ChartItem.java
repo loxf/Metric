@@ -3,11 +3,13 @@ package org.loxf.metric.base.ItemList;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.io.Serializable;
+
 /**
  * Created by hutingting on 2017/7/6.
  */
 @ApiModel("图项")
-public class ChartItem{
+public class ChartItem implements Serializable{
     @ApiModelProperty(value = "图编码", required = true)
     private String chartCode;
 

@@ -3,12 +3,8 @@ package org.loxf.metric.service.impl;
 import org.loxf.metric.api.IQuotaDimensionService;
 import org.loxf.metric.base.utils.MapAndBeanTransUtils;
 import org.loxf.metric.common.constants.ResultCodeEnum;
-import org.loxf.metric.common.dto.BaseResult;
-import org.loxf.metric.common.dto.PageData;
-import org.loxf.metric.common.dto.Pager;
-import org.loxf.metric.common.dto.QuotaDimensionDto;
+import org.loxf.metric.common.dto.*;
 import org.loxf.metric.dal.dao.interfaces.QuotaDimensionDao;
-import org.loxf.metric.dal.po.Quota;
 import org.loxf.metric.dal.po.QuotaDimension;
 import org.loxf.metric.service.base.BaseService;
 import org.slf4j.Logger;
@@ -41,13 +37,16 @@ public class QuotaDimensionServiceImpl extends BaseService implements IQuotaDime
     public BaseResult<String> insertItem(QuotaDimensionDto obj) {
         QuotaDimension quotaDimension = new QuotaDimension();
         BeanUtils.copyProperties(obj, quotaDimension);
+       if(quotaDimensionDao.findOne(quotaDimension)!=null){
+           return new BaseResult(ResultCodeEnum.DATA_EXIST.getCode(),"该指标维度已存在!");
+       }
         quotaDimension.setCreateUserName(obj.getHandleUserName());
         quotaDimension.setUpdateUserName(obj.getHandleUserName());
         return new BaseResult(quotaDimensionDao.insert(quotaDimension));
     }
 
     @Override
-    public BaseResult<QuotaDimensionDto> queryItemByCode(String itemCode, String handleUserName) {
+    public BaseResult<QuotaDimensionDto> queryItemByCode(String itemCode ,UserDto userDto) {
         return new BaseResult(ResultCodeEnum.NOT_SUPPORT.getCode(), "接口弃用");
     }
 

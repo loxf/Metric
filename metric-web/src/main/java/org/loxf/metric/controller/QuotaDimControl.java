@@ -58,7 +58,7 @@ public class QuotaDimControl {
         UserDto user = LoginFilter.getUser(request);
         QuotaDimensionDto dimensionDto = new QuotaDimensionDto();
         dimensionDto.setDimName(dimName);
-        dimensionDto.setDimName(dimCode);
+        dimensionDto.setDimCode(dimCode);
         dimensionDto.setHandleUserName(user.getHandleUserName());
         dimensionDto.setUniqueCode(user.getUniqueCode());
         return quotaDimensionService.updateItem(dimensionDto);

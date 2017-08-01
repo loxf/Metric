@@ -31,18 +31,35 @@ public class IndexSettingControl {
     private IIndexSettingService indexSettingService;
 
     /**
-     * 更新首页配置
+     * 看板添加图
      * @return
      */
-    @RequestMapping(value = "/remove", method = RequestMethod.POST)
-    @ResponseBody
+    @RequestMapping(value = "/addChartList", method = RequestMethod.POST,consumes = "application/json;charset=UTF-8")
+    @ResponseBody   //缺测：子用户获取
     @Permission(PermissionType.ROOT)
-    @ApiOperation(value = "更新首页配置", notes = "更新首页配置，需要ROOT权限", httpMethod = "POST", response = BaseResult.class)
+    @ApiOperation(value = "添加图", notes = "添加图", httpMethod = "POST", response = BaseResult.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
-    public BaseResult updateSetting(@RequestBody @ApiParam(value = "首页配置图列表")List<ChartItem> chartItemList,
-                                    HttpServletRequest request, HttpServletResponse response){
+    public BaseResult<String> addChartList(@ApiParam(value = "首页看板code") String indexCode,
+                                           @RequestBody @ApiParam(value = "图列表") List<ChartItem> chartItemList,
+                                           HttpServletRequest request, HttpServletResponse response){
         UserDto userDto = LoginFilter.getUser(request);
-        return indexSettingService.updateSetting(chartItemList, userDto.getUserName(), userDto.getUniqueCode());
+        return indexSettingService.addChartList(indexCode,userDto,chartItemList);
+    }
+
+    /**
+     * 看板删除图
+     * @return
+     */
+    @RequestMapping(value = "/delChartList", method = RequestMethod.GET,consumes = "application/json;charset=UTF-8")
+    @ResponseBody   //缺测：子用户获取
+    @Permission(PermissionType.ROOT)
+    @ApiOperation(value = "删除图", notes = "删除图", httpMethod = "GET", response = BaseResult.class)
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "编码见枚举值", response = ResultCodeEnum.class)})
+    public BaseResult<String> delChartList(@ApiParam(value = "首页看板code") String indexCode,
+                                           @ApiParam(value = "图code列表，以逗号做分隔") String chartCodeList,
+                                           HttpServletRequest request, HttpServletResponse response){
+        UserDto userDto = LoginFilter.getUser(request);
+        return indexSettingService.delChartList(indexCode,userDto,chartCodeList);
     }
 
 }

@@ -28,7 +28,11 @@
 
     <mvc:interceptors>
         <mvc:interceptor>
-            <mvc:mapping path="/user/**"/> <!-- 拦截范围 -->
+            <mvc:mapping path="/**"/> <!-- 拦截范围 -->
+            <mvc:exclude-mapping path="/authen/**"/> <!--不被拦截范围（路径）-->
+            <mvc:exclude-mapping path="/dataImport/**"/>
+            <mvc:exclude-mapping path="/dataQuery/**"/>
+            <mvc:exclude-mapping path="/dataImport/**"/>
             <bean class="org.loxf.metric.interceptor.PermissionInterceptor" />
         </mvc:interceptor>
     </mvc:interceptors>

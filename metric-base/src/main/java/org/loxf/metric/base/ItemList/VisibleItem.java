@@ -3,11 +3,13 @@ package org.loxf.metric.base.ItemList;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.io.Serializable;
+
 /**
  * Created by luohj on 2017/7/17.
  */
 @ApiModel("可见范围")
-public class VisibleItem {
+public class VisibleItem implements Serializable {
     /**
      * 类型：USER/GROUP
      */
@@ -17,7 +19,7 @@ public class VisibleItem {
      * USERNAME/GROUP_ID
      */
     @ApiModelProperty(value = "编码", required = true)
-    private String code;
+    private String userName;
 
     public String getType() {
         return type;
@@ -27,11 +29,11 @@ public class VisibleItem {
         this.type = type;
     }
 
-    public String getCode() {
-        return code;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }

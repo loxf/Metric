@@ -3,11 +3,13 @@ package org.loxf.metric.base.ItemList;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.io.Serializable;
+
 /**
  * Created by hutingting on 2017/7/6.
  */
 @ApiModel("指标项")
-public class QuotaItem{
+public class QuotaItem implements Serializable {
 
     @ApiModelProperty(value = "指标编码", required = true)
     private String quotaCode;

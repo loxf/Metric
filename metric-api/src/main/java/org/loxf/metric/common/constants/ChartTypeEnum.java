@@ -19,6 +19,17 @@ public enum ChartTypeEnum {
         this.desc = desc;
     }
 
+    public static boolean isInEnumList(String typeName){
+        if(ChartTypeEnum.BROKENLINE.getType().equals(typeName)||
+                ChartTypeEnum.ROUND.getType().equals(typeName)||
+                ChartTypeEnum.HISTOGRAMHORIZONTAL.getType().equals(typeName)||
+                ChartTypeEnum.HISTOGRAMVERTICAL.getType().equals(typeName)||
+                ChartTypeEnum.PILE.getType().equals(typeName)||
+                ChartTypeEnum.TABLE.getType().equals(typeName)){
+            return true;
+        }
+        return false;
+    }
     /**
      * 根据type获取value
      * @param type

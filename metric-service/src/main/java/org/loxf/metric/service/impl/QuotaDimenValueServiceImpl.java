@@ -40,7 +40,7 @@ public class QuotaDimenValueServiceImpl implements IQuotaDimenValueService {
     }
 
     @Override
-    public BaseResult<QuotaDimensionValueDto> queryItemByCode(String itemCode,String handleUserName) {
+    public BaseResult<QuotaDimensionValueDto> queryItemByCode(String itemCode,UserDto userDto) {
         QuotaDimensionValue qryParams = new QuotaDimensionValue();
         qryParams.setDimCode(itemCode);
         QuotaDimensionValue quotaDimensionValue = quotaDimensionValueDao.findOne(qryParams);

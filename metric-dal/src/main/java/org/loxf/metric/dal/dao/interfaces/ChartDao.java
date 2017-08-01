@@ -10,6 +10,8 @@ import java.util.Map;
 public interface ChartDao extends IBaseDao<Chart> {
     public Chart findOne(Chart object,String handleUserName) ;
 
+    public List<Chart> findAll(List<String> chartCodeList,String uniqueCode);
+
     public List<Chart> findAll(Chart object,String handleUserName) ;
 
     public List<Chart> findByPager(Chart object, List<String> excludeChartList, String handleUserName, int start, int pageSize) ;

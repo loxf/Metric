@@ -89,12 +89,7 @@ public class QuotaServiceImpl extends BaseService implements IQuotaService {
         if (StringUtils.isEmpty(quotaDto.getShowType())) {
             return new BaseResult(ResultCodeEnum.PARAM_ERROR.getCode(), "指标展示类型为空");
         }
-        if (StringUtils.isEmpty(quotaDto.getShowType())) {
-            return new BaseResult(ResultCodeEnum.PARAM_ERROR.getCode(), "指标展示类型为空");
-        }
-        if (StringUtils.isEmpty(quotaDto.getShowType())) {
-            return new BaseResult(ResultCodeEnum.PARAM_ERROR.getCode(), "指标展示类型为空");
-        }
+
         if (quotaDto.getIntervalPeriod() == 0) {
             return new BaseResult(ResultCodeEnum.PARAM_ERROR.getCode(), "指标统计周期为0");
         }
@@ -123,7 +118,7 @@ public class QuotaServiceImpl extends BaseService implements IQuotaService {
     }
 
     @Override
-    public BaseResult<QuotaDto> queryItemByCode(String itemCode, String handleUserName) {
+    public BaseResult<QuotaDto> queryItemByCode(String itemCode, UserDto userDto) {
         Quota qryParams = new Quota();
         qryParams.setQuotaCode(itemCode);
         Quota quota = quotaDao.findOne(qryParams);
